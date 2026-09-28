@@ -1,0 +1,94 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { BookOpen, Terminal, ChevronRight, FileText, Sparkles, Layers } from 'lucide-react';
+
+interface Props {
+  title: string;
+  description?: string;
+  currentSlug?: string;
+}
+
+const { title, description = 'Official MoroAI Documentation', currentSlug = '' } = Astro.props;
+
+const docNav = [
+  {
+    category: 'Getting Started',
+    items: [
+      { label: 'Introduction', href: '/docs/getting-started/introduction/' },
+      { label: 'Installation', href: '/docs/getting-started/installation/' },
+      { label: 'Quick Start', href: '/docs/getting-started/quickstart/' },
+    ],
+  },
+  {
+    category: 'Subsystems & Architecture',
+    items: [
+      { label: 'Epistemic Data Compiler', href: '/features#data-compiler' },
+      { label: 'Hardware Recipe Engine', href: '/features#recipe-engine' },
+      { label: 'Self-Healing Engine', href: '/features#training-engine' },
+      { label: 'Multi-Layer Eval Harness', href: '/features#eval-harness' },
+      { label: 'Release Governance & SBOM', href: '/features#governance' },
+      { label: 'DPO Feedback Flywheel', href: '/features#flywheel' },
+    ],
+  },
+  {
+    category: 'API & Command Reference',
+    items: [
+      { label: 'CLI Commands', href: '/docs/api/cli/' },
+      { label: 'Python SDK', href: '/docs/api/cli/#python-api' },
+      { label: 'Configuration (moro.yaml)', href: '/docs/api/cli/#config-spec' },
+    ],
+  },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="pt-28 pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      {/* Sidebar Navigation */}
+      <aside class="lg:col-span-3">
+        <div class="sticky top-28 space-y-8 rounded-2xl border border-dark-800 bg-dark-900/60 p-6 backdrop-blur-xl">
+          <div class="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-moro-400 font-bold border-b border-dark-800 pb-3">
+            <BookOpen class="w-4 h-4" />
+            <span>Documentation Index</span>
+          </div>
+
+          <nav class="space-y-6">
+            {docNav.map((section) => (
+              <div>
+                <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-gray-500 mb-2.5">
+                  {section.category}
+                </h4>
+                <ul class="space-y-1 text-sm">
+                  {section.items.map((item) => {
+                    const isActive = currentSlug === item.href;
+                    return (
+                      <li>
+                        <a
+                          href={item.href}
+                          class={`block px-3 py-1.5 rounded-lg transition-colors ${
+                            isActive
+                              ? 'bg-moro-500/20 text-moro-300 font-semibold border border-moro-500/30'
+                              : 'text-gray-400 hover:text-white hover:bg-dark-800/60'
+                          }`}
+                        >
+                          {item.label}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </nav>
+        </div>
+      </aside>
+
+      {/* Main Documentation Body */}
+      <article class="lg:col-span-9 prose prose-invert max-w-none">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/50 p-8 sm:p-12 backdrop-blur-xl shadow-2xl">
+          <slot />
+        </div>
+      </article>
+    </div>
+  </div>
+</BaseLayout>

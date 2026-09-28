@@ -1,0 +1,104 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Sparkles, Calendar, Clock, ArrowRight, Tag } from 'lucide-react';
+
+const title = 'MoroAI Engineering Blog — Sovereign AI Deep-Dives';
+const description = 'Technical articles, research breakthroughs, and deep-dives on information-theoretic data compilation, VRAM simulation, and self-healing local training.';
+
+const posts = [
+  {
+    slug: 'introducing-moroai',
+    title: 'Introducing MoroAI: The Local-First Model Adaptation Foundry',
+    excerpt: 'Why we built MoroAI: transforming confidential enterprise data into reliable, deployable local language models on consumer GPUs without cloud lock-in.',
+    date: 'Sep 28, 2026',
+    readTime: '6 min read',
+    category: 'Announcement',
+    tagColor: 'text-sky-400 bg-sky-500/10 border-sky-500/20',
+  },
+  {
+    slug: 'epistemic-data-curation',
+    title: 'Why Standard LLM Deduplication Erases Rare Knowledge: Meet MI Guard',
+    excerpt: 'How standard cosine semantic deduplication accidentally prunes mission-critical domain facts, and how Shannon mutual information bounds mathematically protect edge cases.',
+    date: 'Sep 24, 2026',
+    readTime: '9 min read',
+    category: 'Research',
+    tagColor: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
+  },
+  {
+    slug: 'oom-auto-recovery',
+    title: 'Never Lose a Training Run: The 5-Step Autonomous OOM Recovery Engine',
+    excerpt: 'An inside look at how MoroAI intercepts CUDA memory exceptions, dynamically resizes tensor batches, and resumes training with zero data loss.',
+    date: 'Sep 20, 2026',
+    readTime: '8 min read',
+    category: 'Engineering',
+    tagColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+  },
+  {
+    slug: 'dpo-flywheel',
+    title: 'Closing the Local Loop: Mining User Interactions for Continuous DPO Alignment',
+    excerpt: 'Turn real-world corrections and thumbs-down feedback into high-yield chosen/rejected preference pairs without sending user prompts to external cloud endpoints.',
+    date: 'Sep 15, 2026',
+    readTime: '7 min read',
+    category: 'Architecture',
+    tagColor: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+  },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <main class="pt-32 pb-24">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div class="text-center max-w-2xl mx-auto mb-20">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold uppercase tracking-wider mb-6">
+          <Sparkles class="w-3.5 h-3.5" />
+          <span>Research & Engineering</span>
+        </div>
+        <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight mb-4">
+          The Sovereign AI Blog
+        </h1>
+        <p class="text-base sm:text-lg text-gray-300">
+          In-depth technical papers, benchmark analyses, and design breakdowns from the MoroAI engineering team.
+        </p>
+      </div>
+
+      {/* Post List */}
+      <div class="space-y-8">
+        {posts.map((post) => (
+          <article class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-10 hover:border-moro-500/40 transition-all duration-300 hover:shadow-xl hover:shadow-moro-500/5 group backdrop-blur-xl">
+            <div class="flex flex-wrap items-center gap-4 text-xs text-gray-400 font-mono mb-4">
+              <span class={`font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${post.tagColor}`}>
+                {post.category}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <Calendar class="w-3.5 h-3.5 text-gray-500" />
+                <span>{post.date}</span>
+              </span>
+              <span class="text-dark-700">•</span>
+              <span class="flex items-center gap-1.5">
+                <Clock class="w-3.5 h-3.5 text-gray-500" />
+                <span>{post.readTime}</span>
+              </span>
+            </div>
+
+            <h2 class="text-xl sm:text-2xl font-bold text-white group-hover:text-moro-300 transition-colors mb-3">
+              <a href={`/blog/${post.slug}/`}>{post.title}</a>
+            </h2>
+
+            <p class="text-sm sm:text-base text-gray-300 leading-relaxed mb-6">
+              {post.excerpt}
+            </p>
+
+            <a
+              href={`/blog/${post.slug}/`}
+              class="inline-flex items-center gap-2 text-sm font-semibold text-moro-400 group-hover:text-moro-300 transition-colors"
+            >
+              <span>Read Deep Dive</span>
+              <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </main>
+</BaseLayout>

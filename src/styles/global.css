@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --background: 222.2 84% 3.5%;
+    --foreground: 210 40% 98%;
+  }
+
+  * {
+    @apply border-dark-800;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-dark-950 text-gray-100 min-h-screen selection:bg-moro-500/30 selection:text-moro-200;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #030712;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+  }
+}
+
+@layer components {
+  .container-narrow {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-wide {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section {
+    @apply py-20 sm:py-32;
+  }
+
+  .glass-card {
+    @apply bg-dark-900/60 backdrop-blur-xl border border-dark-800/80 shadow-2xl;
+  }
+
+  .glass-card-hover {
+    @apply transition-all duration-300 hover:border-moro-500/40 hover:bg-dark-900/80 hover:shadow-moro-500/10 hover:-translate-y-1;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-moro-400 via-sky-300 to-purple-400 bg-clip-text text-transparent;
+  }
+
+  .glow-box {
+    box-shadow: 0 0 50px -10px rgba(14, 165, 233, 0.25);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

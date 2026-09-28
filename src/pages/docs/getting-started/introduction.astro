@@ -1,0 +1,66 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Terminal, Shield, Zap, Sparkles } from 'lucide-react';
+
+const title = 'Introduction — MoroAI Documentation';
+const description = 'Understand the vision, architecture, and core problem solved by MoroAI local model adaptation.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/getting-started/introduction/">
+  <div class="not-prose mb-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold uppercase tracking-wider mb-4">
+      <Sparkles class="w-3.5 h-3.5" />
+      <span>Getting Started</span>
+    </div>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Introduction to MoroAI</h1>
+    <p class="text-gray-400 text-base mt-2">
+      The local-first platform for turning uncurated enterprise data into high-yield, sovereign language models.
+    </p>
+  </div>
+
+  <h2>What is MoroAI?</h2>
+  <p>
+    <strong>MoroAI</strong> is an open-source, local-first model adaptation foundry. It transforms proprietary documents, customer interaction logs, code repositories, and structured databases into dependable, fine-tuned language models on consumer hardware.
+  </p>
+
+  <p>
+    Existing tools like Axolotl, Unsloth, or LLaMA-Factory provide scripts for running backpropagation, but leave data curation, hardware sizing, evaluation, and release governance to manual guesswork. MoroAI automates the entire lifecycle end-to-end:
+  </p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose my-6">
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800">
+      <div class="font-bold text-white mb-1">1. Epistemic Data Curation</div>
+      <p class="text-xs text-gray-400">Protects rare domain corner cases with Mutual Information Guard while filtering redundant noise.</p>
+    </div>
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800">
+      <div class="font-bold text-white mb-1">2. Zero-OOM Hardware Prediction</div>
+      <p class="text-xs text-gray-400">Simulates activation and gradient memory before launch, guaranteeing zero Out-Of-Memory crashes.</p>
+    </div>
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800">
+      <div class="font-bold text-white mb-1">3. Self-Healing Training</div>
+      <p class="text-xs text-gray-400">5-step autonomous recovery engine that catches spikes, clears caches, and resumes without data loss.</p>
+    </div>
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800">
+      <div class="font-bold text-white mb-1">4. Instant Ollama & GGUF Release</div>
+      <p class="text-xs text-gray-400">One-command quantize and deploy with full cryptographic Software Bill of Materials (SBOM).</p>
+    </div>
+  </div>
+
+  <h2>Who is MoroAI for?</h2>
+  <ul>
+    <li><strong>Regulated Enterprises:</strong> Legal, financial, defense, and healthcare teams unable to send proprietary data to cloud APIs.</li>
+    <li><strong>Engineers with Consumer GPUs:</strong> Builders fine-tuning 1.5B–14B models on single RTX 3060, 4070, or Apple Silicon M-series chips.</li>
+    <li><strong>MLOps Teams:</strong> Teams needing cryptographic audit logs, deterministic regression tests, and continuous DPO feedback loops.</li>
+  </ul>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <span class="text-xs text-gray-500">Next Step</span>
+    <a
+      href="/docs/getting-started/installation/"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors"
+    >
+      <span>Installation Guide</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

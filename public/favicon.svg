@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="moroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#0ea5e9" />
+      <stop offset="100%" stop-color="#a855f7" />
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.8" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="100" height="100" rx="22" fill="#030712" />
+  <rect x="2" y="2" width="96" height="96" rx="20" stroke="#1e293b" stroke-width="2" />
+  <path d="M24 72V30L50 56L76 30V72" stroke="url(#moroGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" />
+  <circle cx="24" cy="30" r="4.5" fill="#38bdf8" />
+  <circle cx="50" cy="56" r="5" fill="#0ea5e9" />
+  <circle cx="76" cy="30" r="4.5" fill="#a855f7" />
+  <circle cx="24" cy="72" r="4" fill="#38bdf8" />
+  <circle cx="76" cy="72" r="4" fill="#a855f7" />
+</svg>

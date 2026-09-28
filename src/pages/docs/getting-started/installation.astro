@@ -1,0 +1,79 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Terminal, Check, Copy } from 'lucide-react';
+
+const title = 'Installation — MoroAI Documentation';
+const description = 'How to install MoroAI via pip or build from source on macOS, Linux, and Windows with CUDA/Metal support.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/getting-started/installation/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Setup Guide
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Installing MoroAI</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Quickly install MoroAI on Linux (CUDA / ROCm), macOS (Apple Silicon Metal), or Windows WSL2.
+    </p>
+  </div>
+
+  <h2>System Requirements</h2>
+  <ul>
+    <li><strong>Python:</strong> Version 3.10, 3.11, or 3.12</li>
+    <li><strong>OS:</strong> Linux (Ubuntu 20.04+ recommended), macOS (Apple Silicon M1/M2/M3/M4), or Windows with WSL2</li>
+    <li><strong>Hardware Acceleration (Recommended):</strong>
+      <ul>
+        <li>NVIDIA GPU with CUDA 12.0+ (minimum 6GB VRAM for 1.5B models; 12GB+ for 7B models)</li>
+        <li>Apple Silicon Mac with 16GB+ Unified Memory</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h2>1. Standard Installation (PyPI)</h2>
+  <p>The core package includes the CLI, Mission Control web UI, and local compilation engine:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+pip install moroai
+  </pre>
+
+  <h2>2. Installation with Training & Dev Extras</h2>
+  <p>To enable local PyTorch/HuggingFace fine-tuning acceleration and training harnesses:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+pip install 'moroai[train]'
+  </pre>
+
+  <h2>3. Verifying the Installation</h2>
+  <p>Run the diagnosis command to verify GPU detection and driver compatibility:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+moro diagnose
+  </pre>
+
+  <p>You should see output similar to:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-400">
+MoroAI Diagnostic Report (v0.1.0)
+----------------------------------
+Python:   3.11.8 (darwin-arm64)
+PyTorch:  2.3.1 (MPS Accelerator Enabled)
+Platform: Apple M3 Max (36GB Unified Memory)
+Status:   All 6 subsystems operational
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a
+      href="/docs/getting-started/introduction/"
+      class="text-xs font-semibold text-gray-400 hover:text-white transition-colors"
+    >
+      ← Introduction
+    </a>
+    <a
+      href="/docs/getting-started/quickstart/"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors"
+    >
+      <span>Next: Quick Start</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

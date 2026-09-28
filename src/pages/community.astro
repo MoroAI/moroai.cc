@@ -1,0 +1,148 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  Github,
+  Disc as Discord,
+  Sparkles,
+  GitPullRequest,
+  Bug,
+  BookOpen,
+  MessageSquare,
+  ArrowRight,
+  Code2
+} from 'lucide-react';
+
+const title = 'Community & Contributing — MoroAI Sovereign AI Project';
+const description = 'Join the MoroAI open-source movement on Discord and GitHub. Explore good first issues, contribute plugins, and build the future of local-first AI.';
+
+const channels = [
+  {
+    icon: Github,
+    title: 'GitHub Organization',
+    description: 'Star the repository, open feature requests, report bugs, and inspect PRs.',
+    link: 'https://github.com/moroai/moro',
+    actionText: 'Browse Repository',
+  },
+  {
+    icon: Discord,
+    title: 'Discord Server',
+    description: 'Chat with core maintainers, discuss VRAM tuning techniques, and showcase your local fine-tunes.',
+    link: 'https://discord.gg/moroai',
+    actionText: 'Join Discord',
+  },
+  {
+    icon: MessageSquare,
+    title: 'Discussions & RFCs',
+    description: 'Participate in architectural RFCs covering new quantization targets and loss curves.',
+    link: 'https://github.com/moroai/moro/discussions',
+    actionText: 'View RFCs',
+  },
+];
+
+const areas = [
+  {
+    title: 'Custom Data Loaders',
+    desc: 'Write connectors for Postgres, Notion, Slack archives, or specialized JSON schemas.',
+    tag: 'Python / IO',
+  },
+  {
+    title: 'Evaluation Suites',
+    desc: 'Design domain benchmark tests for healthcare, financial compliance, and coding syntax.',
+    tag: 'ML / Eval',
+  },
+  {
+    title: 'Export Targets',
+    desc: 'Integrate new serving backends (vLLM, TGI, Apple MLX, ONNX runtime).',
+    tag: 'Deployment',
+  },
+  {
+    title: 'Tutorials & Cookbooks',
+    desc: 'Create step-by-step guides fine-tuning Llama-3, Qwen-2.5, or Mistral models on local laptops.',
+    tag: 'Docs',
+  },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <main class="pt-32 pb-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div class="text-center max-w-3xl mx-auto mb-20">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold uppercase tracking-wider mb-6">
+          <Sparkles class="w-3.5 h-3.5" />
+          <span>Global Community</span>
+        </div>
+        <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight mb-6">
+          Build Together. <span class="bg-gradient-to-r from-moro-400 via-sky-300 to-purple-400 bg-clip-text text-transparent">Stay Sovereign.</span>
+        </h1>
+        <p class="text-lg text-gray-300 leading-relaxed">
+          MoroAI is created by and for machine learning practitioners, privacy engineers,
+          and developers who care deeply about local computing independence.
+        </p>
+      </div>
+
+      {/* Community Channels */}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+        {channels.map((c) => {
+          const Icon = c.icon;
+          return (
+            <div class="rounded-2xl border border-dark-800 bg-dark-900/60 p-8 flex flex-col justify-between hover:border-moro-500/30 transition-all shadow-xl">
+              <div>
+                <div class="w-12 h-12 rounded-xl bg-dark-800 border border-dark-700 flex items-center justify-center text-white mb-6">
+                  <Icon class="w-6 h-6" />
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">{c.title}</h3>
+                <p class="text-sm text-gray-400 leading-relaxed mb-6">{c.desc || c.description}</p>
+              </div>
+              <a
+                href={c.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 text-sm font-semibold text-moro-400 hover:text-moro-300 transition-colors"
+              >
+                <span>{c.actionText}</span>
+                <ArrowRight class="w-4 h-4" />
+              </a>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* How to Contribute */}
+      <div class="rounded-3xl border border-dark-800 bg-dark-900/40 p-8 sm:p-12 mb-24 backdrop-blur-xl">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-6">How to Contribute</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-6 space-y-4 text-gray-300 text-sm leading-relaxed">
+            <p>
+              We welcome code contributions, documentation improvements, benchmark test suites, and bug reports. All contributions are licensed under Apache 2.0.
+            </p>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-white font-semibold">
+                <Code2 class="w-4 h-4 text-moro-400" />
+                <span>Development Workflow:</span>
+              </div>
+              <ol class="list-decimal list-inside text-gray-400 space-y-1 pl-2">
+                <li>Fork the repository on GitHub</li>
+                <li>Create a virtualenv and install with editable dev extras: <code class="text-moro-400">pip install -e '.[dev,train]'</code></li>
+                <li>Run test suite: <code class="text-moro-400">pytest</code> (All 414 tests passing)</li>
+                <li>Submit your pull request with descriptive tests</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {areas.map((a) => (
+              <div class="p-4 rounded-xl bg-dark-950/80 border border-dark-800">
+                <span class="text-[10px] font-mono font-bold text-moro-400 uppercase bg-moro-500/10 px-2 py-0.5 rounded border border-moro-500/20 mb-2 inline-block">
+                  {a.tag}
+                </span>
+                <h4 class="text-sm font-bold text-white mb-1">{a.title}</h4>
+                <p class="text-xs text-gray-400 leading-relaxed">{a.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

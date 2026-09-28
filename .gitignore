@@ -1,0 +1,20 @@
+# Build & Dependencies
+node_modules/
+dist/
+.astro/
+
+# Environment & Cache
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Cloudflare
+.wrangler/

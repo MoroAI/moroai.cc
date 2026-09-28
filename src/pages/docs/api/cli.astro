@@ -1,0 +1,143 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { Terminal, Code, Sparkles, Layers, ArrowRight } from 'lucide-react';
+
+const title = 'CLI & Python API Reference — MoroAI Documentation';
+const description = 'Complete reference for all MoroAI CLI subcommands, flags, Python SDK methods, and moro.yaml schema.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/api/cli/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      API & Commands
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">CLI & SDK Reference</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Every subcommand, command-line flag, and programmatic Python interface available in MoroAI v0.1.0.
+    </p>
+  </div>
+
+  <h2>1. CLI Subcommands</h2>
+
+  <h3><code>moro init [DIR]</code></h3>
+  <p>Initializes a new MoroAI foundry directory containing <code>moro.yaml</code>, datasets folder, and checkpoints directory.</p>
+  <pre class="bg-dark-950 p-3 rounded-lg border border-dark-800 font-mono text-xs text-sky-300">
+moro init my-project
+  </pre>
+
+  <h3><code>moro data build</code></h3>
+  <p>Compiles, deduplicates, and validates raw data with the Epistemic Compiler.</p>
+  <ul>
+    <li><code>--source &lt;path&gt;</code>: Path to raw input file (.jsonl, .csv, .parquet).</li>
+    <li><code>--output &lt;path&gt;</code>: Destination path for compiled dataset.</li>
+    <li><code>--mi-guard-threshold &lt;float&gt;</code>: Mutual Information outlier preservation bound (default: <code>0.85</code>).</li>
+    <li><code>--dedup-threshold &lt;float&gt;</code>: Cosine similarity deduplication cutoff (default: <code>0.88</code>).</li>
+  </ul>
+
+  <h3><code>moro recipe generate</code></h3>
+  <p>Simulates memory requirements for a target base model and local GPU, writing optimal hyperparams to <code>moro.yaml</code>.</p>
+  <ul>
+    <li><code>--model &lt;id&gt;</code>: Hugging Face model identifier (e.g. <code>Qwen/Qwen2.5-1.5B</code>).</li>
+    <li><code>--hardware &lt;detect|manual&gt;</code>: Automatically probe VRAM or specify manually.</li>
+    <li><code>--target-vram-gb &lt;int&gt;</code>: Explicit maximum VRAM ceiling.</li>
+  </ul>
+
+  <h3><code>moro train</code></h3>
+  <p>Executes local fine-tuning under the supervision of the autonomous 5-step self-healing daemon.</p>
+  <ul>
+    <li><code>--config &lt;path&gt;</code>: Path to configuration file (default: <code>./moro.yaml</code>).</li>
+    <li><code>--auto-heal / --no-auto-heal</code>: Enable/disable automatic OOM recovery and loss spike rollback (default: <code>True</code>).</li>
+    <li><code>--resume &lt;checkpoint_dir&gt;</code>: Resume training from a specific step.</li>
+  </ul>
+
+  <h3><code>moro eval compare</code></h3>
+  <p>Evaluates a fine-tuned adapter against a base model across deterministic rules, semantic judges, and Wasserstein drift bounds.</p>
+  <ul>
+    <li><code>--checkpoint &lt;path&gt;</code>: Checkpoint directory to test.</li>
+    <li><code>--suite &lt;name&gt;</code>: Test suite name or YAML spec.</li>
+    <li><code>--gate-strict / --no-gate-strict</code>: Enforce 100% pass on deterministic rules.</li>
+  </ul>
+
+  <h3><code>moro release deploy</code></h3>
+  <p>Merges weights, applies GGUF quantization, generates cryptographic SHA-256 SBOM, and registers into local Ollama.</p>
+  <ul>
+    <li><code>--target &lt;ollama|vllm|docker|directory&gt;</code>: Deployment target runtime.</li>
+    <li><code>--quantize &lt;q4_k_m|q8_0|fp16&gt;</code>: GGUF quantization mode.</li>
+    <li><code>--model-name &lt;string&gt;</code>: Local name to register in Ollama.</li>
+  </ul>
+
+  <h3><code>moro dashboard</code></h3>
+  <p>Launches the interactive real-time Mission Control web interface in your browser.</p>
+  <ul>
+    <li><code>--host &lt;string&gt;</code>: Bind host (default: <code>127.0.0.1</code>).</li>
+    <li><code>--port &lt;int&gt;</code>: Web server port (default: <code>8080</code>).</li>
+  </ul>
+
+  <h2 id="python-api">2. Programmatic Python SDK</h2>
+  <p>MoroAI can be invoked directly inside Python applications, scripts, or Jupyter notebooks:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`from moro.core.compiler import EpistemicDataCompiler
+from moro.core.recipe import RecipePredictor
+from moro.engine.trainer import SelfHealingTrainer
+from moro.eval.harness import MultiLayerEvalHarness
+
+# 1. Compile data with MI Guard
+compiler = EpistemicDataCompiler(mi_guard_threshold=0.85)
+curated_data = compiler.compile("./raw_logs.jsonl")
+
+# 2. Predict optimal VRAM recipe
+predictor = RecipePredictor(model_id="Qwen/Qwen2.5-1.5B")
+recipe = predictor.simulate_and_generate(device="cuda:0")
+
+# 3. Train with autonomous recovery
+trainer = SelfHealingTrainer(recipe=recipe, dataset=curated_data)
+run_result = trainer.fit()
+
+# 4. Evaluate release candidate
+harness = MultiLayerEvalHarness()
+eval_summary = harness.evaluate(run_result.checkpoint_dir)
+if eval_summary.passed_gate:
+    print(f"Model certified! Cryptographic ID: {eval_summary.signature}")`}
+  </pre>
+
+  <h2 id="config-spec">3. Configuration File (<code>moro.yaml</code>)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+{`version: "1.0"
+model:
+  base_model: "Qwen/Qwen2.5-1.5B"
+  quantization: "4bit"
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: ["q_proj", "v_proj", "k_proj", "o_proj"]
+
+data:
+  train_path: "./datasets/curated_train.jsonl"
+  val_path: "./datasets/curated_val.jsonl"
+  max_seq_length: 2048
+
+training:
+  learning_rate: 0.0002
+  micro_batch_size: 2
+  gradient_accumulation_steps: 8
+  epochs: 3
+  auto_recovery: true`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a
+      href="/docs/getting-started/quickstart/"
+      class="text-xs font-semibold text-gray-400 hover:text-white transition-colors"
+    >
+      ← Quickstart
+    </a>
+    <a
+      href="/features"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors"
+    >
+      <span>Subsystems Deep Dive</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

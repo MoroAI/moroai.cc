@@ -1,0 +1,110 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Terminal, CheckCircle2, Sparkles, Layers } from 'lucide-react';
+
+const title = 'Quick Start — MoroAI Documentation';
+const description = 'Complete end-to-end tutorial: compile data, train a local model with self-healing recovery, and deploy to Ollama in under 15 minutes.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/getting-started/quickstart/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      15-Minute Tutorial
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Quick Start Guide</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Train and deploy your first private domain language model from scratch.
+    </p>
+  </div>
+
+  <h2>Step 1: Initialize Workspace</h2>
+  <p>Create a fresh workspace directory with standard configuration files:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+moro init my-model-foundry
+cd my-model-foundry
+  </pre>
+
+  <p>This creates a structured directory containing:</p>
+  <ul>
+    <li><code>moro.yaml</code>: Central configuration defining data paths, hardware profiles, and training parameters.</li>
+    <li><code>datasets/</code>: Directory for raw and compiled training sets.</li>
+    <li><code>checkpoints/</code>: Directory for model adapters and weights.</li>
+  </ul>
+
+  <h2>Step 2: Compile & Clean Data with MI Guard</h2>
+  <p>Feed in your raw proprietary data (JSONL, CSV, or text) to run information-theoretic curation:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+moro data build --source ./datasets/raw_support_logs.jsonl
+  </pre>
+
+  <p>
+    The Epistemic Compiler dedupes repetitive queries while activating the <strong>MI Guard</strong> to preserve critical rare boundary conditions.
+  </p>
+
+  <h2>Step 3: Hardware Simulation & Recipe Generation</h2>
+  <p>Query your local GPU VRAM to generate an optimized, zero-OOM recipe:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+moro recipe generate --model Qwen/Qwen2.5-1.5B --hardware detect
+  </pre>
+
+  <p>
+    MoroAI calculates sequence lengths and activation footprints, configuring micro-batch size and LoRA rank (e.g. <code>lora_r=16</code>, <code>lora_alpha=32</code>) to maximize speed without risking an out-of-memory abort.
+  </p>
+
+  <h2>Step 4: Launch Self-Healing Training</h2>
+  <p>Start local fine-tuning:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+moro train
+  </pre>
+
+  <p>
+    If a sudden spike in token sequence length triggers a memory warning, the 5-step autonomous recovery engine intervenes, flushes cache, adjusts gradient accumulation on the fly, and resumes.
+  </p>
+
+  <h2>Step 5: Run Multi-Layer Evaluation</h2>
+  <p>Certify the model against deterministic format rules and semantic drift tests:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+moro eval compare --suite full
+  </pre>
+
+  <h2>Step 6: One-Click Deploy to Ollama</h2>
+  <p>Quantize your fine-tuned weights into GGUF format and register into your local Ollama serving engine:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+moro release deploy --target ollama
+  </pre>
+
+  <p>Test your model immediately from any terminal or local app:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-emerald-400">
+ollama run my-model:v1 "Explain our custom refund workflow"
+  </pre>
+
+  <h2>Bonus: Launch Mission Control Web UI</h2>
+  <p>Prefer a visual interface? Launch the interactive browser dashboard at any time:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-purple-300">
+moro dashboard --port 8080
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a
+      href="/docs/getting-started/installation/"
+      class="text-xs font-semibold text-gray-400 hover:text-white transition-colors"
+    >
+      ← Installation
+    </a>
+    <a
+      href="/docs/api/cli/"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors"
+    >
+      <span>CLI Command Reference</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

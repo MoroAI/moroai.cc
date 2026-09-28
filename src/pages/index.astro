@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/home/Hero';
+import FeatureGrid from '../components/home/FeatureGrid';
+import ArchitectureDiagram from '../components/home/ArchitectureDiagram';
+import ComparisonTable from '../components/home/ComparisonTable';
+import Testimonials from '../components/home/Testimonials';
+import NewsletterCTA from '../components/home/NewsletterCTA';
+
+const title = 'MoroAI — Build Private AI. Own Your Models.';
+const description = 'Transform private organizational data into dependable, specialized local language models. 100% private, self-healing training engine, and one-click Ollama deployment.';
+---
+
+<BaseLayout title={title} description={description}>
+  <main>
+    <Hero client:load />
+    <FeatureGrid client:visible />
+    <ArchitectureDiagram client:visible />
+    <ComparisonTable client:visible />
+    <Testimonials client:visible />
+    <NewsletterCTA client:visible />
+  </main>
+</BaseLayout>

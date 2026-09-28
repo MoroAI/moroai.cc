@@ -1,0 +1,189 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Check, Sparkles, ArrowRight, ShieldCheck, HelpCircle, Terminal } from 'lucide-react';
+
+const title = 'MoroAI Pricing — 100% Free Open-Source & Enterprise Support';
+const description = 'MoroAI is free and open-source under the Apache 2.0 license. Explore enterprise support for air-gapped deployments and custom hardware clusters.';
+
+const faqs = [
+  {
+    q: 'Is MoroAI really 100% free and open source?',
+    a: 'Yes. MoroAI is fully open-source under the permissive Apache 2.0 license. You can use it commercially, adapt models on your private servers, modify the code, and deploy without paying any license fees.',
+  },
+  {
+    q: 'Does my training data or telemetry ever get sent to cloud servers?',
+    a: 'Never. MoroAI is strictly local-first. All compilation, training loops, checkpoints, loss telemetry, and Ollama deployments occur entirely on your local machine or private VPC.',
+  },
+  {
+    q: 'What hardware do I need to run MoroAI?',
+    a: 'MoroAI is optimized for single consumer GPUs. You can train 1.5B parameter models on an 8GB VRAM GPU (e.g. RTX 3060, 4060, or Apple Silicon M-series) in under 30 minutes. Larger 7B–14B models run smoothly on 16GB–24GB VRAM cards.',
+  },
+  {
+    q: 'What does Enterprise Support include?',
+    a: 'Enterprise Support is designed for regulated organizations (financial institutions, defense contractors, healthcare) that need custom data compiler connectors, air-gapped on-premise deployments, SLA-backed response times, and multi-node cluster optimization.',
+  },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <main class="pt-32 pb-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div class="text-center max-w-3xl mx-auto mb-20">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold uppercase tracking-wider mb-6">
+          <Sparkles class="w-3.5 h-3.5" />
+          <span>Transparent & Sovereign</span>
+        </div>
+        <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight mb-6">
+          Free Forever for Developers.{' '}
+          <span class="bg-gradient-to-r from-moro-400 via-sky-300 to-purple-400 bg-clip-text text-transparent">
+            Enterprise Support
+          </span>{' '}
+          When Needed.
+        </h1>
+        <p class="text-lg text-gray-300">
+          No cloud tokens. No per-seat billing. Total ownership of your models, data, and infrastructure.
+        </p>
+      </div>
+
+      {/* Pricing Cards */}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-28">
+        {/* Tier 1: Community Open Source */}
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/70 p-8 sm:p-10 flex flex-col justify-between shadow-xl relative backdrop-blur-xl">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-mono uppercase tracking-wider text-moro-400 font-bold bg-moro-500/10 px-3 py-1 rounded-full border border-moro-500/20">
+                Community Edition
+              </span>
+              <span class="text-xs text-gray-400 font-mono">Apache 2.0</span>
+            </div>
+            <div class="flex items-baseline gap-2 mb-4">
+              <span class="text-5xl font-black text-white">$0</span>
+              <span class="text-gray-400 font-medium">/ forever</span>
+            </div>
+            <p class="text-sm text-gray-400 mb-8 leading-relaxed">
+              Complete access to the local model adaptation foundry. Unlimited models, unlimited runs, 100% private.
+            </p>
+
+            <ul class="space-y-3.5 text-sm text-gray-300 mb-10">
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Epistemic Data Compiler with MI Guard</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Pre-flight VRAM hardware predictor</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>5-step self-healing OOM auto-recovery</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Multi-layered evaluation & drift bounds</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Mission Control real-time web UI</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>1-click GGUF export & Ollama deployment</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Community Discord & GitHub support</span>
+              </li>
+            </ul>
+          </div>
+
+          <a
+            href="/docs/getting-started/quickstart/"
+            class="w-full py-4 rounded-xl bg-dark-800 hover:bg-dark-700 text-white font-semibold text-center border border-dark-700 transition-colors flex items-center justify-center gap-2"
+          >
+            <span>Get Started in 60s</span>
+            <ArrowRight class="w-4 h-4" />
+          </a>
+        </div>
+
+        {/* Tier 2: Enterprise Support */}
+        <div class="rounded-3xl border-2 border-moro-500/50 bg-dark-900/90 p-8 sm:p-10 flex flex-col justify-between shadow-2xl shadow-moro-500/10 relative backdrop-blur-xl">
+          <div class="absolute -top-3.5 right-8 bg-gradient-to-r from-moro-500 to-sky-400 text-white text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-md">
+            Sovereign AI
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-mono uppercase tracking-wider text-moro-300 font-bold bg-moro-500/20 px-3 py-1 rounded-full border border-moro-500/30">
+                Enterprise & Sovereign
+              </span>
+              <span class="text-xs text-moro-400 font-mono">Custom SLA</span>
+            </div>
+            <div class="flex items-baseline gap-2 mb-4">
+              <span class="text-5xl font-black text-white">Custom</span>
+              <span class="text-gray-400 font-medium">/ deployment</span>
+            </div>
+            <p class="text-sm text-gray-300 mb-8 leading-relaxed">
+              For security, compliance, and engineering organizations requiring air-gapped deployments and custom hardware acceleration.
+            </p>
+
+            <ul class="space-y-3.5 text-sm text-gray-200 mb-10">
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span><strong>Everything in Community Edition</strong></span>
+              </li>
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Air-gapped on-premise installation support</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Custom enterprise data connectors (SAP, Epic, DB2)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Multi-GPU & Slurm / Kubernetes cluster scaling</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Dedicated ML engineering advisory & SLA</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Regulatory audit & SBOM certification assistance</span>
+              </li>
+            </ul>
+          </div>
+
+          <a
+            href="mailto:enterprise@moroai.cc"
+            class="w-full py-4 rounded-xl bg-gradient-to-r from-moro-500 to-sky-600 hover:from-moro-400 hover:to-sky-500 text-white font-semibold text-center shadow-lg shadow-moro-500/25 transition-all flex items-center justify-center gap-2"
+          >
+            <span>Contact Enterprise Team</span>
+            <ArrowRight class="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+
+      {/* FAQ Section */}
+      <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-12">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-3">Frequently Asked Questions</h2>
+          <p class="text-gray-400 text-sm">Everything you need to know about licensing, data privacy, and hardware requirements.</p>
+        </div>
+
+        <div class="space-y-4">
+          {faqs.map((faq) => (
+            <div class="rounded-2xl border border-dark-800 bg-dark-900/60 p-6">
+              <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
+                <HelpCircle class="w-4 h-4 text-moro-400 shrink-0" />
+                <span>{faq.q}</span>
+              </h3>
+              <p class="text-sm text-gray-300 leading-relaxed pl-6">{faq.a}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
