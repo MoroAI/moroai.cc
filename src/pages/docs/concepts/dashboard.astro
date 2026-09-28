@@ -1,0 +1,139 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, LayoutDashboard, CheckCircle2, Activity, Sliders, Shield, Rocket, Terminal } from 'lucide-react';
+
+const title = 'Mission Control UI Architecture — MoroAI Documentation';
+const description = 'Deep architectural guide to MoroAI Mission Control: local reactive web command center, live SSE/WebSocket telemetry, and visual model orchestration.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/concepts/dashboard/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-pink-400 uppercase tracking-wider bg-pink-500/10 px-2.5 py-1 rounded border border-pink-500/20 mb-3 inline-block">
+      Subsystem 07
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Mission Control UI</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Zero-cloud, browser-based command center for visual dataset curation, live VRAM and loss telemetry, model evaluation diffing, and one-click Ollama deployment.
+    </p>
+  </div>
+
+  <h2>System Architecture & Local Execution</h2>
+  <p>
+    While the <code>moro</code> CLI provides complete automation for scripting and CI/CD pipelines, complex fine-tuning operations benefit immensely from visual, real-time feedback. MoroAI provides <strong>Mission Control</strong>: a self-contained web application served entirely from the local Python package.
+  </p>
+  
+  <p>
+    When launched with <code>moro dashboard</code>, the system starts an embedded, high-performance ASGI server (Uvicorn + FastAPI) and binds exclusively to <code>localhost</code> (or a user-specified private subnet interface). No telemetry or tracking scripts are loaded; assets are served locally from the package distribution.
+  </p>
+
+  <div class="not-prose my-6 p-5 rounded-2xl bg-dark-950 border border-dark-800 font-mono text-xs">
+    <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+      <span>Launch Command</span>
+      <span class="text-pink-400">moro dashboard</span>
+    </div>
+    <pre class="text-pink-300 leading-relaxed overflow-x-auto whitespace-pre-wrap">
+{`$ moro dashboard --port 3000 --host 127.0.0.1
+
+╭──────────────────────────────────────────────────╮
+│   MoroAI Mission Control Dashboard v0.1.0        │
+│   Web Interface:  http://localhost:3000          │
+│   REST API:       http://localhost:3000/api/v1   │
+│   WebSocket:      ws://localhost:3000/api/v1/ws  │
+│   Storage:        SQLite (.moro/moro.db)         │
+╰──────────────────────────────────────────────────╯
+[READY] Press Ctrl+C to stop the dashboard server.`}
+    </pre>
+  </div>
+
+  <h2>Real-Time Streaming Engine (SSE & WebSockets)</h2>
+  <p>
+    Standard machine learning dashboards rely on aggressive REST polling (e.g. fetching <code>/status</code> every second), which introduces latency and CPU thrashing during heavy backpropagation.
+  </p>
+  <p>
+    MoroAI Mission Control implements a dual-channel pub/sub telemetry pipe:
+  </p>
+  <ul>
+    <li>
+      <strong>Server-Sent Events (SSE) (<code>/api/v1/stream</code>):</strong> Delivers unidirectional, lightweight 60Hz telemetry ticks for active training step, rolling moving-average loss, and exact VRAM allocations directly to client SVG/Canvas charts.
+    </li>
+    <li>
+      <strong>Bi-Directional WebSocket (<code>/api/v1/ws</code>):</strong> Facilitates instant command dispatching (such as dynamic learning rate nudges, emergency pause, or manual checkpoint creation) with sub-millisecond execution roundtrips.
+    </li>
+  </ul>
+
+  <h2>Core Modules in Mission Control</h2>
+
+  <h3>1. Interactive Dataset Studio</h3>
+  <p>
+    Drag and drop raw <code>.jsonl</code>, <code>.csv</code>, or <code>.parquet</code> files directly into the browser. The studio immediately runs the <strong>Epistemic Data Compiler</strong> in a background worker process, rendering:
+  </p>
+  <ul>
+    <li>Interactive token length distribution histograms</li>
+    <li>Positive Pointwise Mutual Information (PPMI) density curves</li>
+    <li>Visual identification of protected <strong>MI Guard Landmark</strong> samples versus pruned boilerplate</li>
+  </ul>
+
+  <h3>2. Pre-Flight VRAM Simulator</h3>
+  <p>
+    Before starting training, operators can adjust sequence length (e.g. 1024, 2048, 4096) and LoRA rank ($r=8, 16, 32, 64$). A dynamic gauge continuously predicts peak VRAM against available GPU memory and illuminates safety thresholds (Green: Safe, Yellow: Tight, Red: OOM Inevitable).
+  </p>
+
+  <h3>3. Evaluation Comparator & Completion Diffing</h3>
+  <p>
+    Compare base model versus fine-tuned checkpoint completions side by side on standardized enterprise test sets. Responses are diffed token-by-token with color-coded highlighting of strict rule compliance, hallucination markers, and Wasserstein distribution drift scores.
+  </p>
+
+  <h3>4. One-Click Runtime Deployment</h3>
+  <p>
+    Once an evaluation gate is certified, the operator can click <strong>Deploy to Ollama</strong>. Mission Control invokes local quantization (NF4/GGUF), compiles the Modelfile, and registers the model in the local Ollama daemon without leaving the browser.
+  </p>
+
+  <h2>REST & WebSocket Integration</h2>
+  <p>
+    For programmatic monitoring or embedding into internal corporate portals, Mission Control exposes comprehensive endpoints:
+  </p>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Endpoint</th>
+          <th class="p-3 border border-dark-800">Method</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-pink-400 font-bold">/api/v1/health</td>
+          <td class="p-3 text-emerald-400 font-bold">GET</td>
+          <td class="p-3 text-gray-300">Server status, connected GPU info, and database state</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-pink-400 font-bold">/api/v1/runs</td>
+          <td class="p-3 text-emerald-400 font-bold">GET / POST</td>
+          <td class="p-3 text-gray-300">List historical runs or launch new training job</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-pink-400 font-bold">/api/v1/runs/{'{id}'}/telemetry</td>
+          <td class="p-3 text-emerald-400 font-bold">GET (SSE)</td>
+          <td class="p-3 text-gray-300">Continuous SSE event stream for loss, step, and VRAM</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-pink-400 font-bold">/api/v1/deploy/ollama</td>
+          <td class="p-3 text-cyan-400 font-bold">POST</td>
+          <td class="p-3 text-gray-300">Trigger GGUF quantization and local Ollama registration</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/flywheel/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← DPO Feedback Flywheel
+    </a>
+    <a href="/docs/api/rest/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>REST API Reference</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

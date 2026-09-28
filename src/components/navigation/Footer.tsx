@@ -74,32 +74,32 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <a href="/features#data-compiler" className="text-gray-400 hover:text-moro-300 transition-colors">
+                <a href="/features/#data-compiler" className="text-gray-400 hover:text-moro-300 transition-colors">
                   Data Compiler & MI Guard
                 </a>
               </li>
               <li>
-                <a href="/features#recipe-engine" className="text-gray-400 hover:text-moro-300 transition-colors">
+                <a href="/features/#recipe-engine" className="text-gray-400 hover:text-moro-300 transition-colors">
                   VRAM Recipe Predictor
                 </a>
               </li>
               <li>
-                <a href="/features#training-engine" className="text-gray-400 hover:text-moro-300 transition-colors">
+                <a href="/features/#training-engine" className="text-gray-400 hover:text-moro-300 transition-colors">
                   OOM Auto-Recovery
                 </a>
               </li>
               <li>
-                <a href="/features#eval-harness" className="text-gray-400 hover:text-moro-300 transition-colors">
+                <a href="/features/#eval-harness" className="text-gray-400 hover:text-moro-300 transition-colors">
                   Multi-Layered Eval
                 </a>
               </li>
               <li>
-                <a href="/features#flywheel" className="text-gray-400 hover:text-moro-300 transition-colors">
+                <a href="/features/#flywheel" className="text-gray-400 hover:text-moro-300 transition-colors">
                   DPO Feedback Flywheel
                 </a>
               </li>
               <li>
-                <a href="/features#dashboard" className="text-gray-400 hover:text-moro-300 transition-colors">
+                <a href="/features/#dashboard" className="text-gray-400 hover:text-moro-300 transition-colors">
                   Mission Control UI
                 </a>
               </li>

@@ -1,53 +1,117 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, Zap, CheckCircle2, AlertOctagon } from 'lucide-react';
+import { ArrowRight, Zap, CheckCircle2, AlertOctagon, Terminal, ShieldAlert } from 'lucide-react';
 
-const title = 'Self-Healing Training Engine — MoroAI Architecture';
-const description = 'How the 5-step autonomous OOM recovery engine and loss divergence rollback keep training runs alive.';
+const title = 'OOM Auto-Recovery & Self-Healing Training Engine — MoroAI Architecture';
+const description = 'Deep dive into MoroAI five-level autonomous OOM recovery engine, gradient accumulation dynamics, and loss explosion rollback.';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/concepts/training-engine/">
   <div class="not-prose mb-8">
-    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      Subsystem 04
+    <span class="text-xs font-mono font-bold text-purple-400 uppercase tracking-wider bg-purple-500/10 px-2.5 py-1 rounded border border-purple-500/20 mb-3 inline-block">
+      Subsystem 03
     </span>
-    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Self-Healing Training Engine</h1>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">OOM Auto-Recovery & Self-Healing Engine</h1>
     <p class="text-gray-400 text-base mt-2">
-      Zero-loss training recovery that intercepts CUDA out-of-memory errors and loss explosions automatically.
+      Zero-loss training recovery that intercepts CUDA out-of-memory errors and loss explosions in-flight without aborting the run.
     </p>
   </div>
 
-  <h2>The 5-Step Healer Protocol</h2>
+  <h2>Why Unattended Local Training Fails</h2>
   <p>
-    When hardware thresholds are violated during backpropagation, MoroAI executes an automated progressive mitigation protocol:
+    Machine learning fine-tuning jobs on consumer GPUs are inherently fragile. Even when pre-flight estimates indicate safe headroom, two runtime anomalies routinely terminate processes:
+  </p>
+  <ul>
+    <li>
+      <strong>Burst Sequence Outliers (CUDA OOM):</strong> A mini-batch containing conversations with outlier token lengths (e.g. 3,800 tokens instead of the mean 1,200 tokens) causes quadratic attention memory consumption ($O(N^2)$), instantly crashing the PyTorch allocator.
+    </li>
+    <li>
+      <strong>Gradient Explosion / NaN Divergence:</strong> Mixed-precision (FP16/BF16) training on small datasets occasionally encounters extreme gradient norms, causing weights to turn into NaNs or training loss to spike by &gt;300%.
+    </li>
+  </ul>
+
+  <h2>The 5-Level Autonomous Escalation Ladder</h2>
+  <p>
+    MoroAI replaces the standard unhandled exception loop with a progressive <strong>Autonomous Healer Protocol</strong>. When an anomaly occurs, the engine intercepts the signal and executes the lowest-impact resolution:
   </p>
 
   <div class="space-y-4 not-prose my-6 text-sm">
     <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
-      <span class="text-purple-400 font-bold font-mono block mb-1">Level 1: Memory Pool Evacuation</span>
-      <p class="text-gray-400 text-xs">Invokes <code>torch.cuda.empty_cache()</code> and forces Python garbage collection to eliminate fragmented blocks.</p>
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-purple-400 font-bold font-mono">Level 1: Allocator Cache Evacuation</span>
+        <span class="text-xs font-mono text-gray-500">Latency: ~400ms</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Invokes <code>torch.cuda.empty_cache()</code> and forces Python cyclic garbage collection. This defragments the CUDA memory allocator, reclaiming up to 1.5GB of stale buffer blocks without altering training state.
+      </p>
     </div>
+
     <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
-      <span class="text-purple-400 font-bold font-mono block mb-1">Level 2: Dynamic Micro-Batch Resizing</span>
-      <p class="text-gray-400 text-xs">Divides micro-batch size by 2 while doubling gradient accumulation steps, preserving the exact mathematical gradient trajectory.</p>
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-purple-400 font-bold font-mono">Level 2: Dynamic Micro-Batch Halving</span>
+        <span class="text-xs font-mono text-gray-500">Mathematical Gradient Equivalence</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Divides the per-device micro-batch size by 2 while doubling gradient accumulation steps (e.g., micro-batch 4 &amp; accum 4 &rarr; micro-batch 2 &amp; accum 8). Effective batch size (B_eff = b_micro * N_accum) is mathematically preserved.
+      </p>
     </div>
+
     <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
-      <span class="text-purple-400 font-bold font-mono block mb-1">Level 3: Full Gradient Checkpointing</span>
-      <p class="text-gray-400 text-xs">Enables activation recomputation across all attention and MLP layers, trading ~20% compute time for 60% activation memory reduction.</p>
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-purple-400 font-bold font-mono">Level 3: Full Gradient Checkpointing Enforcement</span>
+        <span class="text-xs font-mono text-gray-500">Memory Reduction: ~60%</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Dynamically enables PyTorch activation recomputation across all attention heads and MLP projection layers. Rather than storing intermediate forward activations, they are recomputed during backward pass, reducing activation VRAM by 60% with a modest 15-20% compute overhead.
+      </p>
     </div>
+
     <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
-      <span class="text-purple-400 font-bold font-mono block mb-1">Level 4: Dynamic Sequence Clamping</span>
-      <p class="text-gray-400 text-xs">Detects batch outlier tokens causing burst spikes and clamps the maximum context length for that specific batch.</p>
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-purple-400 font-bold font-mono">Level 4: Sequence Length Batch Clamping</span>
+        <span class="text-xs font-mono text-gray-500">Targeted Batch Recovery</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        If an isolated mini-batch triggers an OOM due to extreme sequence length, the healer isolates the spike batch, clamps token lengths to the 95th percentile, backpropagates safely, and logs the truncation event to the lineage ledger.
+      </p>
     </div>
+
     <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
-      <span class="text-purple-400 font-bold font-mono block mb-1">Level 5: Checkpoint Rollback on Loss Divergence</span>
-      <p class="text-gray-400 text-xs">If moving loss jumps by >3x due to numerical instability, MoroAI rolls back to the last valid checkpoint and reduces learning rate by 20%.</p>
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-purple-400 font-bold font-mono">Level 5: Checkpoint Rollback on Loss Divergence</span>
+        <span class="text-xs font-mono text-gray-500">Loss Spike Protection</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        A moving exponential loss tracker monitors gradient stability. If step loss exceeds 3x moving average loss (EMA) or evaluates to NaN, training automatically rolls back to the last certified checkpoint, lowers the learning rate by 20%, and resumes.
+      </p>
     </div>
   </div>
 
+  <h2>CLI Invocation</h2>
+  <p>
+    Launch training with auto-heal enabled:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+# Launch unattended training with the 5-step healer active
+moro train --config ./moro.yaml --auto-heal
+  </pre>
+
+  <h2>Live Recovery Log Stream</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300 leading-relaxed">
+Step 420/1200 | Loss: 1.12 | VRAM: 7.9GB
+[WARN] CUDA OOM at step 421 (token length 3,840)
+[HEAL] Level 1: Flushed CUDA memory pool (Freed 820MB)
+[HEAL] Level 2: Micro-batch 2 -> 1, Accum 8 -> 16
+[RESUME] Checkpoint 400 reloaded
+Step 421/1200 | Loss: 1.11 | VRAM: 6.1GB (STABLE)
+Step 422/1200 | Loss: 1.09 | VRAM: 6.2GB
+[SUCCESS] Full training finished with 0 data loss
+  </pre>
+
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
     <a href="/docs/concepts/recipe-engine/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
-      ← Hardware Recipe Engine
+      ← VRAM Recipe Predictor
     </a>
     <a href="/docs/concepts/eval-harness/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
       <span>Multi-Layer Eval Harness</span>

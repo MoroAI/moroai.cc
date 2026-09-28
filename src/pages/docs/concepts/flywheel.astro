@@ -1,41 +1,92 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, RefreshCcw, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, RefreshCcw, CheckCircle2, Sliders, Terminal, Award } from 'lucide-react';
 
-const title = 'DPO Feedback Flywheel — MoroAI Architecture';
-const description = 'Continuous model improvement through local user feedback mining and Direct Preference Optimization.';
+const title = 'Closed-Loop DPO Feedback Flywheel — MoroAI Architecture';
+const description = 'Continuous private model alignment through local human interaction feedback mining and Direct Preference Optimization (DPO).';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/concepts/flywheel/">
   <div class="not-prose mb-8">
-    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      Subsystem 06
+    <span class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider bg-amber-500/10 px-2.5 py-1 rounded border border-amber-500/20 mb-3 inline-block">
+      Subsystem 05
     </span>
-    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">DPO Feedback Flywheel</h1>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Closed-Loop DPO Feedback Flywheel</h1>
     <p class="text-gray-400 text-base mt-2">
-      Closing the local loop: mining production operational feedback into chosen/rejected preference pairs for continuous model alignment.
+      Transforming live production interactions and human operator edits into preference pairs for continuous local model alignment.
     </p>
   </div>
 
-  <h2>How the Flywheel Works</h2>
+  <h2>Why Static Models Degrade Over Time</h2>
+  <p>
+    When a model is fine-tuned and deployed into an enterprise environment, its real-world performance is tested by evolving edge cases, novel customer questions, and shifting operational terminology. In typical cloud-based setups, closing this loop requires shipping sensitive conversation transcripts to external annotation vendors.
+  </p>
+  <p>
+    MoroAI creates a <strong>local, sovereign learning flywheel</strong>. Human operators naturally correct model answers or submit thumbs-up / thumbs-down ratings during daily operations. The MoroAI Flywheel mines these local signals and formats them into high-signal <strong>Direct Preference Optimization (DPO)</strong> datasets without data ever leaving the workstation or VPC.
+  </p>
+
+  <h2>Direct Preference Optimization (DPO) Mechanics</h2>
+  <p>
+    Traditional RLHF requires training a separate reward model followed by complex PPO reinforcement learning, which is notoriously unstable and memory-intensive on consumer GPUs. DPO optimizes the policy model directly on preference pairs using the exact analytical relationship between policy and reward:
+  </p>
+
+  <div class="not-prose my-6 p-5 rounded-2xl bg-dark-950 border border-dark-800 font-mono text-xs">
+    <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+      <span>DPO Closed-Form Objective</span>
+      <span class="text-amber-400">Optimization Math</span>
+    </div>
+    <pre class="text-amber-300 leading-relaxed overflow-x-auto whitespace-pre-wrap">
+{`L_DPO(π_θ; π_ref) = -E_(x, y_w, y_l) [
+    log σ( β * log( π_θ(y_w | x) / π_ref(y_w | x) ) - β * log( π_θ(y_l | x) / π_ref(y_l | x) ) )
+]
+
+Where:
+  x     = The user prompt
+  y_w   = Chosen response (human operator edit or high-rated completion)
+  y_l   = Rejected response (original unedited model completion)
+  π_ref = Frozen reference model (initial fine-tuned LoRA checkpoint)
+  β     = Temperature hyperparameter controlling deviation penalty (default 0.1)`}
+    </pre>
+  </div>
+
+  <h2>The 4-Step Flywheel Lifecycle</h2>
   <ol>
-    <li><strong>Production Interaction Capture:</strong> Captures completions, operator corrections, and rating votes from local user sessions.</li>
-    <li><strong>Preference Extraction:</strong> When an operator manually edits a model completion, MoroAI pairs the prompt with the human edit as the <code>chosen</code> response and the original completion as the <code>rejected</code> response.</li>
-    <li><strong>Quality Filtering:</strong> Eliminates ambiguous feedback pairs where the margin of preference is below 0.3.</li>
-    <li><strong>Offline DPO Cycle:</strong> Automatically triggers a local Direct Preference Optimization alignment round once sufficient preference data accumulates.</li>
+    <li>
+      <strong>Local Interaction Logging:</strong> As queries pass through the local Ollama or vLLM proxy, input prompts and completions are securely persisted to local encrypted SQLite storage (<code>.moro/moro.db</code>).
+    </li>
+    <li>
+      <strong>Preference Pair Extraction:</strong> When an operator manually corrects an output in Mission Control or an integrated CRM, the engine constructs a preference pair with the corrected text as <code>chosen</code> and the initial output as <code>rejected</code>.
+    </li>
+    <li>
+      <strong>Confidence Margin Filtering:</strong> To eliminate ambiguous feedback, pairs where the operator edit is merely trivial whitespace or where rating confidence is below $\Delta = 0.3$ are automatically pruned.
+    </li>
+    <li>
+      <strong>Automated Offline Alignment:</strong> When a user-configured threshold of validated pairs is reached (e.g. 250 pairs), the engine schedules an automated overnight DPO alignment run, verifies the model against the evaluation harness, and generates a new versioned release candidate.
+    </li>
   </ol>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-amber-300">
-# Process interaction feedback into DPO preference pairs:
-moro flywheel process --interactions ./logs/chat.jsonl --output ./data/dpo_pairs.jsonl
+  <h2>CLI Mining & Alignment Commands</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-amber-300 leading-relaxed">
+# Mine interaction logs for high-confidence preference pairs
+moro flywheel process \
+    --interactions ./logs/chat_ops.jsonl \
+    --min-margin 0.3 \
+    --output ./data/dpo_pairs.jsonl
+
+# Execute local DPO fine-tuning alignment round
+moro flywheel align \
+    --base-checkpoint ./runs/run_01/checkpoints/best/ \
+    --pairs ./data/dpo_pairs.jsonl \
+    --beta 0.1 \
+    --output ./runs/dpo_aligned/
   </pre>
 
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
-    <a href="/docs/concepts/drift-detection/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
-      ← Drift Detection
+    <a href="/docs/concepts/eval-harness/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Multi-Layer Eval Harness
     </a>
-    <a href="/docs/concepts/governance/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
-      <span>Release Governance & SBOM</span>
+    <a href="/docs/concepts/dashboard/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Mission Control UI</span>
       <ArrowRight class="w-3.5 h-3.5" />
     </a>
   </div>

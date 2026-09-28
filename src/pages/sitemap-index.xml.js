@@ -27,6 +27,7 @@ export async function GET() {
     { url: '/docs/concepts/drift-detection/', changefreq: 'weekly', priority: 0.8 },
     { url: '/docs/concepts/flywheel/', changefreq: 'weekly', priority: 0.8 },
     { url: '/docs/concepts/governance/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/concepts/dashboard/', changefreq: 'weekly', priority: 0.8 },
     // Cookbook
     { url: '/docs/cookbook/', changefreq: 'weekly', priority: 0.8 },
     { url: '/docs/cookbook/support-bot/', changefreq: 'weekly', priority: 0.8 },

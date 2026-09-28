@@ -13,148 +13,228 @@ import {
   Lock,
   Layers,
   Sparkles,
-  FileCheck
+  FileCheck,
+  LayoutDashboard,
+  LineChart,
+  Sliders,
+  Activity,
+  Server,
+  Key
 } from 'lucide-react';
 
-const title = 'MoroAI Architecture & Features — Deep Technical Breakdown';
-const description = 'Explore the 6 core systems behind MoroAI: Epistemic Data Compiler, Hardware Recipe Engine, Self-Healing Training, Multi-Layered Eval, Cryptographic Release, and DPO Flywheel.';
+const title = 'MoroAI Architecture & Features — Complete Subsystems Breakdown';
+const description = 'Deep technical breakdown of the 6 core systems behind MoroAI: Epistemic Data Compiler, VRAM Recipe Predictor, OOM Auto-Recovery, Multi-Layered Eval, DPO Flywheel, and Mission Control UI.';
+
+const subsystems = [
+  { id: 'data-compiler', name: 'Data Compiler & MI Guard', tag: '01' },
+  { id: 'recipe-engine', name: 'VRAM Recipe Predictor', tag: '02' },
+  { id: 'training-engine', name: 'OOM Auto-Recovery', tag: '03' },
+  { id: 'eval-harness', name: 'Multi-Layered Eval', tag: '04' },
+  { id: 'flywheel', name: 'DPO Feedback Flywheel', tag: '05' },
+  { id: 'dashboard', name: 'Mission Control UI', tag: '06' },
+  { id: 'governance', name: 'Cryptographic SBOM', tag: '07' },
+  { id: 'deployment', name: 'Local Deployment', tag: '08' },
+  { id: 'privacy', name: 'Sovereign Privacy', tag: '09' },
+];
 ---
 
 <BaseLayout title={title} description={description}>
   <main class="pt-32 pb-24">
     {/* Page Header */}
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-24">
-      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold uppercase tracking-wider mb-6">
-        <Sparkles className="w-3.5 h-3.5" />
-        <span>In-Depth Engineering</span>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold uppercase tracking-wider mb-6">
+        <Sparkles class="w-3.5 h-3.5" />
+        <span>Full Architectural Specifications</span>
       </div>
-      <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight mb-6">
-        Under the Hood of <span className="bg-gradient-to-r from-moro-400 via-sky-300 to-purple-400 bg-clip-text text-transparent">MoroAI</span>
+      <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight mb-6">
+        Under the Hood of <span class="bg-gradient-to-r from-moro-400 via-sky-300 to-purple-400 bg-clip-text text-transparent">MoroAI</span>
       </h1>
-      <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-        A deep architectural breakdown of how MoroAI turns uncurated enterprise data into
-        production-grade, private local language models without cloud dependencies.
+      <p class="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+        A deep, uncompromising engineering breakdown of how MoroAI transforms uncurated enterprise data into production-ready, private local language models without cloud dependencies or out-of-memory crashes.
       </p>
+
+      {/* Quick-Jump Navigation Bar */}
+      <div class="mt-12 sticky top-20 z-40 bg-dark-950/90 backdrop-blur-xl border border-dark-800/80 rounded-2xl p-2.5 max-w-5xl mx-auto shadow-2xl overflow-x-auto">
+        <div class="flex items-center gap-1.5 min-w-max justify-center">
+          {subsystems.map((sub) => (
+            <a
+              href={`#${sub.id}`}
+              class="px-3 py-1.5 rounded-xl text-xs font-medium text-gray-300 hover:text-white hover:bg-dark-800/80 border border-transparent hover:border-dark-700 transition-all flex items-center gap-1.5"
+            >
+              <span class="font-mono text-[10px] text-moro-400 font-bold">{sub.tag}</span>
+              <span>{sub.name}</span>
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
 
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-28">
-      {/* 1. Epistemic Data Compiler */}
-      <section id="data-compiler" className="scroll-mt-32">
-        <div className="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl">
-          <div className="flex flex-wrap items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white shadow-lg">
-              <Database className="w-6 h-6" />
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
+
+      {/* 1. Epistemic Data Compiler & MI Guard */}
+      <section id="data-compiler" class="scroll-mt-36">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+          <div class="flex flex-wrap items-center gap-3 mb-6">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white shadow-lg">
+              <Database class="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider">Subsystem 01</span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Epistemic Data Compiler & MI Guard</h2>
+              <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider font-bold">Subsystem 01</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Data Compiler & MI Guard</h2>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
               <p>
-                Standard LLM fine-tuning datasets frequently suffer from semantic redundancy and the unintended loss of critical domain outliers. When organizations run standard deduplication, high-frequency generic patterns survive while rare business rules and corner cases are pruned away.
+                Standard LLM fine-tuning datasets are plagued by two structural flaws: <strong class="text-white">semantic redundancy</strong> that dilutes fine-tuning gradients, and the <strong class="text-white">unintended erasure of critical domain facts</strong>. When traditional deduplication algorithms (e.g., naive MinHash or embedding cosine cutoff) run, high-frequency boilerplate survives while rare domain edge cases are pruned as unrepresentative outliers.
               </p>
               <p>
-                MoroAI introduces the <strong class="text-white">Mutual Information (MI) Guard</strong>. It calculates Shannon entropy and embedding divergence across the dataset. Samples that contain high information gain relative to the core distribution are cryptographically tagged and protected from deduplication pruning.
+                MoroAI introduces the <strong class="text-white">Mutual Information (MI) Guard</strong>. It calculates Shannon entropy $H(X)$ and Pointwise Mutual Information (PPMI) across token n-grams and dense embeddings. Samples possessing high information gain relative to the background corpus are mathematically protected from deduplication pruning:
               </p>
-              <div className="pt-2">
-                <h4 className="text-xs uppercase tracking-wider font-mono text-gray-400 font-semibold mb-3">Key Capabilities</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  <div className="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Information-theoretic token density</span>
+              
+              <div class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300 space-y-1">
+                <div class="text-gray-400 text-[11px] uppercase tracking-wider">MI Guard Decision Rule</div>
+                <div>{`PPMI(w1, w2) = max(0, log2( P(w1, w2) / (P(w1) * P(w2)) ))`}</div>
+                <div class="text-emerald-400">{`if sample.is_outlier() and sample.ppmi > mi_guard_threshold:`}</div>
+                <div class="text-emerald-400 pl-4">{`preserve_sample(sample, tag="MI_GUARD_LANDMARK")`}</div>
+              </div>
+
+              <div class="pt-2">
+                <h4 class="text-xs uppercase tracking-wider font-mono text-gray-400 font-semibold mb-3">Key Capabilities</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <div class="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
+                    <CheckCircle2 class="w-4 h-4 text-cyan-400 shrink-0" />
+                    <span>Positive Pointwise Mutual Information</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Cosine + Jaccard semantic clustering</span>
+                  <div class="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
+                    <CheckCircle2 class="w-4 h-4 text-cyan-400 shrink-0" />
+                    <span>Cosine + Jaccard boundary clustering</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Automated train/val/test splits</span>
+                  <div class="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
+                    <CheckCircle2 class="w-4 h-4 text-cyan-400 shrink-0" />
+                    <span>Deterministic train/val/eval splits</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Cryptographic dataset SHA-256 fingerprint</span>
+                  <div class="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
+                    <CheckCircle2 class="w-4 h-4 text-cyan-400 shrink-0" />
+                    <span>Immutable SHA-256 dataset fingerprint</span>
                   </div>
                 </div>
               </div>
+
+              <div class="pt-4 flex items-center gap-4">
+                <a
+                  href="/docs/concepts/data-compiler/"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 text-xs font-semibold transition-all"
+                >
+                  <span>Explore Data Compiler Docs</span>
+                  <ArrowRight class="w-3.5 h-3.5" />
+                </a>
+                <a
+                  href="/docs/concepts/ppci-filtering/"
+                  class="text-xs font-medium text-gray-400 hover:text-white transition-colors"
+                >
+                  PPMI & Entropy Filtering Guide →
+                </a>
+              </div>
             </div>
 
-            <div className="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
-              <div className="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+            <div class="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
+              <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
                 <span>CLI Invocation</span>
-                <span className="text-cyan-400">moro data build</span>
+                <span class="text-cyan-400">moro data build</span>
               </div>
-              <pre className="text-sky-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+              <pre class="text-sky-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
 {`$ moro data build \\
     --source ./customer_ops.jsonl \\
     --mi-guard-threshold 0.85 \\
     --dedup-threshold 0.88 \\
-    --output ./data/curated.jsonl
+    --output ./data/compiled/
 
 [INFO] Total raw inputs: 10,480
-[MI-GUARD] Protected 312 critical edge cases
+[MI-GUARD] Protected 312 critical domain landmarks
 [DEDUP] Pruned 2,890 redundant instances
 [DONE] Final curated: 7,590 samples
-[ENTROPY] +28.4% mean token information`}
+[ENTROPY] +28.4% mean token information gain
+[HASH] sha256: 8f3b20e5c941a877028b`}
               </pre>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. Hardware-Aware Recipe Engine */}
-      <section id="recipe-engine" className="scroll-mt-32">
-        <div className="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl">
-          <div className="flex flex-wrap items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white shadow-lg">
-              <Cpu className="w-6 h-6" />
+      {/* 2. VRAM Recipe Predictor */}
+      <section id="recipe-engine" class="scroll-mt-36">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+          <div class="flex flex-wrap items-center gap-3 mb-6">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white shadow-lg">
+              <Cpu class="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs font-mono text-emerald-400 uppercase tracking-wider">Subsystem 02</span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Hardware-Aware Recipe Engine</h2>
+              <span class="text-xs font-mono text-emerald-400 uppercase tracking-wider font-bold">Subsystem 02</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white">VRAM Recipe Predictor & Hardware Engine</h2>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
               <p>
-                Fine-tuning typically involves hours of trial and error guessing hyperparameter values, micro-batch sizes, and gradient accumulation steps before crashing halfway through with an Out Of Memory (OOM) error.
+                In standard ML workflows, selecting training hyperparameters (micro-batch size, sequence context length, LoRA rank $r$, and gradient accumulation steps) is guesswork. An engineer waits 45 minutes only for the process to terminate with a fatal <code class="text-emerald-300">CUDA out of memory</code> error.
               </p>
               <p>
-                MoroAI performs <strong class="text-white">Pre-Flight VRAM Auditing</strong>. By inspecting GPU architecture (VRAM capacity, compute capability, tensor cores), model weight tensors, and sequence length, it predicts exact peak memory usage and configures the optimal LoRA rank (r), alpha, and quantization (NF4/FP16) guaranteed to stay within hardware limits.
+                MoroAI introduces the <strong class="text-white">Pre-Flight VRAM Auditing Engine</strong>. Prior to launching backpropagation, it profiles the exact GPU architecture (VRAM capacity, memory bandwidth, tensor core generation) and calculates exact peak memory footprint:
               </p>
-              <div className="pt-2">
-                <h4 className="text-xs uppercase tracking-wider font-mono text-gray-400 font-semibold mb-3">Key Capabilities</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  <div className="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>CUDA & Apple Silicon Metal detection</span>
+
+              <div class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+                <div class="text-gray-400 text-[11px] uppercase tracking-wider mb-1">Analytical VRAM Formula</div>
+                <div>{`M_peak = M_base(NF4) + M_lora(rank, α) + M_opt(AdamW8b) + M_act(seq_len, batch) + M_cuda_ctx`}</div>
+              </div>
+
+              <div class="pt-2">
+                <h4 class="text-xs uppercase tracking-wider font-mono text-gray-400 font-semibold mb-3">Key Capabilities</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <div class="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
+                    <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>NVIDIA CUDA & Apple Silicon Metal detection</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Activation tensor size calculation</span>
+                  <div class="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
+                    <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Exact activation memory tensor projection</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Auto-tuned batch & accumulation</span>
+                  <div class="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
+                    <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Auto-tuned micro-batch & accumulation</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Export to reproducible moro.yaml</span>
+                  <div class="flex items-center gap-2 text-gray-200 bg-dark-950/80 p-2.5 rounded-lg border border-dark-800">
+                    <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Reproducible config generation (moro.yaml)</span>
                   </div>
                 </div>
               </div>
+
+              <div class="pt-4 flex items-center gap-4">
+                <a
+                  href="/docs/concepts/recipe-engine/"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 text-xs font-semibold transition-all"
+                >
+                  <span>Explore Recipe Engine Docs</span>
+                  <ArrowRight class="w-3.5 h-3.5" />
+                </a>
+                <a
+                  href="/docs/guides/performance/"
+                  class="text-xs font-medium text-gray-400 hover:text-white transition-colors"
+                >
+                  Consumer GPU Tuning Guide →
+                </a>
+              </div>
             </div>
 
-            <div className="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
-              <div className="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+            <div class="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
+              <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
                 <span>VRAM Simulator</span>
-                <span className="text-emerald-400">moro recipe generate</span>
+                <span class="text-emerald-400">moro recipe generate</span>
               </div>
-              <pre className="text-emerald-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+              <pre class="text-emerald-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
 {`$ moro recipe generate --model Qwen2.5-1.5B
 
 Device: NVIDIA GeForce RTX 4070 (12,288 MB)
@@ -173,42 +253,74 @@ Recipe generated: ./moro.yaml (Verified Zero OOM)`}
         </div>
       </section>
 
-      {/* 3. Self-Healing Training Engine */}
-      <section id="training-engine" className="scroll-mt-32">
-        <div className="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl">
-          <div className="flex flex-wrap items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white shadow-lg">
-              <Zap className="w-6 h-6" />
+      {/* 3. OOM Auto-Recovery */}
+      <section id="training-engine" class="scroll-mt-36">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+          <div class="flex flex-wrap items-center gap-3 mb-6">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white shadow-lg">
+              <Zap class="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs font-mono text-purple-400 uppercase tracking-wider">Subsystem 03</span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Self-Healing Training Engine</h2>
+              <span class="text-xs font-mono text-purple-400 uppercase tracking-wider font-bold">Subsystem 03</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white">OOM Auto-Recovery & Self-Healing Training</h2>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
               <p>
-                Unattended training runs fail for two primary reasons: sudden CUDA Out-of-Memory spikes triggered by long outlier tokens, or training loss explosion caused by numerical instability.
+                Unattended training runs fail for two reasons: unexpected CUDA Out-Of-Memory spikes caused by burst sequence outlier batches, or numerical instability causing gradient exploding (NaN/Inf).
               </p>
               <p>
-                MoroAI wraps the execution loop in an <strong class="text-white">Autonomous 5-Step Healer</strong>:
+                MoroAI wraps the backpropagation execution loop in an <strong class="text-white">Autonomous 5-Level Self-Healing Escalation Ladder</strong> that intercepts exceptions and resolves them in-flight without aborting the run:
               </p>
-              <ol className="list-decimal list-inside space-y-1.5 text-xs sm:text-sm pl-2 text-gray-300">
-                <li><strong class="text-purple-300">Level 1:</strong> Intercept CUDA OOM exception & flush driver cache.</li>
-                <li><strong class="text-purple-300">Level 2:</strong> Halve micro-batch size and double gradient accumulation.</li>
-                <li><strong class="text-purple-300">Level 3:</strong> Enforce gradient checkpointing on remaining attention layers.</li>
-                <li><strong class="text-purple-300">Level 4:</strong> Dynamic sequence truncation on spike batches.</li>
-                <li><strong class="text-purple-300">Level 5:</strong> Auto-revert to the last stable checkpoint if loss diverges &gt; 3x.</li>
-              </ol>
+              
+              <div class="space-y-2.5 pt-1">
+                <div class="bg-dark-950 p-2.5 rounded-lg border border-dark-800 flex items-center justify-between text-xs">
+                  <div><strong class="text-purple-300">Level 1:</strong> Intercept CUDA OOM & flush driver cache + garbage collection</div>
+                  <span class="text-gray-500 font-mono text-[10px]">~0.5s</span>
+                </div>
+                <div class="bg-dark-950 p-2.5 rounded-lg border border-dark-800 flex items-center justify-between text-xs">
+                  <div><strong class="text-purple-300">Level 2:</strong> Halve micro-batch size and double gradient accumulation steps</div>
+                  <span class="text-gray-500 font-mono text-[10px]">Gradient Equiv.</span>
+                </div>
+                <div class="bg-dark-950 p-2.5 rounded-lg border border-dark-800 flex items-center justify-between text-xs">
+                  <div><strong class="text-purple-300">Level 3:</strong> Enforce full gradient checkpointing on remaining attention layers</div>
+                  <span class="text-gray-500 font-mono text-[10px]">-60% Act. Mem</span>
+                </div>
+                <div class="bg-dark-950 p-2.5 rounded-lg border border-dark-800 flex items-center justify-between text-xs">
+                  <div><strong class="text-purple-300">Level 4:</strong> Dynamic sequence length clamping on outlier spike batch</div>
+                  <span class="text-gray-500 font-mono text-[10px]">Batch-specific</span>
+                </div>
+                <div class="bg-dark-950 p-2.5 rounded-lg border border-dark-800 flex items-center justify-between text-xs">
+                  <div><strong class="text-purple-300">Level 5:</strong> Auto-revert to last stable checkpoint if loss diverges &gt;3x</div>
+                  <span class="text-gray-500 font-mono text-[10px]">Rollback</span>
+                </div>
+              </div>
+
+              <div class="pt-4 flex items-center gap-4">
+                <a
+                  href="/docs/concepts/training-engine/"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30 hover:bg-purple-500/30 text-xs font-semibold transition-all"
+                >
+                  <span>Explore Self-Healing Training Docs</span>
+                  <ArrowRight class="w-3.5 h-3.5" />
+                </a>
+                <a
+                  href="/blog/oom-auto-recovery/"
+                  class="text-xs font-medium text-gray-400 hover:text-white transition-colors"
+                >
+                  Read Deep Dive Article →
+                </a>
+              </div>
             </div>
 
-            <div className="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
-              <div className="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+            <div class="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
+              <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
                 <span>Autonomous Recovery</span>
-                <span className="text-purple-400">moro train --auto-heal</span>
+                <span class="text-purple-400">moro train --auto-heal</span>
               </div>
-              <pre className="text-purple-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+              <pre class="text-purple-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
 {`Step 420/1200 | Loss: 1.12 | VRAM: 7.9GB
 [WARN] CUDA OOM at step 421 (token length 3,840)
 [HEAL] Level 1: Flushed CUDA memory pool
@@ -223,53 +335,70 @@ Step 422/1200 | Loss: 1.09 | VRAM: 6.2GB
         </div>
       </section>
 
-      {/* 4. Multi-Layered Eval Harness */}
-      <section id="eval-harness" className="scroll-mt-32">
-        <div className="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl">
-          <div className="flex flex-wrap items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white shadow-lg">
-              <Shield className="w-6 h-6" />
+      {/* 4. Multi-Layered Eval */}
+      <section id="eval-harness" class="scroll-mt-36">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+          <div class="flex flex-wrap items-center gap-3 mb-6">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white shadow-lg">
+              <Shield class="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs font-mono text-red-400 uppercase tracking-wider">Subsystem 04</span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Multi-Layered Evaluation Harness</h2>
+              <span class="text-xs font-mono text-red-400 uppercase tracking-wider font-bold">Subsystem 04</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Multi-Layered Evaluation Harness</h2>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
               <p>
-                Evaluation cannot rely solely on validation loss. A lower loss does not guarantee that a model won't hallucinate or violate deterministic enterprise requirements.
+                A low validation loss does not guarantee that a fine-tuned model won't hallucinate or output syntactically broken responses in production.
               </p>
               <p>
-                MoroAI runs four distinct evaluation barriers before certifying a model for deployment:
+                MoroAI runs four rigorous evaluation barriers before issuing a cryptographic release certification:
               </p>
-              <ul className="space-y-2 text-xs sm:text-sm text-gray-300">
-                <li className="flex items-start gap-2">
-                  <span className="text-red-400 font-bold">•</span>
-                  <span><strong>Deterministic Regex & JSON Gates:</strong> Validates structured schema adherence and strict business logic rules.</span>
+              
+              <ul class="space-y-2 text-xs sm:text-sm text-gray-300">
+                <li class="flex items-start gap-2">
+                  <span class="text-red-400 font-bold">•</span>
+                  <span><strong class="text-white">Deterministic Regex & Schema Gates:</strong> Validates JSON schema integrity, required keywords, and strict negative constraints.</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-red-400 font-bold">•</span>
-                  <span><strong>Semantic LLM Judge:</strong> Compares completions against domain ground truth.</span>
+                <li class="flex items-start gap-2">
+                  <span class="text-red-400 font-bold">•</span>
+                  <span><strong class="text-white">Semantic LLM Judge:</strong> Performs reference-based chain-of-thought accuracy evaluation against ground truth domain benchmarks.</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-red-400 font-bold">•</span>
-                  <span><strong>Wasserstein Drift Detection:</strong> Quantifies output embedding divergence against reference standards.</span>
+                <li class="flex items-start gap-2">
+                  <span class="text-red-400 font-bold">•</span>
+                  <span><strong class="text-white">Wasserstein Drift Detection:</strong> Quantifies output embedding distribution drift against the base model to prevent catastrophic forgetting.</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-red-400 font-bold">•</span>
-                  <span><strong>Adversarial Perturbations:</strong> Injects synthetic typos and syntactic swaps to verify invariance.</span>
+                <li class="flex items-start gap-2">
+                  <span class="text-red-400 font-bold">•</span>
+                  <span><strong class="text-white">Adversarial Typo Stress Testing:</strong> Injects synthetic keyboard typos, homoglyphs, and syntax swaps to test invariance under noise.</span>
                 </li>
               </ul>
+
+              <div class="pt-4 flex items-center gap-4">
+                <a
+                  href="/docs/concepts/eval-harness/"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30 text-xs font-semibold transition-all"
+                >
+                  <span>Explore Eval Harness Docs</span>
+                  <ArrowRight class="w-3.5 h-3.5" />
+                </a>
+                <a
+                  href="/docs/concepts/drift-detection/"
+                  class="text-xs font-medium text-gray-400 hover:text-white transition-colors"
+                >
+                  Drift Detection Mechanics →
+                </a>
+              </div>
             </div>
 
-            <div className="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
-              <div className="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+            <div class="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
+              <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
                 <span>Evaluation Gate</span>
-                <span className="text-red-400">moro eval compare</span>
+                <span class="text-red-400">moro eval compare</span>
               </div>
-              <pre className="text-orange-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+              <pre class="text-orange-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
 {`Eval Suite: Enterprise Support v1 (150 tests)
 -----------------------------------------------
 1. Deterministic Format Rules:  100.0%  (PASS)
@@ -285,53 +414,206 @@ Release Gate ID: gate_78f1a9e3`}
         </div>
       </section>
 
-      {/* 5. Release Governance & Cryptographic Provenance */}
-      <section id="governance" className="scroll-mt-32">
-        <div className="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl">
-          <div className="flex flex-wrap items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center text-white shadow-lg">
-              <FileCheck className="w-6 h-6" />
+      {/* 5. DPO Feedback Flywheel */}
+      <section id="flywheel" class="scroll-mt-36">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+          <div class="flex flex-wrap items-center gap-3 mb-6">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center text-white shadow-lg">
+              <RefreshCcw class="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs font-mono text-teal-400 uppercase tracking-wider">Subsystem 05</span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Cryptographic Release Governance (SBOM)</h2>
+              <span class="text-xs font-mono text-amber-400 uppercase tracking-wider font-bold">Subsystem 05</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Closed-Loop DPO Feedback Flywheel</h2>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
               <p>
-                In high-compliance sectors (finance, healthcare, defense), deploying an AI model without strict provenance is a regulatory liability. MoroAI automatically creates an immutable <strong>Software Bill of Materials (SBOM)</strong> for every release candidate.
+                A deployed private model should not remain static. As operators and employees use the model locally, human operators correct errors, provide thumbs-up feedback, and supply manual edits.
               </p>
               <p>
-                Every release bundle cryptographically binds:
+                The <strong class="text-white">MoroAI Flywheel</strong> automatically parses interaction telemetry and extracts <strong class="text-white">Direct Preference Optimization (DPO) preference pairs (prompt, chosen, rejected)</strong>. When sufficient preference data accumulates, MoroAI triggers a local DPO alignment round:
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="bg-dark-950 p-3 rounded-lg border border-dark-800">
-                  <span className="text-teal-400 font-mono font-bold block mb-1">Dataset Hash</span>
-                  <span className="text-gray-400">SHA-256 fingerprint of the exact compiled training data</span>
-                </div>
-                <div className="bg-dark-950 p-3 rounded-lg border border-dark-800">
-                  <span className="text-teal-400 font-mono font-bold block mb-1">Recipe Snapshot</span>
-                  <span className="text-gray-400">Deterministic seed, learning rate, and rank configuration</span>
-                </div>
-                <div className="bg-dark-950 p-3 rounded-lg border border-dark-800">
-                  <span className="text-teal-400 font-mono font-bold block mb-1">Eval Certificate</span>
-                  <span className="text-gray-400">Signed benchmark results and passing gate scores</span>
-                </div>
-                <div className="bg-dark-950 p-3 rounded-lg border border-dark-800">
-                  <span className="text-teal-400 font-mono font-bold block mb-1">Weights Signature</span>
-                  <span className="text-gray-400">Final adapter and GGUF quant checksums</span>
-                </div>
+
+              <div class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-amber-300">
+                <div class="text-gray-400 text-[11px] uppercase tracking-wider mb-1">DPO Objective Function</div>
+                <div>{`L_DPO = -E [ log σ( β * log( π_θ(y_w|x) / π_ref(y_w|x) ) - β * log( π_θ(y_l|x) / π_ref(y_l|x) ) ) ]`}</div>
+              </div>
+
+              <div class="pt-4 flex items-center gap-4">
+                <a
+                  href="/docs/concepts/flywheel/"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 text-xs font-semibold transition-all"
+                >
+                  <span>Explore DPO Flywheel Docs</span>
+                  <ArrowRight class="w-3.5 h-3.5" />
+                </a>
+                <a
+                  href="/blog/dpo-flywheel/"
+                  class="text-xs font-medium text-gray-400 hover:text-white transition-colors"
+                >
+                  Read Flywheel Architecture Blog →
+                </a>
               </div>
             </div>
 
-            <div className="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
-              <div className="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
-                <span>Release Manifest</span>
-                <span className="text-teal-400">moro release verify</span>
+            <div class="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
+              <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+                <span>DPO Miner</span>
+                <span class="text-amber-400">moro flywheel process</span>
               </div>
-              <pre className="text-teal-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+              <pre class="text-amber-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+{`$ moro flywheel process \\
+    --interactions ./logs/chat_ops.jsonl \\
+    --min-margin 0.3
+
+[SCAN] Ingested 1,200 production sessions
+[PAIR] Extracted 342 chosen/rejected pairs
+[FILTER] Discarded 48 ambiguous feedback events
+[READY] DPO dataset created: ./dpo_v2.jsonl
+[TRIGGER] Scheduled offline alignment run`}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Mission Control UI */}
+      <section id="dashboard" class="scroll-mt-36">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+          <div class="flex flex-wrap items-center gap-3 mb-6">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white shadow-lg">
+              <LayoutDashboard class="w-6 h-6" />
+            </div>
+            <div>
+              <span class="text-xs font-mono text-pink-400 uppercase tracking-wider font-bold">Subsystem 06</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Mission Control UI & Real-Time Orchestration</h2>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+              <p>
+                Not every team wants to live solely in the command line. MoroAI includes an interactive, browser-based <strong class="text-white">Mission Control UI</strong> that launches with a single command (<code class="text-pink-300">moro dashboard</code>) and binds to <code class="text-pink-300">http://localhost:3000</code>.
+              </p>
+              <p>
+                Built with a zero-cloud architecture using React, Tailwind CSS, and Server-Sent Events (SSE), Mission Control gives operators a single glass pane to orchestrate the entire lifecycle:
+              </p>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs pt-1">
+                <div class="flex items-start gap-2 bg-dark-950 p-2.5 rounded-lg border border-dark-800">
+                  <Activity class="w-4 h-4 text-pink-400 shrink-0 mt-0.5" />
+                  <span><strong>Live VRAM & Loss Telemetry:</strong> Real-time streaming charts with step-by-step GPU memory gauges.</span>
+                </div>
+                <div class="flex items-start gap-2 bg-dark-950 p-2.5 rounded-lg border border-dark-800">
+                  <Sliders class="w-4 h-4 text-pink-400 shrink-0 mt-0.5" />
+                  <span><strong>Visual Recipe Generator:</strong> Drag sliders for sequence length and rank with live VRAM safety simulation.</span>
+                </div>
+                <div class="flex items-start gap-2 bg-dark-950 p-2.5 rounded-lg border border-dark-800">
+                  <Shield class="w-4 h-4 text-pink-400 shrink-0 mt-0.5" />
+                  <span><strong>Eval Comparator:</strong> Side-by-side completion diffing between base and adapted model checkpoints.</span>
+                </div>
+                <div class="flex items-start gap-2 bg-dark-950 p-2.5 rounded-lg border border-dark-800">
+                  <Rocket class="w-4 h-4 text-pink-400 shrink-0 mt-0.5" />
+                  <span><strong>1-Click Ollama Deploy:</strong> Export and register models straight into local Ollama runtime.</span>
+                </div>
+              </div>
+
+              <div class="pt-4 flex items-center gap-4">
+                <a
+                  href="/docs/concepts/dashboard/"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-500/20 text-pink-300 border border-pink-500/30 hover:bg-pink-500/30 text-xs font-semibold transition-all"
+                >
+                  <span>Explore Mission Control Docs</span>
+                  <ArrowRight class="w-3.5 h-3.5" />
+                </a>
+                <a
+                  href="/docs/api/rest/"
+                  class="text-xs font-medium text-gray-400 hover:text-white transition-colors"
+                >
+                  Mission Control REST API →
+                </a>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
+              <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+                <span>Start Mission Control</span>
+                <span class="text-pink-400">moro dashboard</span>
+              </div>
+              <pre class="text-pink-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+{`$ moro dashboard --port 3000
+
+╭──────────────────────────────────────────────╮
+│  MoroAI Mission Control Dashboard v0.1.0    │
+│  Serving on: http://localhost:3000           │
+│  Hardware: NVIDIA RTX 4070 (12GB VRAM)       │
+│  Active Runs: 1 (run_01_support_qwen)        │
+│  Telemetry: SSE connected (120 msg/sec)      │
+╰──────────────────────────────────────────────╯
+[HTTP] UI bundle loaded in 14ms
+[WS] Telemetry pipe active on /api/v1/stream`}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. Cryptographic Release Governance */}
+      <section id="governance" class="scroll-mt-36">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+          <div class="flex flex-wrap items-center gap-3 mb-6">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center text-white shadow-lg">
+              <FileCheck class="w-6 h-6" />
+            </div>
+            <div>
+              <span class="text-xs font-mono text-teal-400 uppercase tracking-wider font-bold">Subsystem 07</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Cryptographic Release Governance (SBOM)</h2>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+              <p>
+                In high-compliance environments (healthcare, banking, defense), deploying an AI model without strict provenance is a regulatory non-starter. MoroAI automatically compiles an immutable <strong class="text-white">Software Bill of Materials (SBOM)</strong> for every release candidate.
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div class="bg-dark-950 p-3 rounded-lg border border-dark-800">
+                  <span class="text-teal-400 font-mono font-bold block mb-1">Dataset Hash</span>
+                  <span class="text-gray-400">SHA-256 fingerprint of the compiled training samples</span>
+                </div>
+                <div class="bg-dark-950 p-3 rounded-lg border border-dark-800">
+                  <span class="text-teal-400 font-mono font-bold block mb-1">Recipe Snapshot</span>
+                  <span class="text-gray-400">Deterministic seed, learning rate, rank, and target modules</span>
+                </div>
+                <div class="bg-dark-950 p-3 rounded-lg border border-dark-800">
+                  <span class="text-teal-400 font-mono font-bold block mb-1">Eval Certificate</span>
+                  <span class="text-gray-400">Signed benchmark scorecard with passing gate thresholds</span>
+                </div>
+                <div class="bg-dark-950 p-3 rounded-lg border border-dark-800">
+                  <span class="text-teal-400 font-mono font-bold block mb-1">Weights Signature</span>
+                  <span class="text-gray-400">Cryptographic hash of the output LoRA adapter and GGUF quant</span>
+                </div>
+              </div>
+
+              <div class="pt-4 flex items-center gap-4">
+                <a
+                  href="/docs/concepts/governance/"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-teal-500/20 text-teal-300 border border-teal-500/30 hover:bg-teal-500/30 text-xs font-semibold transition-all"
+                >
+                  <span>Explore Governance Docs</span>
+                  <ArrowRight class="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
+              <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+                <span>Release Manifest</span>
+                <span class="text-teal-400">moro release verify</span>
+              </div>
+              <pre class="text-teal-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
 {`{
   "release_id": "rel_2026_09_28_01",
   "base_model": "Qwen/Qwen2.5-1.5B",
@@ -349,58 +631,152 @@ Release Gate ID: gate_78f1a9e3`}
         </div>
       </section>
 
-      {/* 6. DPO Feedback Flywheel */}
-      <section id="flywheel" className="scroll-mt-32">
-        <div className="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl">
-          <div className="flex flex-wrap items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center text-white shadow-lg">
-              <RefreshCcw className="w-6 h-6" />
+      {/* 8. Local Deployment */}
+      <section id="deployment" class="scroll-mt-36">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+          <div class="flex flex-wrap items-center gap-3 mb-6">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white shadow-lg">
+              <Rocket class="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs font-mono text-amber-400 uppercase tracking-wider">Subsystem 06</span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Closed-Loop DPO Feedback Flywheel</h2>
+              <span class="text-xs font-mono text-indigo-400 uppercase tracking-wider font-bold">Subsystem 08</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Local Serving & One-Command Deployment</h2>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
               <p>
-                A deployed model shouldn't remain static. As users interact with your private AI, operators correct outputs, thumbs-up good completions, or provide manual revisions.
+                Adapting a model is only half the battle—serving it with ultra-low latency without complex cloud orchestration is where teams get bogged down.
               </p>
               <p>
-                The MoroAI Flywheel automatically ingests these production corrections and formats them into <strong>Direct Preference Optimization (DPO) preference pairs (prompt, chosen, rejected)</strong>. When enough preference data accumulates, MoroAI triggers a local DPO alignment round to fine-tune the model against its real-world mistakes.
+                MoroAI automatically fuses trained adapter weights, quantizes to GGUF format (Q4_K_M, Q8_0), generates an optimized Modelfile, and registers the model directly into local runtimes:
               </p>
-              <div className="pt-2">
+              
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs pt-1">
+                <div class="bg-dark-950 p-2.5 rounded-lg border border-dark-800 text-center">
+                  <Server class="w-5 h-5 text-indigo-400 mx-auto mb-1" />
+                  <span class="font-bold text-white block">Ollama</span>
+                  <span class="text-gray-400 text-[10px]">Instant local CLI & REST API</span>
+                </div>
+                <div class="bg-dark-950 p-2.5 rounded-lg border border-dark-800 text-center">
+                  <Activity class="w-5 h-5 text-indigo-400 mx-auto mb-1" />
+                  <span class="font-bold text-white block">vLLM</span>
+                  <span class="text-gray-400 text-[10px]">High-throughput PagedAttention</span>
+                </div>
+                <div class="bg-dark-950 p-2.5 rounded-lg border border-dark-800 text-center">
+                  <Layers class="w-5 h-5 text-indigo-400 mx-auto mb-1" />
+                  <span class="font-bold text-white block">Docker</span>
+                  <span class="text-gray-400 text-[10px]">Isolated sovereign microservices</span>
+                </div>
+              </div>
+
+              <div class="pt-4 flex items-center gap-4">
                 <a
-                  href="/docs/getting-started/quickstart/"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 text-sm font-semibold transition-colors"
+                  href="/docs/deployment/ollama/"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/30 text-xs font-semibold transition-all"
                 >
-                  <span>Build Your First Local Model</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span>Explore Ollama Deploy Guide</span>
+                  <ArrowRight class="w-3.5 h-3.5" />
+                </a>
+                <a
+                  href="/docs/deployment/production/"
+                  class="text-xs font-medium text-gray-400 hover:text-white transition-colors"
+                >
+                  Production Best Practices →
                 </a>
               </div>
             </div>
 
-            <div className="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
-              <div className="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
-                <span>DPO Miner</span>
-                <span className="text-amber-400">moro flywheel process</span>
+            <div class="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
+              <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+                <span>Deploy Command</span>
+                <span class="text-indigo-400">moro deploy</span>
               </div>
-              <pre className="text-amber-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
-{`$ moro flywheel process \\
-    --interactions ./logs/chat_ops.jsonl \\
-    --min-margin 0.3
+              <pre class="text-indigo-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+{`$ moro deploy --target ollama --name support-v1
 
-[SCAN] Ingested 1,200 production sessions
-[PAIR] Extracted 342 chosen/rejected pairs
-[FILTER] Discarded 48 ambiguous feedback events
-[READY] DPO dataset created: ./dpo_v2.jsonl
-[TRIGGER] Scheduled offline alignment run`}
+[1/3] Fusing LoRA adapter weights...
+[2/3] Quantizing to GGUF Q4_K_M (1.1GB)...
+[3/3] Registering Modelfile into Ollama...
+
+[SUCCESS] Model registered as: support-v1
+Serve locally with:
+  ollama run support-v1
+Or query via OpenAI-compatible endpoint:
+  http://localhost:11434/v1/chat/completions`}
               </pre>
             </div>
           </div>
         </div>
       </section>
+
+      {/* 9. Sovereign Privacy */}
+      <section id="privacy" class="scroll-mt-36">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+          <div class="flex flex-wrap items-center gap-3 mb-6">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-500 to-zinc-600 flex items-center justify-center text-white shadow-lg">
+              <Lock class="w-6 h-6" />
+            </div>
+            <div>
+              <span class="text-xs font-mono text-gray-400 uppercase tracking-wider font-bold">Subsystem 09</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Sovereign Privacy & Zero-Telemetry Audit</h2>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-7 space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+              <p>
+                In an era where third-party AI APIs routinely log queries for model retraining, MoroAI operates under a strict <strong class="text-white">air-gapped sovereign guarantee</strong>:
+              </p>
+              <ul class="space-y-2 text-xs sm:text-sm text-gray-300">
+                <li class="flex items-start gap-2">
+                  <Key class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span><strong>Zero Cloud Outbound:</strong> No telemetry, error reporting, training tokens, or model weights ever leave your workstation or on-premise VPC.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <Database class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span><strong>Embedded SQLite:</strong> All state, metadata, and run lineage is persisted exclusively in local SQLite databases (<code class="text-gray-300">.moro/moro.db</code>).</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <Shield class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span><strong>Automated PII Sanitization:</strong> Built-in pre-training privacy scanner automatically redacts emails, phone numbers, and API tokens before tokenization.</span>
+                </li>
+              </ul>
+
+              <div class="pt-4 flex items-center gap-4">
+                <a
+                  href="/docs/guides/privacy/"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 text-xs font-semibold transition-all"
+                >
+                  <span>Explore Privacy Architecture Guide</span>
+                  <ArrowRight class="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 bg-dark-950 rounded-2xl border border-dark-800 p-5 font-mono text-xs">
+              <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+                <span>Privacy Audit</span>
+                <span class="text-emerald-400">moro doctor --privacy</span>
+              </div>
+              <pre class="text-emerald-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+{`$ moro doctor --privacy
+
+[AUDIT] Checking outbound network egress...
+  -> Egress sockets: 0
+  -> Cloud telemetry: DISABLED
+  -> Model cache: /Users/mac/.cache/moro
+  -> PII Scanner: ENABLED (Regex + Entity)
+  -> SQLite Database: .moro/moro.db (Encrypted)
+
+[VERDICT] 100% AIR-GAPPED SOVEREIGN ENVIRONMENT`}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   </main>
 </BaseLayout>

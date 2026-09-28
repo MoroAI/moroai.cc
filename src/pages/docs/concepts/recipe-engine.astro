@@ -1,43 +1,130 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, Cpu, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { ArrowRight, Cpu, CheckCircle2, AlertTriangle, Terminal, Sliders } from 'lucide-react';
 
-const title = 'Hardware Recipe Engine — MoroAI Architecture';
-const description = 'Pre-flight VRAM memory simulation, tensor footprint calculation, and zero-OOM hyperparameter generation.';
+const title = 'VRAM Recipe Predictor & Hardware Engine — MoroAI Architecture';
+const description = 'Pre-flight VRAM memory simulation, tensor footprint calculation, and zero-OOM hyperparameter generation for local GPUs.';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/concepts/recipe-engine/">
   <div class="not-prose mb-8">
-    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      Subsystem 03
+    <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20 mb-3 inline-block">
+      Subsystem 02
     </span>
-    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Hardware Recipe Engine</h1>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">VRAM Recipe Predictor</h1>
     <p class="text-gray-400 text-base mt-2">
-      Eliminating trial-and-error fine-tuning by simulating memory consumption before touching GPU memory.
+      Eliminating trial-and-error fine-tuning by simulating memory consumption down to the megabyte before touching GPU memory.
     </p>
   </div>
 
-  <h2>VRAM Mathematical Memory Model</h2>
+  <h2>The VRAM Memory Formula</h2>
   <p>
-    Peak GPU VRAM is modeled prior to training according to four tensor allocations:
+    When fine-tuning on consumer hardware, memory exhaustion is non-linear. Peak GPU VRAM is modeled prior to training execution across five critical tensor allocations:
   </p>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-emerald-300">
-VRAM_Peak = M_base + M_lora + M_optimizer + M_activations + M_context
+  <div class="not-prose my-6 p-5 rounded-2xl bg-dark-950 border border-dark-800 font-mono text-xs">
+    <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+      <span>Analytical VRAM Memory Model</span>
+      <span class="text-emerald-400">Peak Memory Equation</span>
+    </div>
+    <pre class="text-emerald-300 leading-relaxed overflow-x-auto whitespace-pre-wrap">
+{`VRAM_Peak = M_base + M_lora + M_optimizer + M_activations + M_cuda_context
+
+Where:
+  M_base        = (N_params * B_quant) / 8           # Base weights in NF4 / FP16
+  M_lora        = 2 * rank * d_model * N_targets * 4 # Trainable LoRA adapter matrices (FP32)
+  M_optimizer   = M_lora * 2                         # 8-bit AdamW first and second moments
+  M_activations = b * s * L * (34 * d_model + 5 * s * h) # Backprop activation tensors
+  M_cuda_ctx    = ~850MB to 1.2GB                     # CUDA driver context & kernels`}
+    </pre>
+  </div>
+
+  <h2>Hardware Tier Presets & Validation</h2>
+  <p>
+    The engine maintains validated memory envelopes across standard consumer and workstation GPUs:
+  </p>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Hardware Profile</th>
+          <th class="p-3 border border-dark-800">Available Memory</th>
+          <th class="p-3 border border-dark-800">Recommended Model</th>
+          <th class="p-3 border border-dark-800">LoRA Rank (r)</th>
+          <th class="p-3 border border-dark-800">Context Length</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">RTX 3060 / 4060</td>
+          <td class="p-3 text-emerald-400">12 GB VRAM</td>
+          <td class="p-3 text-gray-300">Qwen2.5-1.5B / Llama-3.2-1B</td>
+          <td class="p-3 text-gray-300">r=16, alpha=32</td>
+          <td class="p-3 text-cyan-400">2,048 tokens</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">RTX 4070 / 4070 Ti</td>
+          <td class="p-3 text-emerald-400">12–16 GB VRAM</td>
+          <td class="p-3 text-gray-300">Qwen2.5-3B / Llama-3.2-3B</td>
+          <td class="p-3 text-gray-300">r=32, alpha=64</td>
+          <td class="p-3 text-cyan-400">4,096 tokens</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">RTX 3090 / 4090</td>
+          <td class="p-3 text-emerald-400">24 GB VRAM</td>
+          <td class="p-3 text-gray-300">Qwen2.5-7B / Llama-3.1-8B</td>
+          <td class="p-3 text-gray-300">r=64, alpha=128</td>
+          <td class="p-3 text-cyan-400">4,096 tokens</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">Apple Silicon (M2/M3/M4)</td>
+          <td class="p-3 text-emerald-400">16–64 GB Unified</td>
+          <td class="p-3 text-gray-300">Qwen2.5-7B / Mistral-7B</td>
+          <td class="p-3 text-gray-300">r=16, alpha=32</td>
+          <td class="p-3 text-cyan-400">2,048 tokens</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">Cloud A100 / H100</td>
+          <td class="p-3 text-emerald-400">80 GB VRAM</td>
+          <td class="p-3 text-gray-300">Qwen2.5-14B / 32B</td>
+          <td class="p-3 text-gray-300">r=64, alpha=128</td>
+          <td class="p-3 text-cyan-400">8,192 tokens</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Generating a Reproducible Recipe</h2>
+  <p>
+    Run the recipe engine to automatically probe your active GPU driver, detect memory bandwidth, and output a guaranteed zero-OOM <code>moro.yaml</code> configuration:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+# Automatically audit GPU and generate optimal training configuration
+moro recipe generate --model Qwen/Qwen2.5-1.5B --hardware detect --output ./moro.yaml
   </pre>
 
-  <ul>
-    <li><code>M_base</code>: 4-bit (NF4) or 8-bit quantized frozen base model weights.</li>
-    <li><code>M_lora</code>: Trainable low-rank adapter matrices (determined by rank $r$ and target modules).</li>
-    <li><code>M_optimizer</code>: 8-bit AdamW optimizer states for adapter parameters.</li>
-    <li><code>M_activations</code>: Attention keys, queries, values, and MLP projections scaled by batch size and sequence length.</li>
-    <li><code>M_context</code>: Driver CUDA context overhead (~800MB–1.2GB).</li>
-  </ul>
-
-  <h2>CLI Recipe Command</h2>
+  <h2>Generated Recipe File Anatomy (moro.yaml)</h2>
   <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
-# Automatically audit GPU and generate optimal moro.yaml
-moro recipe generate --model Qwen/Qwen2.5-1.5B --hardware detect
+name: "customer-support-qwen"
+version: "0.1.0"
+model:
+  base: "Qwen/Qwen2.5-1.5B"
+  quantization: "nf4"        # 4-bit NormalFloat quantization
+  lora_rank: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+
+training:
+  micro_batch_size: 2
+  gradient_accumulation_steps: 8
+  learning_rate: 2.0e-4
+  max_seq_length: 2048
+  optimizer: "adamw_8bit"
+  gradient_checkpointing: true
+  auto_heal: true            # Enables 5-level autonomous OOM recovery
   </pre>
 
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">

@@ -1,41 +1,118 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, Shield, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Shield, CheckCircle2, AlertTriangle, Terminal, Code, Sliders } from 'lucide-react';
 
-const title = 'Multi-Layer Eval Harness — MoroAI Architecture';
-const description = 'Deterministic rule validation, semantic LLM accuracy, and adversarial stress testing.';
+const title = 'Multi-Layer Evaluation Harness — MoroAI Architecture';
+const description = 'Deterministic validation rules, semantic LLM accuracy, Wasserstein drift detection, and adversarial stress testing.';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/concepts/eval-harness/">
   <div class="not-prose mb-8">
-    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      Subsystem 05
+    <span class="text-xs font-mono font-bold text-red-400 uppercase tracking-wider bg-red-500/10 px-2.5 py-1 rounded border border-red-500/20 mb-3 inline-block">
+      Subsystem 04
     </span>
-    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Multi-Layer Eval Harness</h1>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Multi-Layer Evaluation Harness</h1>
     <p class="text-gray-400 text-base mt-2">
-      Comprehensive model certification across deterministic rules, semantic judges, and adversarial perturbations.
+      Comprehensive model certification across deterministic rules, semantic judges, distribution drift detection, and adversarial stress tests.
     </p>
   </div>
 
-  <h2>Four Testing Barriers</h2>
-  <ol>
-    <li><strong>Deterministic Strict Rules:</strong> Validates JSON schema adherence, required keywords, and forbidden terms using regular expressions.</li>
-    <li><strong>Semantic LLM Judge:</strong> Compares output reasoning steps against domain reference ground truth.</li>
-    <li><strong>Distribution Drift Detection:</strong> Quantifies embedding shift using the Wasserstein metric to prevent catastrophic forgetting.</li>
-    <li><strong>Adversarial Perturbation Testing:</strong> Injects syntactic typos and character swaps to test output stability under noisy user input.</li>
-  </ol>
+  <h2>Beyond Validation Loss: The Need for Multi-Layer Certification</h2>
+  <p>
+    In academic research, evaluation often stops at cross-entropy validation loss or standard perplexity. However, in enterprise deployment, an adapted model with a low validation loss can still:
+  </p>
+  <ul>
+    <li>Violate strict JSON schema requirements, producing malformed API payloads</li>
+    <li>Hallucinate plausible-sounding legal or medical falsehoods</li>
+    <li>Experience <strong>catastrophic forgetting</strong> of general reasoning capabilities</li>
+    <li>Break under noisy user input with misspellings or colloquial phrasing</li>
+  </ul>
+  <p>
+    MoroAI enforces four distinct evaluation gates before certifying any checkpoint for production release.
+  </p>
 
-  <h2>Running Evaluations</h2>
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
-moro eval run --checkpoint ./runs/run_01/checkpoints/best/ --suite ./eval/suite.yaml
+  <h2>The 4-Layer Validation Gates</h2>
+
+  <div class="space-y-4 not-prose my-6 text-sm">
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-red-400 font-bold font-mono">Layer 1: Deterministic Syntax & Schema Gates</span>
+        <span class="text-xs font-mono text-gray-500">Weight: 100% Mandatory</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Validates completions against strict deterministic patterns. Checks include exact JSON Schema validation, regex constraints for mandatory IDs or formatting, and zero-tolerance scans for forbidden tokens or hallucinated URLs.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-red-400 font-bold font-mono">Layer 2: Semantic LLM Domain Judge</span>
+        <span class="text-xs font-mono text-gray-500">Weight: Accuracy Benchmark</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Executes reference-guided domain evaluation against ground-truth question-answer pairs. An evaluator model scores factual correctness, reasoning completeness, and tone fidelity on a calibrated 1-5 scale using structured JSON rubrics.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-red-400 font-bold font-mono">Layer 3: Wasserstein Embedding Drift Detection</span>
+        <span class="text-xs font-mono text-gray-500">Weight: General Reasoning Guard</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Calculates the Earth Mover's (Wasserstein-1) distance between output embedding representations of the fine-tuned model versus the base foundation model on standard anchor prompts. If drift exceeds $W_1 > 0.05$, the model is flagged for catastrophic forgetting.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-red-400 font-bold font-mono">Layer 4: Adversarial Perturbation Stress Testing</span>
+        <span class="text-xs font-mono text-gray-500">Weight: Robustness Guard</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Automatically injects synthetic perturbations into test prompts (character swaps, common keyboard typos, and homoglyphs). The harness verifies that the model's structured completion remains invariant under realistic noisy operator input.
+      </p>
+    </div>
+  </div>
+
+  <h2>Defining an Evaluation Suite (eval_suite.yaml)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300 leading-relaxed">
+name: "customer-support-eval"
+version: "1.0.0"
+gates:
+  deterministic:
+    min_pass_rate: 1.0        # 100% must pass JSON schema
+  semantic:
+    min_accuracy: 0.90         # 90% domain accuracy
+  drift:
+    max_wasserstein: 0.05      # No severe representation collapse
+  adversarial:
+    min_stability: 0.85        # Robust against typos
+
+tests:
+  - id: "test_refund_json"
+    prompt: "Customer requests refund for order #12345 after 14 days."
+    expected_schema:
+      type: "object"
+      required: ["eligible", "refund_amount", "reason_code"]
+    forbidden_terms: ["I think", "maybe", "as an AI"]
+  </pre>
+
+  <h2>Running Evaluations via CLI</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+# Run complete evaluation harness against candidate checkpoint
+moro eval run --checkpoint ./runs/run_01/checkpoints/best/ --suite ./eval/eval_suite.yaml
+
+# Compare candidate checkpoint against base foundation model
+moro eval compare --base Qwen/Qwen2.5-1.5B --candidate ./runs/run_01/checkpoints/best/
   </pre>
 
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
     <a href="/docs/concepts/training-engine/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
-      ← Self-Healing Engine
+      ← Self-Healing Training Engine
     </a>
     <a href="/docs/concepts/drift-detection/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
-      <span>Drift Detection</span>
+      <span>Statistical Drift Detection</span>
       <ArrowRight class="w-3.5 h-3.5" />
     </a>
   </div>

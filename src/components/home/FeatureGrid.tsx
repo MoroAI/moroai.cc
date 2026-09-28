@@ -22,7 +22,7 @@ const features = [
     description:
       'Information-theoretic curation with MI Guard. Rare boundary facts and domain specifics are mathematically preserved rather than pruned as outliers.',
     color: 'from-blue-500 to-cyan-500',
-    link: '/features#data-compiler',
+    link: '/features/#data-compiler',
     tag: 'Core Innovation',
   },
   {
@@ -31,7 +31,7 @@ const features = [
     description:
       'Pre-flight VRAM audit predicts memory requirements down to the megabyte. Automatically configures LoRA rank, quantization, and batching for your exact GPU.',
     color: 'from-emerald-500 to-teal-500',
-    link: '/features#recipe-engine',
+    link: '/features/#recipe-engine',
     tag: 'Zero Crash',
   },
   {
@@ -40,7 +40,7 @@ const features = [
     description:
       '5-step automatic OOM recovery engine. When memory spikes or loss explodes, MoroAI empties cache, resizes gradients, and rolls back checkpoints automatically.',
     color: 'from-purple-500 to-pink-500',
-    link: '/features#training-engine',
+    link: '/features/#training-engine',
     tag: 'Autonomous',
   },
   {
@@ -49,7 +49,7 @@ const features = [
     description:
       'Deterministic validation rules, semantic accuracy judges, Wasserstein drift detection, and adversarial perturbation stress tests prove model stability.',
     color: 'from-red-500 to-orange-500',
-    link: '/features#eval-harness',
+    link: '/features/#eval-harness',
     tag: 'Safety & Quality',
   },
   {
@@ -58,7 +58,7 @@ const features = [
     description:
       'Turn production queries and corrections into preference pairs. Close the learning loop locally so your model continuously improves with zero cloud exposure.',
     color: 'from-amber-500 to-yellow-500',
-    link: '/features#flywheel',
+    link: '/features/#flywheel',
     tag: 'Continuous',
   },
   {
@@ -67,7 +67,7 @@ const features = [
     description:
       'Directly export to GGUF format with customized quantization (Q4_K_M, Q8_0) and register into local Ollama, vLLM, or Docker in a single CLI command.',
     color: 'from-indigo-500 to-violet-500',
-    link: '/features#deployment',
+    link: '/features/#deployment',
     tag: 'Instant Serving',
   },
   {
@@ -76,7 +76,7 @@ const features = [
     description:
       'Full Software Bill of Materials (SBOM) with cryptographic hashes linking the compiled dataset, hyperparameter recipe, and training weights for audit compliance.',
     color: 'from-teal-500 to-emerald-500',
-    link: '/features#governance',
+    link: '/features/#governance',
     tag: 'Audit Ready',
   },
   {
@@ -85,7 +85,7 @@ const features = [
     description:
       'Modern, reactive web control center. Drag-and-drop training datasets, watch real-time GPU metrics and loss curves, and trigger evaluations visually.',
     color: 'from-pink-500 to-rose-500',
-    link: '/features#dashboard',
+    link: '/features/#dashboard',
     tag: 'Interactive UI',
   },
   {
@@ -94,7 +94,7 @@ const features = [
     description:
       'Cross-run comparative analytics and hyperparameter Pareto frontier visualization. Discover which data slices yielded the highest benchmark jump.',
     color: 'from-cyan-500 to-blue-500',
-    link: '/features#analytics',
+    link: '/features/#analytics',
     tag: 'Insights',
   },
   {
@@ -103,7 +103,7 @@ const features = [
     description:
       'Clean Python entry-points for custom tokenizers, data loaders, loss criteria, and enterprise deployment backends. Extend without modifying core code.',
     color: 'from-lime-500 to-green-500',
-    link: '/features#plugins',
+    link: '/features/#plugins',
     tag: 'Extensible',
   },
   {
@@ -112,7 +112,7 @@ const features = [
     description:
       'Built specifically to run 1.5B to 14B parameter models on single consumer graphics cards (RTX 3060, 4070, Apple Silicon M-series, or AMD ROCm).',
     color: 'from-orange-500 to-amber-500',
-    link: '/features#hardware',
+    link: '/features/#hardware',
     tag: 'Consumer Hardware',
   },
   {
@@ -121,7 +121,7 @@ const features = [
     description:
       'True local-first execution. Training data, model weights, and telemetry never leave your workstation or private VPC. No external API dependencies.',
     color: 'from-slate-400 to-gray-400',
-    link: '/features#privacy',
+    link: '/features/#privacy',
     tag: 'Absolute Privacy',
   },
 ];
