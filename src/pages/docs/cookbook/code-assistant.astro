@@ -1,38 +1,63 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, Code, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Terminal, CheckCircle2, Code, Laptop, Sparkles } from 'lucide-react';
 
-const title = 'Internal Code Assistant — MoroAI Cookbook';
-const description = 'Adapt a local model on internal SDKs, private APIs, and organization coding conventions.';
+const title = 'Code Assistant — MoroAI Cookbook';
+const description = 'Build and deploy a private code generation and repository assistant model fine-tuned on internal company SDKs.';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/cookbook/code-assistant/">
   <div class="not-prose mb-8">
     <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      Cookbook 03
+      Cookbook Blueprint
     </span>
-    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Internal Code Assistant</h1>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Code Assistant</h1>
     <p class="text-gray-400 text-base mt-2">
-      Train a coding model on your private internal repositories, company frameworks, and architectural style rules.
+      Train a specialized coding companion on your proprietary internal libraries, API client packages, and framework conventions.
     </p>
   </div>
 
-  <h2>1. Data Extraction from Git Repositories</h2>
-  <p>
-    Extract functions and docstrings from your private codebase into instruction-following pairs:
-  </p>
+  <h2>Training Data Best Practices</h2>
+  <ol>
+    <li><strong>Include PEP 484 Type Hints:</strong> Models trained on typed signatures hallucinate significantly fewer type mismatches.</li>
+    <li><strong>Provide Complete Error Handling:</strong> Include <code>try / except</code> blocks and defensive edge-case checks in target completions.</li>
+    <li><strong>Incorporate Sphinx/Google Docstrings:</strong> Ensures the model outputs comprehensive documentation for all generated functions.</li>
+  </ol>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
-{`{"messages": [
-  {"role": "user", "content": "How do I initialize an authenticated client with our internal PaymentGateway SDK?"},
-  {"role": "assistant", "content": "from internal_payments import PaymentClient\\n\\nclient = PaymentClient.from_env()\\nres = client.authorize(amount_cents=1000, currency=\\"USD\\")"}
-]}`}
+  <h2>Sample Training Data Format (JSONL)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300 leading-relaxed">
+cat &gt; data/raw/code_pairs.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "user", "content": "Write a Python function to reverse a string with type annotations"}, {"role": "assistant", "content": "def reverse_string(s: str) -> str:\\n    \\"\\"\\"Reverse an input string safely.\\"\\"\\"\\n    return s[::-1]\\n\\n# Example usage:\\nassert reverse_string('hello') == 'olleh'"}]}`}
+{`{"messages": [{"role": "user", "content": "Explain this code: for i in range(10): print(i)"}, {"role": "assistant", "content": "This loop iterates over integers from 0 to 9 (exclusive of 10) and prints each integer to stdout using standard Python range semantics."}]}`}
+EOF
   </pre>
 
-  <h2>2. Compile with Information Entropy</h2>
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
-moro data build --source ./data/internal_code.jsonl --mi-guard-threshold 0.90
-moro train
+  <h2>Evaluation Suite (eval_code.yaml)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300 leading-relaxed">
+{`name: "code-assistant-eval"
+tests:
+  - id: "test_factorial"
+    prompt: "Write a recursive Python function to compute the factorial of n."
+    expected_keywords:
+      - "def factorial"
+      - "if n <= 1:"
+      - "return"
+    forbidden_terms:
+      - "goto"
+      - "as an AI model"`}
+  </pre>
+
+  <h2>Execution & Deployment</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300 leading-relaxed">
+# 1. Compile dataset
+moro data build --source ./data/raw/code_pairs.jsonl
+
+# 2. Train on local GPU
+moro train --model Qwen/Qwen2.5-Coder-1.5B-Instruct
+
+# 3. Export to GGUF and deploy to Ollama
+moro release export --run-id best --version v1.0.0
+moro release deploy --target ollama --version v1.0.0 --name code-companion
   </pre>
 
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">

@@ -1,0 +1,91 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { Terminal, ArrowRight, FileCheck, Rocket, CheckCircle2 } from 'lucide-react';
+
+const title = 'moro release — CLI Reference — MoroAI Documentation';
+const description = 'Release commands for MoroAI: export GGUF models, verify cryptographic SBOMs, and deploy to Ollama or Docker.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/cli/release/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-teal-400 uppercase tracking-wider bg-teal-500/10 px-2.5 py-1 rounded border border-teal-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro release</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Export models into standalone quantized runtimes (GGUF), sign cryptographic Software Bills of Materials (SBOM), and deploy directly into Ollama or Docker.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro release export`</h3>
+  <p>
+    Fuses the trained LoRA adapter weights with the base model, applies quantized GGUF packaging, and generates a signed provenance manifest.
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro release export --run-id run_01 --version v1.0.0 --quant Q4_K_M
+  </pre>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--run-id</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">Required</td>
+          <td class="p-3 text-gray-300">Training run identifier from runs/ directory.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--version</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">v0.1.0</td>
+          <td class="p-3 text-gray-300">Semantic version tag for this release.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--quant</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">Q4_K_M</td>
+          <td class="p-3 text-gray-300">Quantization type: <code>Q4_K_M</code>, <code>Q5_K_M</code>, <code>Q8_0</code>, or <code>F16</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2. `moro release deploy`</h3>
+  <p>Registers the exported release bundle directly into local serving runtimes:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+# Deploy to local Ollama runtime
+moro release deploy --target ollama --version v1.0.0 --name support-model
+
+# Deploy as an isolated Docker container
+moro release deploy --target docker --version v1.0.0 --port 8080
+  </pre>
+
+  <h3>3. `moro release verify`</h3>
+  <p>Audits the cryptographic signatures and SHA-256 hashes inside the model's SBOM:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+moro release verify --version v1.0.0
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/eval/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro eval
+    </a>
+    <a href="/docs/cli/flywheel/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro flywheel Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

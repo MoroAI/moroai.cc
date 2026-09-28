@@ -1,0 +1,84 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { Terminal, ArrowRight, RefreshCcw, CheckCircle2 } from 'lucide-react';
+
+const title = 'moro flywheel — CLI Reference — MoroAI Documentation';
+const description = 'Flywheel commands for MoroAI: mine production telemetry for DPO preference pairs and trigger continuous local alignment.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/cli/flywheel/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider bg-amber-500/10 px-2.5 py-1 rounded border border-amber-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro flywheel</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Turn production interactions, human operator corrections, and rating signals into clean Direct Preference Optimization (DPO) datasets and execute local alignment.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro flywheel process`</h3>
+  <p>
+    Scans local interaction logs, identifies human edits, and extracts high-confidence preference pairs (prompt, chosen, rejected).
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro flywheel process --interactions ./logs/chat_ops.jsonl --min-margin 0.3 --output ./data/dpo.jsonl
+  </pre>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--interactions, -i</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">Required</td>
+          <td class="p-3 text-gray-300">Path to raw user sessions / completions log file.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--min-margin</td>
+          <td class="p-3 text-gray-300">Float</td>
+          <td class="p-3 text-gray-300">0.3</td>
+          <td class="p-3 text-gray-300">Confidence margin threshold; pairs below this gap are dropped.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--output, -o</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">./data/dpo.jsonl</td>
+          <td class="p-3 text-gray-300">Target output JSONL path for extracted preference pairs.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2. `moro flywheel align`</h3>
+  <p>Executes an offline Direct Preference Optimization training round on the mined pairs:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-amber-300">
+moro flywheel align \
+    --base-checkpoint ./runs/run_01/checkpoints/best/ \
+    --pairs ./data/dpo.jsonl \
+    --beta 0.1 \
+    --epochs 1
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/release/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro release
+    </a>
+    <a href="/docs/cli/services/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro services Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

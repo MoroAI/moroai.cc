@@ -1,0 +1,83 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { Terminal, ArrowRight, LayoutDashboard, CheckCircle2 } from 'lucide-react';
+
+const title = 'moro dashboard — CLI Reference — MoroAI Documentation';
+const description = 'Dashboard command reference for MoroAI: start the browser-based Mission Control UI and configure telemetry ports.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/cli/dashboard/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-pink-400 uppercase tracking-wider bg-pink-500/10 px-2.5 py-1 rounded border border-pink-500/20 mb-3 inline-block">
+      CLI Command
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro dashboard</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Starts the embedded Mission Control UI web server, providing live visual telemetry, drag-and-drop dataset curation, and 1-click model deployment.
+    </p>
+  </div>
+
+  <h2>Usage</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro dashboard [OPTIONS]
+  </pre>
+
+  <h2>Options & Flags</h2>
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--port, -p</td>
+          <td class="p-3 text-gray-300">Int</td>
+          <td class="p-3 text-gray-300">3000</td>
+          <td class="p-3 text-gray-300">TCP port on which to bind the HTTP dashboard interface.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--host</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">127.0.0.1</td>
+          <td class="p-3 text-gray-300">Network bind address. Use <code>0.0.0.0</code> for local LAN access.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--open / --no-open</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">true</td>
+          <td class="p-3 text-gray-300">Automatically open default web browser upon server start.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Example Output</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-pink-300 leading-relaxed">
+$ moro dashboard --port 3000
+
+╭──────────────────────────────────────────────╮
+│  MoroAI Mission Control Dashboard v0.1.0    │
+│  Serving on: http://localhost:3000           │
+│  Hardware: NVIDIA RTX 4070 (12GB VRAM)       │
+│  Active Runs: 1 (run_01_support_qwen)        │
+│  Telemetry: SSE connected (120 msg/sec)      │
+╰──────────────────────────────────────────────╯
+[INFO] Application startup complete.
+[INFO] Uvicorn running on http://127.0.0.1:3000 (Press CTRL+C to quit)
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/analytics/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro analytics
+    </a>
+    <a href="/docs/cli/plugins/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro plugins Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

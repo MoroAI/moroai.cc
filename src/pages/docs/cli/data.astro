@@ -1,0 +1,92 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { Terminal, ArrowRight, Database, CheckCircle2 } from 'lucide-react';
+
+const title = 'moro data — CLI Reference — MoroAI Documentation';
+const description = 'Data commands for MoroAI: build, report, and import datasets with the Epistemic Data Compiler and MI Guard.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/cli/data/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 px-2.5 py-1 rounded border border-cyan-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro data</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Manage dataset ingestion, normalization, information-theoretic deduplication, MI Guard protection, and quality diagnostics.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro data build`</h3>
+  <p>
+    Executes the complete epistemic curation pipeline on raw files. Automatically redacts PII, scores samples with PPMI and Resnik IC, applies the MI Guard, and produces clean train/val/eval splits.
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro data build [OPTIONS]
+  </pre>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--source, -s</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">data/raw/</td>
+          <td class="p-3 text-gray-300">Raw input file (.jsonl, .csv, .parquet) or directory.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--mi-guard-threshold</td>
+          <td class="p-3 text-gray-300">Float</td>
+          <td class="p-3 text-gray-300">0.85</td>
+          <td class="p-3 text-gray-300">PPMI information density threshold to preserve outliers.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--dedup-threshold</td>
+          <td class="p-3 text-gray-300">Float</td>
+          <td class="p-3 text-gray-300">0.88</td>
+          <td class="p-3 text-gray-300">Cosine similarity threshold for near-duplicate pruning.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--pii-scan / --no-pii</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">true</td>
+          <td class="p-3 text-gray-300">Toggle automatic redaction of emails, phones, and API keys.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--val-ratio</td>
+          <td class="p-3 text-gray-300">Float</td>
+          <td class="p-3 text-gray-300">0.10</td>
+          <td class="p-3 text-gray-300">Fraction of dataset allocated to validation set.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2. `moro data report`</h3>
+  <p>Generates an in-depth epistemic report of token entropy, PPMI distribution, and MI Guard statistics:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+moro data report --compiled-dir data/compiled/
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/init/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro init
+    </a>
+    <a href="/docs/cli/recipe/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro recipe Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

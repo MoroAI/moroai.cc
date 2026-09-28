@@ -1,53 +1,111 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, FileJson, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Terminal, CheckCircle2, Code, FileText } from 'lucide-react';
 
 const title = 'Structured JSON Extractor — MoroAI Cookbook';
-const description = 'Fine-tune a model to extract strict, schema-compliant JSON from messy invoices and documents.';
+const description = 'Build and deploy a private model that converts unstructured enterprise documents into validated JSON schemas.';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/cookbook/json-extractor/">
   <div class="not-prose mb-8">
     <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      Cookbook 02
+      Cookbook Blueprint
     </span>
     <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Structured JSON Extractor</h1>
     <p class="text-gray-400 text-base mt-2">
-      Train a model to consistently output valid, parsable JSON without markdown backticks or hallucinations.
+      Train a compact local model to parse invoices, receipts, and contract text into strict, deterministic JSON payloads.
     </p>
   </div>
 
-  <h2>1. Problem & Schema</h2>
+  <h2>The Objective</h2>
   <p>
-    Generic LLMs frequently insert conversational preamble or markdown formatting when asked to extract JSON. By adapting a 1.5B or 3B model on prompt-JSON pairs, you achieve 100% deterministic compliance:
+    Extract structured entity fields from arbitrary unstructured enterprise strings:
   </p>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
-{`{"messages": [
-  {"role": "user", "content": "Extract invoice fields: Wire invoice #9810 from Acme Corp for $4,500 due on 2026-10-15."},
-  {"role": "assistant", "content": "{\\"invoice_number\\": \\"9810\\", \\"vendor\\": \\"Acme Corp\\", \\"amount\\": 4500.0, \\"due_date\\": \\"2026-10-15\\"}"}
-]}`}
+  <div class="not-prose my-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <span class="text-gray-400 font-bold block mb-2">Unstructured Input</span>
+      <p class="text-gray-300 whitespace-pre-wrap leading-relaxed">
+{`"Invoice #INV-9821 from Apex Logistics Corp for $1,450.00 due on 2026-10-15. Terms net-30."`}
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <span class="text-cyan-400 font-bold block mb-2">Extracted JSON Payload</span>
+      <pre class="text-cyan-300 leading-relaxed">
+{`{
+  "invoice_number": "INV-9821",
+  "vendor": "Apex Logistics Corp",
+  "amount": 1450.00,
+  "currency": "USD",
+  "due_date": "2026-10-15"
+}`}
+      </pre>
+    </div>
+  </div>
+
+  <h2>Training Data Formulation</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300 leading-relaxed">
+cat &gt; data/raw/invoices.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "user", "content": "Extract JSON from: Invoice #12345 from Acme Corp for $500 due on 2024-03-15"}, {"role": "assistant", "content": "{\\"invoice_number\\": \\"12345\\", \\"vendor\\": \\"Acme Corp\\", \\"amount\\": 500, \\"due_date\\": \\"2024-03-15\\"}"}]}`}
+{`{"messages": [{"role": "user", "content": "Extract JSON from: PO-9876 from Widget Inc for $1,250 due 2024-04-01"}, {"role": "assistant", "content": "{\\"invoice_number\\": \\"PO-9876\\", \\"vendor\\": \\"Widget Inc\\", \\"amount\\": 1250, \\"due_date\\": \\"2024-04-01\\"}"}]}`}
+EOF
   </pre>
 
-  <h2>2. Validation Rule Specification</h2>
-  <p>
-    Enforce deterministic validation in <code>eval/suite.yaml</code>:
-  </p>
+  <h2>Evaluation Suite with JSON Schema Validation</h2>
+  <p>Enforce 100% deterministic schema compliance using MoroAI's evaluation harness:</p>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
-{`name: json-compliance-gate
-rules:
-  - type: strict_json_schema
-    required_keys: ["invoice_number", "vendor", "amount", "due_date"]
-    disallow_markdown_fences: true`}
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300 leading-relaxed">
+name: "invoice-json-eval"
+tests:
+  - id: "test_invoice_schema"
+    prompt: "Extract JSON from: Invoice #555 from Test Co for $99 due 2026-11-01"
+    expected_schema:
+      type: "object"
+      required: ["invoice_number", "vendor", "amount", "due_date"]
+      properties:
+        invoice_number:
+          type: "string"
+        vendor:
+          type: "string"
+        amount:
+          type: "number"
+        due_date:
+          type: "string"
+  </pre>
+
+  <h2>Production Python Client</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300 leading-relaxed">
+{`import json
+import httpx
+
+def extract_invoice_json(document_text: str) -> dict:
+    """Query fine-tuned local extractor via Ollama."""
+    response = httpx.post(
+        "http://localhost:11434/api/generate",
+        json={
+            "model": "json-extractor:v1.0.0",
+            "prompt": f"Extract JSON from: {document_text}",
+            "stream": False,
+            "format": "json"
+        },
+        timeout=15.0
+    )
+    raw_completion = response.json()["response"]
+    return json.loads(raw_completion)
+
+# Example invocation:
+data = extract_invoice_json("Bill #4489 from CloudHost for $89.50 due 2026-10-31")
+print("Structured Data:\\n", data)
+print("Vendor:", data["vendor"])`}
   </pre>
 
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
     <a href="/docs/cookbook/support-bot/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
-      ← Support Bot
+      ← Support Bot Recipe
     </a>
     <a href="/docs/cookbook/code-assistant/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
-      <span>Code Assistant</span>
+      <span>Code Assistant Recipe</span>
       <ArrowRight class="w-3.5 h-3.5" />
     </a>
   </div>

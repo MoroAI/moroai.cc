@@ -1,59 +1,97 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, GitBranch, Database, Shield } from 'lucide-react';
+import { ArrowRight, GitBranch, Database, Shield, CheckCircle2, Code } from 'lucide-react';
 
-const title = 'Lineage Graphs & State — MoroAI Architecture';
+const title = 'Lineage Graphs & Provenance — MoroAI Architecture';
 const description = 'How MoroAI tracks data and model provenance through a Directed Acyclic Graph (DAG) state manager.';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/concepts/lineage-graphs/">
   <div class="not-prose mb-8">
     <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      Subsystem 02
+      Provenance & Audit
     </span>
-    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Lineage Graphs & Provenance</h1>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Lineage Graphs: Complete Provenance Tracking</h1>
     <p class="text-gray-400 text-base mt-2">
-      Immutable, cryptographically verifiable lifecycle tracking across raw datasets, recipes, checkpoints, and deployments.
+      Immutable lifecycle tracking from raw input documents to deployed local model weights using an embedded Directed Acyclic Graph (DAG).
     </p>
   </div>
 
-  <h2>Directed Acyclic Graph (DAG) State Engine</h2>
+  <h2>The Directed Acyclic Graph (DAG)</h2>
   <p>
-    MoroAI maintains an embedded ACID-compliant SQLite graph database located at <code>.moro/state.db</code>. Every artifact in the platform is represented as a node connected by directional provenance edges:
+    In high-compliance deployments, knowing what data a model was trained on is mandatory. MoroAI maintains an embedded graph ledger (stored in <code>.moro/moro.db</code>) where every entity is a cryptographic node linked by directional edges:
   </p>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
-Raw Dataset (.jsonl)
-    ↓ [DERIVED_FROM]
-Compiled Dataset Version
-    ↓ [TRAINED_ON]
-Training Run Checkpoint
-    ↓ [EVALUATED_BY]
-Evaluation Gate Result
-    ↓ [RELEASED_FROM]
-Release Candidate (SBOM)
-    ↓ [DEPLOYED_TO]
-Local Ollama / vLLM Instance
-    ↓ [FEEDBACK_MINED]
-DPO Preference Pairs
-  </pre>
+  <div class="not-prose my-6 p-5 rounded-2xl bg-dark-950 border border-dark-800 font-mono text-xs">
+    <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+      <span>End-to-End Provenance Graph</span>
+      <span class="text-moro-400">Node & Edge Lifecycle</span>
+    </div>
+    <pre class="text-sky-300 leading-relaxed overflow-x-auto whitespace-pre-wrap">
+{`raw_source:pharma_docs.jsonl (sha256: 8f3b20...a19c)
+    │
+    ▼ [DERIVED_FROM]
+dataset_version:pharma_v1 (1,247 curated samples)
+    │
+    ▼ [TRAINED_ON]
+training_run:run_123456 (LoRA r=16, alpha=32, Qwen2.5-1.5B)
+    │
+    ▼ [EVALUATED_BY]
+eval_result:eval_789 (Deterministic: 100%, Semantic: 94.2%)
+    │
+    ▼ [RELEASED_FROM]
+release:v1.0.0 (GGUF Q4_K_M + signed SBOM)
+    │
+    ▼ [DEPLOYED_TO]
+deployment:ollama_pharma_v1 (http://localhost:11434)
+    │
+    ▼ [FEEDBACK_FOR]
+feedback_batch:batch_001 (342 human operator edits)
+    │
+    ▼ [ALIGNED_BY]
+dpo_epoch:epoch_001 (continuous local refinement)`}
+    </pre>
+  </div>
 
-  <h2>Auditing Provenance</h2>
+  <h2>Querying Lineage Programmatically</h2>
   <p>
-    From any deployed model, operators can trace the complete provenance chain back to the exact input data lines and cryptographic hashes:
+    The MoroAI Python SDK allows engineers to trace artifacts backwards or forwards across the graph:
   </p>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-400">
-# Inspect complete lineage of a deployment:
-moro release verify --release-id rel_v1_prod
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300 leading-relaxed">
+{`from pathlib import Path
+from moro.state.manager import StateManager
+from moro.state.models import EdgeType
+
+# Initialize state manager pointing to local database
+state = StateManager(Path(".moro/moro.db"))
+
+# 1. Trace the complete ancestral lineage of an active deployment:
+lineage = state.trace_lineage("deployment_ollama_pharma_v1")
+print("Trained from raw files:", lineage.root_sources)
+print("Cryptographic dataset hash:", lineage.dataset_sha256)
+
+# 2. Find all models derived from a specific dataset version:
+runs = state.get_connected_nodes(
+    "dataset_pharma_v1",
+    edge_type=EdgeType.TRAINED_ON,
+    direction="outgoing"
+)
+for run in runs:
+    print(f"Run {run.id}: Validation Loss = {run.metrics.val_loss}")`}
   </pre>
+
+  <h2>Lineage in Mission Control Dashboard</h2>
+  <p>
+    When using the Mission Control UI (<code>moro dashboard</code>), lineage graphs are rendered as interactive node-link diagrams. Operators can click any model checkpoint, view its exact dataset origin, inspect evaluation certificates, and verify cryptographic hashes with a single click.
+  </p>
 
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
     <a href="/docs/concepts/ppci-filtering/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
       ← PPMI Filtering
     </a>
     <a href="/docs/concepts/recipe-engine/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
-      <span>Hardware Recipe Engine</span>
+      <span>VRAM Recipe Engine</span>
       <ArrowRight class="w-3.5 h-3.5" />
     </a>
   </div>

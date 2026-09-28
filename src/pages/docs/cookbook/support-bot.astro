@@ -1,38 +1,123 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, Bot, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Terminal, CheckCircle2, MessageSquare, Code, Play } from 'lucide-react';
 
 const title = 'Customer Support Bot — MoroAI Cookbook';
-const description = 'Build and deploy a local support bot trained on product FAQs and documentation.';
+const description = 'Step-by-step cookbook: build, evaluate, and locally deploy a private customer support assistant with MoroAI and Ollama.';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/cookbook/support-bot/">
   <div class="not-prose mb-8">
     <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      Cookbook 01
+      Cookbook Blueprint
     </span>
     <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Customer Support Bot</h1>
     <p class="text-gray-400 text-base mt-2">
-      Train a lightweight, accurate customer support bot on your organization's private FAQs and deploy locally.
+      Train a specialized domain language model on private knowledge base articles and deploy it locally with zero cloud dependencies.
     </p>
   </div>
 
-  <h2>1. Data Schema</h2>
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
-{`{"messages": [{"role": "system", "content": "You are a customer support agent for CloudScale."}, {"role": "user", "content": "What is the SLA for enterprise tier uptime?"}, {"role": "assistant", "content": "Enterprise Tier includes a 99.99% monthly uptime guarantee backed by financial service credits under Section 8 of our Master Service Agreement."}]}`}
+  <h2>What You'll Build</h2>
+  <ul>
+    <li>A localized Qwen2.5 or Llama-3.2 model fine-tuned on company policies and FAQs</li>
+    <li>A deterministic evaluation suite to ensure 100% adherence to company refund and password procedures</li>
+    <li>An instant local REST endpoint served via Ollama and queried with Python</li>
+  </ul>
+
+  <h2>Step 1: Prepare Training Data</h2>
+  <p>Format your customer support FAQ into structured multi-turn conversation JSONL:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300 leading-relaxed">
+cat &gt; support_data.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "system", "content": "You are a helpful support assistant for Acme Corp."}, {"role": "user", "content": "How do I reset my password?"}, {"role": "assistant", "content": "To reset your password, go to Settings > Security > Reset Password. You'll receive a confirmation email within 2 minutes."}]}`}
+{`{"messages": [{"role": "system", "content": "You are a helpful support assistant for Acme Corp."}, {"role": "user", "content": "What is your refund policy?"}, {"role": "assistant", "content": "We offer a 30-day money-back guarantee on all purchases. To request a refund, go to Orders > Select Order > Request Refund."}]}`}
+{`{"messages": [{"role": "system", "content": "You are a helpful support assistant for Acme Corp."}, {"role": "user", "content": "How do I contact emergency support?"}, {"role": "assistant", "content": "You can reach our 24/7 priority support team at priority@acme.com or by calling 1-800-ACME-HELP."}]}`}
+EOF
   </pre>
 
-  <h2>2. Build & Train</h2>
+  <h2>Step 2: Initialize Project & Copy Data</h2>
   <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
-moro init support-bot
-moro data build --source ./data/support.jsonl
+moro init support-bot --template support-bot
+cd support-bot
+cp ../support_data.jsonl data/raw/
+  </pre>
+
+  <h2>Step 3: Configure moro.yaml</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+name: "support-bot"
+version: "1.0.0"
+
+dataset:
+  source: ./data/raw/support_data.jsonl
+  format: jsonl
+  mi_guard_threshold: 0.85
+
+model:
+  base: "Qwen/Qwen2.5-1.5B"
+  quantization: "nf4"
+
+training:
+  learning_rate: 2.0e-4
+  micro_batch_size: 2
+  gradient_accumulation_steps: 8
+  auto_heal: true
+  </pre>
+
+  <h2>Step 4: Build & Train</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+# 1. Compile dataset with MI Guard
+moro data build
+
+# 2. Start self-healing training
 moro train
   </pre>
 
-  <h2>3. Test with Ollama</h2>
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-400">
-moro release deploy --target ollama --model-name support-bot:v1
-ollama run support-bot:v1 "What happens if uptime drops below 99.9%?"
+  <h2>Step 5: Run Evaluation Suite</h2>
+  <p>Create an evaluation definition to verify accurate answers:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+cat &gt; eval/support_eval.yaml &lt;&lt; 'EOF'
+name: "support-eval"
+tests:
+  - id: "test_password_reset"
+    prompt: "How do I reset my password?"
+    expected_keywords: ["Settings", "Security", "Reset Password"]
+    forbidden_terms: ["call the CEO", "I don't know"]
+  - id: "test_refund"
+    prompt: "Can I get my money back?"
+    expected_keywords: ["30-day", "money-back"]
+EOF
+
+# Execute evaluation
+moro eval run --checkpoint ./runs/best/ --suite eval/support_eval.yaml
+  </pre>
+
+  <h2>Step 6: Deploy to Local Ollama Runtime</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+moro release export --run-id best --version v1.0.0 --quant Q4_K_M
+moro release deploy --target ollama --version v1.0.0 --name support-bot
+  </pre>
+
+  <h2>Step 7: Production Query Example (Python)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300 leading-relaxed">
+{`import httpx
+
+def query_support_bot(user_question: str) -> str:
+    """Send customer query to locally running Ollama instance."""
+    response = httpx.post(
+        "http://localhost:11434/api/generate",
+        json={
+            "model": "support-bot:v1.0.0",
+            "prompt": user_question,
+            "stream": False,
+        },
+        timeout=30.0,
+    )
+    return response.json()["response"]
+
+# Example usage:
+answer = query_support_bot("How do I reset my password?")
+print("Support Bot Response:\\n", answer)`}
   </pre>
 
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
@@ -40,7 +125,7 @@ ollama run support-bot:v1 "What happens if uptime drops below 99.9%?"
       ← Cookbook Overview
     </a>
     <a href="/docs/cookbook/json-extractor/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
-      <span>JSON Extractor</span>
+      <span>JSON Extractor Recipe</span>
       <ArrowRight class="w-3.5 h-3.5" />
     </a>
   </div>

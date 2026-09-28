@@ -1,0 +1,52 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { Terminal, ArrowRight, Server, CheckCircle2 } from 'lucide-react';
+
+const title = 'moro services — CLI Reference — MoroAI Documentation';
+const description = 'Service commands for MoroAI: manage local background daemons, telemetry streams, and inference proxies.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/cli/services/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-indigo-400 uppercase tracking-wider bg-indigo-500/10 px-2.5 py-1 rounded border border-indigo-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro services</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Manage local background services, continuous logging daemons, hardware watchdog workers, and inference proxy endpoints.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro services start`</h3>
+  <p>Spawns background telemetry watchers and the local inference monitoring proxy:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro services start [--daemon]
+  </pre>
+
+  <h3>2. `moro services status`</h3>
+  <p>Displays process states, port allocations, and system resource consumption across all active MoroAI background workers:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-indigo-300">
+moro services status
+  </pre>
+
+  <h3>3. `moro services logs`</h3>
+  <p>Streams consolidated service logs in real time:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+moro services logs -f
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/flywheel/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro flywheel
+    </a>
+    <a href="/docs/cli/analytics/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro analytics Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

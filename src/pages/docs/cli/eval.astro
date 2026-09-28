@@ -1,0 +1,83 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { Terminal, ArrowRight, Shield, CheckCircle2 } from 'lucide-react';
+
+const title = 'moro eval — CLI Reference — MoroAI Documentation';
+const description = 'Evaluation commands for MoroAI: run multi-layer benchmark suites, compare checkpoints, and generate certification reports.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/cli/eval/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-red-400 uppercase tracking-wider bg-red-500/10 px-2.5 py-1 rounded border border-red-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro eval</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Execute deterministic schema gates, semantic LLM accuracy evaluations, Wasserstein representation drift audits, and adversarial stress testing.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro eval run`</h3>
+  <p>
+    Executes a structured evaluation test suite against an adapted model checkpoint or base foundation model.
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro eval run --checkpoint ./runs/run_01/checkpoints/best/ --suite ./eval/suite.yaml
+  </pre>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--checkpoint</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">Required</td>
+          <td class="p-3 text-gray-300">Path to candidate model weights or adapter directory.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--suite</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">./eval/suite.yaml</td>
+          <td class="p-3 text-gray-300">Path to evaluation suite YAML file.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--judge-model</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">local</td>
+          <td class="p-3 text-gray-300">Model used for semantic scoring: <code>local</code> (Ollama) or HF model ID.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2. `moro eval compare`</h3>
+  <p>Runs identical benchmarks across a base model and adapted checkpoint to measure accuracy delta and drift:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+moro eval compare \
+    --base Qwen/Qwen2.5-1.5B \
+    --candidate ./runs/run_01/checkpoints/best/ \
+    --suite ./eval/suite.yaml
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/train/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro train
+    </a>
+    <a href="/docs/cli/release/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro release Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

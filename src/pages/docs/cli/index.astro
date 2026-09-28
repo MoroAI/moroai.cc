@@ -1,0 +1,123 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { Terminal, ArrowRight, CheckCircle2, Sliders } from 'lucide-react';
+
+const title = 'CLI Reference Overview — MoroAI Documentation';
+const description = 'Complete command-line interface documentation for MoroAI. Learn about all 11 subcommands, flags, and global options.';
+
+const commands = [
+  { name: 'moro init', href: '/docs/cli/init/', desc: 'Scaffold a new project workspace with configuration templates.' },
+  { name: 'moro data', href: '/docs/cli/data/', desc: 'Ingest, deduplicate, and curate datasets with the MI Guard.' },
+  { name: 'moro recipe', href: '/docs/cli/recipe/', desc: 'Audit GPU VRAM and generate zero-OOM hyperparameter recipes.' },
+  { name: 'moro train', href: '/docs/cli/train/', desc: 'Execute local fine-tuning with autonomous 5-level error recovery.' },
+  { name: 'moro eval', href: '/docs/cli/eval/', desc: 'Run multi-layered deterministic and semantic evaluation benchmarks.' },
+  { name: 'moro release', href: '/docs/cli/release/', desc: 'Export models to GGUF, verify cryptographic SBOMs, and deploy.' },
+  { name: 'moro flywheel', href: '/docs/cli/flywheel/', desc: 'Extract DPO preference pairs and trigger continuous local alignment.' },
+  { name: 'moro services', href: '/docs/cli/services/', desc: 'Manage background daemons, queue workers, and telemetry pipes.' },
+  { name: 'moro analytics', href: '/docs/cli/analytics/', desc: 'Inspect cross-run Pareto frontiers, training curves, and loss stats.' },
+  { name: 'moro dashboard', href: '/docs/cli/dashboard/', desc: 'Start the browser-based Mission Control UI on localhost:3000.' },
+  { name: 'moro plugins', href: '/docs/cli/plugins/', desc: 'Manage custom tokenizers, scorers, and serving extensions.' },
+];
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/cli/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      CLI Manual
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">CLI Reference</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Comprehensive documentation for the <code class="text-moro-300">moro</code> command-line interface. Built on Typer with rich terminal output, JSON emission, and automated error diagnostics.
+    </p>
+  </div>
+
+  <h2>Global CLI Architecture</h2>
+  <p>
+    The MoroAI CLI is designed for both human operators and headless CI/CD automation. Every command follows POSIX standards, emits structured exit codes, and supports machine-readable JSON output for automated scripting.
+  </p>
+
+  <h2>Command Overview</h2>
+  <div class="not-prose my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+    {commands.map((cmd) => (
+      <a
+        href={cmd.href}
+        class="p-4 rounded-xl bg-dark-950 border border-dark-800 hover:border-moro-500/40 hover:bg-dark-900/60 transition-all flex flex-col justify-between group"
+      >
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-mono text-sm font-bold text-white group-hover:text-moro-300 transition-colors">
+              {cmd.name}
+            </span>
+            <ArrowRight class="w-3.5 h-3.5 text-gray-500 group-hover:text-moro-300 group-hover:translate-x-1 transition-all" />
+          </div>
+          <p class="text-xs text-gray-400 leading-relaxed">{cmd.desc}</p>
+        </div>
+      </a>
+    ))}
+  </div>
+
+  <h2>Global Flags & Options</h2>
+  <p>These flags are accepted across all <code>moro</code> subcommands:</p>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--config, -c</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">./moro.yaml</td>
+          <td class="p-3 text-gray-300">Explicit path to the project configuration file.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--verbose, -v</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">false</td>
+          <td class="p-3 text-gray-300">Print detailed debug diagnostics and tensor shapes.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--quiet, -q</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">false</td>
+          <td class="p-3 text-gray-300">Suppress non-essential terminal output and ASCII art.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--json</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">false</td>
+          <td class="p-3 text-gray-300">Emit raw JSON output to stdout for scripting and CI pipelines.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--help, -h</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">-</td>
+          <td class="p-3 text-gray-300">Show usage instructions, arguments, and command options.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>System Diagnostics (`moro doctor`)</h2>
+  <p>Verify that your Python environment, CUDA drivers, and package dependencies are configured correctly:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro doctor
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/getting-started/quickstart/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Quickstart Guide
+    </a>
+    <a href="/docs/cli/init/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro init Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

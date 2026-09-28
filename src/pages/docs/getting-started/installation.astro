@@ -1,78 +1,159 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, Terminal, Check, Copy } from 'lucide-react';
+import { ArrowRight, Terminal, CheckCircle2, AlertTriangle, Cpu, HardDrive } from 'lucide-react';
 
-const title = 'Installation — MoroAI Documentation';
-const description = 'How to install MoroAI via pip or build from source on macOS, Linux, and Windows with CUDA/Metal support.';
+const title = 'Installation Guide — MoroAI Documentation';
+const description = 'Complete installation instructions for MoroAI: pip, source, Docker, CUDA setup, and GPU compatibility.';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/getting-started/installation/">
   <div class="not-prose mb-8">
     <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      Setup Guide
+      Setup & Verification
     </span>
-    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Installing MoroAI</h1>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Installation Guide</h1>
     <p class="text-gray-400 text-base mt-2">
-      Quickly install MoroAI on Linux (CUDA / ROCm), macOS (Apple Silicon Metal), or Windows WSL2.
+      Step-by-step installation instructions for Linux, macOS (Apple Silicon), and Windows WSL2.
     </p>
   </div>
 
-  <h2>System Requirements</h2>
+  <h2>System Prerequisites</h2>
   <ul>
     <li><strong>Python:</strong> Version 3.10, 3.11, or 3.12</li>
-    <li><strong>OS:</strong> Linux (Ubuntu 20.04+ recommended), macOS (Apple Silicon M1/M2/M3/M4), or Windows with WSL2</li>
-    <li><strong>Hardware Acceleration (Recommended):</strong>
-      <ul>
-        <li>NVIDIA GPU with CUDA 12.0+ (minimum 6GB VRAM for 1.5B models; 12GB+ for 7B models)</li>
-        <li>Apple Silicon Mac with 16GB+ Unified Memory</li>
-      </ul>
-    </li>
+    <li><strong>RAM:</strong> 8GB minimum (16GB+ recommended for dataset compilation)</li>
+    <li><strong>Disk Space:</strong> 10GB free SSD space for base model weights and cached adapters</li>
+    <li><strong>GPU (Optional for training):</strong> NVIDIA GPU with 4GB+ VRAM or Apple Silicon Mac (M1/M2/M3/M4)</li>
   </ul>
 
-  <h2>1. Standard Installation (PyPI)</h2>
-  <p>The core package includes the CLI, Mission Control web UI, and local compilation engine:</p>
+  <h2>Installation Methods</h2>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+  <h3>Option 1: Standard `pip` (Recommended)</h3>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+# Basic installation (CLI, data compiler, and evaluation)
 pip install moroai
+
+# With training extensions (PyTorch, BitsAndBytes, PEFT, TRL)
+pip install "moroai[train]"
+
+# Full installation with all optional export and serving plugins
+pip install "moroai[all]"
   </pre>
 
-  <h2>2. Installation with Training & Dev Extras</h2>
-  <p>To enable local PyTorch/HuggingFace fine-tuning acceleration and training harnesses:</p>
-
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
-pip install 'moroai[train]'
+  <h3>Option 2: From Source (Latest Development)</h3>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+git clone https://github.com/moroai/moro.git
+cd moro
+pip install -e ".[train]"
   </pre>
 
-  <h2>3. Verifying the Installation</h2>
-  <p>Run the diagnosis command to verify GPU detection and driver compatibility:</p>
-
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
-moro diagnose
+  <h3>Option 3: Pre-Built Docker Image</h3>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+docker pull moroai/moro:latest
+docker run --gpus all -it -p 3000:3000 moroai/moro:latest
   </pre>
 
-  <p>You should see output similar to:</p>
+  <h2>Verifying Installation (`moro doctor`)</h2>
+  <p>Run the built-in diagnostic tool to verify all components:</p>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-400">
-MoroAI Diagnostic Report (v0.1.0)
-----------------------------------
-Python:   3.11.8 (darwin-arm64)
-PyTorch:  2.3.1 (MPS Accelerator Enabled)
-Platform: Apple M3 Max (36GB Unified Memory)
-Status:   All 6 subsystems operational
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300 leading-relaxed">
+$ moro doctor
+
+MoroAI System Diagnostics
+─────────────────────────────────────────────────
+Platform:         Darwin / Linux (x86_64 or arm64)
+Python:           3.11.5 (Active environment)
+CLI Version:      0.1.0 (moro)
+
+Core Dependencies:
+  ✓ typer         0.12.0
+  ✓ rich          13.7.0
+  ✓ pydantic      2.6.0
+  ✓ pyyaml        6.0.1
+
+Training Backend:
+  ✓ torch         2.2.0 (CUDA 12.1 or MPS available)
+  ✓ transformers  4.38.0
+  ✓ peft          0.9.0
+  ✓ bitsandbytes  0.42.0
+
+Hardware Status:
+  ✓ GPU: NVIDIA GeForce RTX 4070 (12,288 MB VRAM)
+  ✓ Driver: 545.29.06 | CUDA: 12.1
+  ✓ Zero-OOM Pre-Flight Engine: ACTIVE
+
+System Verdict:
+  ✓ READY FOR DATA CURATION & LOCAL TRAINING
+  </pre>
+
+  <h2>GPU Compatibility & Model Sizes</h2>
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">GPU Tier</th>
+          <th class="p-3 border border-dark-800">Dedicated VRAM</th>
+          <th class="p-3 border border-dark-800">Supported Target Models</th>
+          <th class="p-3 border border-dark-800">Quantization</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">Entry Level</td>
+          <td class="p-3 text-emerald-400">4 GB – 8 GB</td>
+          <td class="p-3 text-gray-300">0.5B – 1.5B (Qwen2.5, Llama-3.2)</td>
+          <td class="p-3 text-cyan-400">4-bit NF4</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">Mid-Range (RTX 3060/4070)</td>
+          <td class="p-3 text-emerald-400">12 GB – 16 GB</td>
+          <td class="p-3 text-gray-300">1.5B – 3B (Llama-3.2-3B, Qwen2.5-3B)</td>
+          <td class="p-3 text-cyan-400">4-bit NF4</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">High-End (RTX 3090/4090)</td>
+          <td class="p-3 text-emerald-400">24 GB</td>
+          <td class="p-3 text-gray-300">7B – 8B (Llama-3.1-8B, Mistral-7B)</td>
+          <td class="p-3 text-cyan-400">4-bit NF4 or 8-bit</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">Apple Silicon (M2/M3/M4)</td>
+          <td class="p-3 text-emerald-400">16 GB – 64 GB Unified</td>
+          <td class="p-3 text-gray-300">1.5B – 14B (Metal Acceleration)</td>
+          <td class="p-3 text-cyan-400">FP16 / 4-bit MLX</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">Data Center (A100 / H100)</td>
+          <td class="p-3 text-emerald-400">40 GB – 80 GB</td>
+          <td class="p-3 text-gray-300">14B – 70B (Full LoRA Rank 64)</td>
+          <td class="p-3 text-cyan-400">BF16 / FP16</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Common Installation Troubleshooting</h2>
+
+  <h3>1. CUDA Not Found or PyTorch CPU-Only Installed</h3>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+# Verify NVIDIA driver is working:
+nvidia-smi
+
+# Reinstall PyTorch with explicit CUDA 12.1 runtime:
+pip install --upgrade torch --index-url https://download.pytorch.org/whl/cu121
+  </pre>
+
+  <h3>2. Apple Silicon Metal Performance Shaders (MPS) Setup</h3>
+  <p>On macOS with Apple Silicon chips, hardware acceleration is enabled out of the box through PyTorch's Metal backend:</p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+python -c "import torch; print('MPS available:', torch.backends.mps.is_available())"
   </pre>
 
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
-    <a
-      href="/docs/getting-started/introduction/"
-      class="text-xs font-semibold text-gray-400 hover:text-white transition-colors"
-    >
+    <a href="/docs/getting-started/introduction/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
       ← Introduction
     </a>
-    <a
-      href="/docs/getting-started/quickstart/"
-      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors"
-    >
-      <span>Next: Quick Start</span>
+    <a href="/docs/getting-started/quickstart/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>5-Minute Quickstart</span>
       <ArrowRight class="w-3.5 h-3.5" />
     </a>
   </div>

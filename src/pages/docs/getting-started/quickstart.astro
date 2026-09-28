@@ -1,109 +1,166 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, Terminal, CheckCircle2, Sparkles, Layers } from 'lucide-react';
+import { ArrowRight, Terminal, CheckCircle2, Sparkles, Database, Cpu, Rocket, Check } from 'lucide-react';
 
-const title = 'Quick Start — MoroAI Documentation';
-const description = 'Complete end-to-end tutorial: compile data, train a local model with self-healing recovery, and deploy to Ollama in under 15 minutes.';
+const title = 'Quickstart (5 Minutes) — MoroAI Documentation';
+const description = 'Go from pip install to a deployed local model in 5 minutes with MoroAI.';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/getting-started/quickstart/">
   <div class="not-prose mb-8">
     <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      15-Minute Tutorial
+      5-Minute Tutorial
     </span>
-    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Quick Start Guide</h1>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Quickstart: 5 Minutes to Your First Local Model</h1>
     <p class="text-gray-400 text-base mt-2">
-      Train and deploy your first private domain language model from scratch.
+      This step-by-step tutorial takes you from <strong class="text-white">zero to a deployed, private local language model</strong> in 5 minutes.
     </p>
   </div>
 
-  <h2>Step 1: Initialize Workspace</h2>
-  <p>Create a fresh workspace directory with standard configuration files:</p>
+  <h2>Step 1: Install MoroAI (30 seconds)</h2>
+  <p>Install the MoroAI core package with training extensions:</p>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
-moro init my-model-foundry
-cd my-model-foundry
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+# Install with training support
+pip install "moroai[train]"
   </pre>
 
-  <p>This creates a structured directory containing:</p>
-  <ul>
-    <li><code>moro.yaml</code>: Central configuration defining data paths, hardware profiles, and training parameters.</li>
-    <li><code>datasets/</code>: Directory for raw and compiled training sets.</li>
-    <li><code>checkpoints/</code>: Directory for model adapters and weights.</li>
-  </ul>
+  <p>Verify that your environment and GPU are ready:</p>
 
-  <h2>Step 2: Compile & Clean Data with MI Guard</h2>
-  <p>Feed in your raw proprietary data (JSONL, CSV, or text) to run information-theoretic curation:</p>
-
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
-moro data build --source ./datasets/raw_support_logs.jsonl
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+moro doctor
   </pre>
 
-  <p>
-    The Epistemic Compiler dedupes repetitive queries while activating the <strong>MI Guard</strong> to preserve critical rare boundary conditions.
-  </p>
-
-  <h2>Step 3: Hardware Simulation & Recipe Generation</h2>
-  <p>Query your local GPU VRAM to generate an optimized, zero-OOM recipe:</p>
-
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
-moro recipe generate --model Qwen/Qwen2.5-1.5B --hardware detect
+  <h2>Step 2: Initialize Your Project (30 seconds)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro init my-first-model
+cd my-first-model
   </pre>
 
-  <p>
-    MoroAI calculates sequence lengths and activation footprints, configuring micro-batch size and LoRA rank (e.g. <code>lora_r=16</code>, <code>lora_alpha=32</code>) to maximize speed without risking an out-of-memory abort.
-  </p>
+  <p>This creates a reproducible workspace:</p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-gray-300">
+my-first-model/
+├── moro.yaml          # Project configuration & recipe
+├── data/
+│   └── raw/           # Raw training data inputs
+├── runs/              # Training checkpoints & telemetry
+├── releases/          # Exported GGUF models & SBOMs
+└── eval/              # Evaluation suites
+  </pre>
 
-  <h2>Step 4: Launch Self-Healing Training</h2>
-  <p>Start local fine-tuning:</p>
+  <h2>Step 3: Add Your Data (1 minute)</h2>
+  <p>Create a sample customer support dataset:</p>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300">
+cat &gt; data/raw/support_data.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "user", "content": "How do I reset my password?"}, {"role": "assistant", "content": "Go to Settings > Security > Reset Password."}]}`}
+{`{"messages": [{"role": "user", "content": "What is your refund policy?"}, {"role": "assistant", "content": "We offer a 30-day money-back guarantee on all purchases."}]}`}
+{`{"messages": [{"role": "user", "content": "How do I contact support?"}, {"role": "assistant", "content": "You can reach our support team at support@example.com."}]}`}
+EOF
+  </pre>
+
+  <p>Ensure <code>moro.yaml</code> references your raw data:</p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+dataset:
+  source: ./data/raw/support_data.jsonl
+  format: jsonl
+  </pre>
+
+  <h2>Step 4: Build the Dataset with MI Guard (30 seconds)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro data build
+  </pre>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+✓ Loaded 3 samples
+✓ After deduplication: 3 samples
+✓ MI Guard: 1 rare domain landmark protected
+✓ Split: train=2, val=1, eval=0
+✓ Dataset compiled to data/compiled
+  </pre>
+
+  <h2>Step 5: Train Your Model (2 minutes)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
 moro train
   </pre>
 
-  <p>
-    If a sudden spike in token sequence length triggers a memory warning, the 5-step autonomous recovery engine intervenes, flushes cache, adjusts gradient accumulation on the fly, and resumes.
-  </p>
-
-  <h2>Step 5: Run Multi-Layer Evaluation</h2>
-  <p>Certify the model against deterministic format rules and semantic drift tests:</p>
-
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
-moro eval compare --suite full
+  <p>MoroAI detects your hardware, audits VRAM memory safety, and runs local fine-tuning:</p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+✓ Hardware detected: NVIDIA GeForce RTX 4070 (12GB)
+✓ Recipe generated: lora_r=16, lr=2e-4, batch=2, accum=8
+✓ Training started: run_1234567890
+✓ Step 50/100 | Loss: 1.42 | VRAM: 6.2GB
+✓ Training completed in 45s (Zero OOM)
   </pre>
 
-  <h2>Step 6: One-Click Deploy to Ollama</h2>
-  <p>Quantize your fine-tuned weights into GGUF format and register into your local Ollama serving engine:</p>
-
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
-moro release deploy --target ollama
+  <h2>Step 6: Deploy to Ollama (30 seconds)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+moro release export --run-id run_1234567890 --version v1.0.0
+moro release deploy --target ollama --version v1.0.0
   </pre>
 
-  <p>Test your model immediately from any terminal or local app:</p>
+  <h2>Step 7: Test Your Private Model (30 seconds)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`# Test locally via Ollama CLI:
+ollama run my-first-model:v1.0.0 "How do I reset my password?"
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-emerald-400">
-ollama run my-model:v1 "Explain our custom refund workflow"
+# Or via the OpenAI-compatible local REST API:
+curl http://localhost:11434/api/generate -d '{
+  "model": "my-first-model:v1.0.0",
+  "prompt": "How do I reset my password?",
+  "stream": false
+}'`}
   </pre>
 
-  <h2>Bonus: Launch Mission Control Web UI</h2>
-  <p>Prefer a visual interface? Launch the interactive browser dashboard at any time:</p>
+  <h2>What Just Happened?</h2>
+  <div class="not-prose my-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center gap-2 mb-1.5 text-cyan-400 font-bold text-xs">
+        <Database class="w-4 h-4" />
+        <span>Data Curated</span>
+      </div>
+      <p class="text-gray-400 text-xs">
+        Raw data was parsed, deduplicated, and scored with information-theoretic token density.
+      </p>
+    </div>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-purple-300">
-moro dashboard --port 8080
-  </pre>
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center gap-2 mb-1.5 text-emerald-400 font-bold text-xs">
+        <Cpu class="w-4 h-4" />
+        <span>Hardware Aware</span>
+      </div>
+      <p class="text-gray-400 text-xs">
+        An optimal LoRA recipe was synthesized to guarantee zero out-of-memory crashes on your GPU.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center gap-2 mb-1.5 text-purple-400 font-bold text-xs">
+        <Rocket class="w-4 h-4" />
+        <span>Model Deployed</span>
+      </div>
+      <p class="text-gray-400 text-xs">
+        Adapter weights were quantized to GGUF format and registered directly into the local Ollama runtime.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center gap-2 mb-1.5 text-emerald-400 font-bold text-xs">
+        <Check class="w-4 h-4" />
+        <span>100% Private</span>
+      </div>
+      <p class="text-gray-400 text-xs">
+        Zero tokens, weights, or logs left your workstation. Complete data sovereignty achieved.
+      </p>
+    </div>
+  </div>
 
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
-    <a
-      href="/docs/getting-started/installation/"
-      class="text-xs font-semibold text-gray-400 hover:text-white transition-colors"
-    >
-      ← Installation
+    <a href="/docs/getting-started/installation/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Installation Guide
     </a>
-    <a
-      href="/docs/api/cli/"
-      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors"
-    >
-      <span>CLI Command Reference</span>
+    <a href="/docs/getting-started/first-model/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Deep First Model Guide</span>
       <ArrowRight class="w-3.5 h-3.5" />
     </a>
   </div>
