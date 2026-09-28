@@ -1,0 +1,42 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Shield, CheckCircle2 } from 'lucide-react';
+
+const title = 'Multi-Layer Eval Harness — MoroAI Architecture';
+const description = 'Deterministic rule validation, semantic LLM accuracy, and adversarial stress testing.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/concepts/eval-harness/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Subsystem 05
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Multi-Layer Eval Harness</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Comprehensive model certification across deterministic rules, semantic judges, and adversarial perturbations.
+    </p>
+  </div>
+
+  <h2>Four Testing Barriers</h2>
+  <ol>
+    <li><strong>Deterministic Strict Rules:</strong> Validates JSON schema adherence, required keywords, and forbidden terms using regular expressions.</li>
+    <li><strong>Semantic LLM Judge:</strong> Compares output reasoning steps against domain reference ground truth.</li>
+    <li><strong>Distribution Drift Detection:</strong> Quantifies embedding shift using the Wasserstein metric to prevent catastrophic forgetting.</li>
+    <li><strong>Adversarial Perturbation Testing:</strong> Injects syntactic typos and character swaps to test output stability under noisy user input.</li>
+  </ol>
+
+  <h2>Running Evaluations</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro eval run --checkpoint ./runs/run_01/checkpoints/best/ --suite ./eval/suite.yaml
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/training-engine/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Self-Healing Engine
+    </a>
+    <a href="/docs/concepts/drift-detection/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Drift Detection</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

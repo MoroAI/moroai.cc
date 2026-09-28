@@ -1,0 +1,42 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, RefreshCcw, CheckCircle2 } from 'lucide-react';
+
+const title = 'DPO Feedback Flywheel — MoroAI Architecture';
+const description = 'Continuous model improvement through local user feedback mining and Direct Preference Optimization.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/concepts/flywheel/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Subsystem 06
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">DPO Feedback Flywheel</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Closing the local loop: mining production operational feedback into chosen/rejected preference pairs for continuous model alignment.
+    </p>
+  </div>
+
+  <h2>How the Flywheel Works</h2>
+  <ol>
+    <li><strong>Production Interaction Capture:</strong> Captures completions, operator corrections, and rating votes from local user sessions.</li>
+    <li><strong>Preference Extraction:</strong> When an operator manually edits a model completion, MoroAI pairs the prompt with the human edit as the <code>chosen</code> response and the original completion as the <code>rejected</code> response.</li>
+    <li><strong>Quality Filtering:</strong> Eliminates ambiguous feedback pairs where the margin of preference is below 0.3.</li>
+    <li><strong>Offline DPO Cycle:</strong> Automatically triggers a local Direct Preference Optimization alignment round once sufficient preference data accumulates.</li>
+  </ol>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-amber-300">
+# Process interaction feedback into DPO preference pairs:
+moro flywheel process --interactions ./logs/chat.jsonl --output ./data/dpo_pairs.jsonl
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/drift-detection/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Drift Detection
+    </a>
+    <a href="/docs/concepts/governance/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Release Governance & SBOM</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

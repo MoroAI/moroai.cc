@@ -1,0 +1,52 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, GitPullRequest, Code2, CheckCircle2 } from 'lucide-react';
+
+const title = 'Contributing Guide — MoroAI Documentation';
+const description = 'How to develop, test, and contribute pull requests to the open-source MoroAI repository.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/guides/contributing/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Open Source
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Contributing to MoroAI</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Guidelines for submitting bug reports, writing test cases, and opening pull requests.
+    </p>
+  </div>
+
+  <h2>Setting Up Local Development</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+# Clone the repository
+git clone https://github.com/MoroAI/moro.git
+cd moro
+
+# Install in editable mode with development extras
+pip install -e '.[dev,train]'
+  </pre>
+
+  <h2>Running the Test Suite</h2>
+  <p>All PRs must maintain 100% pass rates across the test suite:</p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-400">
+pytest
+  </pre>
+
+  <h2>Code Standards</h2>
+  <ul>
+    <li>Format code with <code>ruff</code> and <code>black</code>.</li>
+    <li>Ensure all CLI arguments include descriptive help text.</li>
+    <li>Include unit tests under <code>tests/</code> for all new functions.</li>
+  </ul>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/guides/privacy/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Air-Gapped Privacy
+    </a>
+    <a href="/community" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Join the Community</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

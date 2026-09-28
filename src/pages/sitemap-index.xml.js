@@ -11,10 +11,46 @@ export async function GET() {
     { url: '/blog/epistemic-data-curation/', changefreq: 'monthly', priority: 0.8 },
     { url: '/blog/oom-auto-recovery/', changefreq: 'monthly', priority: 0.8 },
     { url: '/blog/dpo-flywheel/', changefreq: 'monthly', priority: 0.8 },
+    // Getting Started
     { url: '/docs/getting-started/introduction/', changefreq: 'weekly', priority: 0.9 },
     { url: '/docs/getting-started/installation/', changefreq: 'weekly', priority: 0.9 },
     { url: '/docs/getting-started/quickstart/', changefreq: 'weekly', priority: 0.9 },
+    { url: '/docs/getting-started/first-model/', changefreq: 'weekly', priority: 0.9 },
+    // Concepts
+    { url: '/docs/concepts/overview/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/concepts/data-compiler/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/concepts/ppci-filtering/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/concepts/lineage-graphs/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/concepts/recipe-engine/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/concepts/training-engine/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/concepts/eval-harness/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/concepts/drift-detection/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/concepts/flywheel/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/concepts/governance/', changefreq: 'weekly', priority: 0.8 },
+    // Cookbook
+    { url: '/docs/cookbook/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/cookbook/support-bot/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/cookbook/json-extractor/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/cookbook/code-assistant/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/cookbook/document-summarizer/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/cookbook/medical-qa/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/cookbook/legal-analyzer/', changefreq: 'weekly', priority: 0.8 },
+    // API Reference
     { url: '/docs/api/cli/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/api/python/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/api/rest/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/api/websocket/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/api/plugin-api/', changefreq: 'weekly', priority: 0.8 },
+    // Deployment
+    { url: '/docs/deployment/ollama/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/deployment/docker/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/deployment/kubernetes/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/deployment/production/', changefreq: 'weekly', priority: 0.8 },
+    // Guides
+    { url: '/docs/guides/troubleshooting/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/guides/performance/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/guides/privacy/', changefreq: 'weekly', priority: 0.8 },
+    { url: '/docs/guides/contributing/', changefreq: 'weekly', priority: 0.8 },
   ];
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

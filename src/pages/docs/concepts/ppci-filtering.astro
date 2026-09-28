@@ -1,0 +1,64 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
+
+const title = 'PPMI & Information Content — MoroAI Architecture';
+const description = 'Mathematical formulation of Positive Pointwise Mutual Information and Resnik Information Content in MoroAI.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/concepts/ppci-filtering/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Theory & Math
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">PPMI & Information Content</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Quantifying semantic domain specificity and conceptual rarity in training datasets.
+    </p>
+  </div>
+
+  <h2>1. Positive Pointwise Mutual Information (PPMI)</h2>
+  <p>
+    Pointwise Mutual Information measures the statistical dependency between a vocabulary token $w$ and the enterprise domain corpus $D$:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+{`PPMI(w, D) = max(0, log2( P(w | D) / P(w | GeneralCorpus) ))`}
+  </pre>
+
+  <p>
+    Tokens with high PPMI scores represent high-value domain vocabulary (e.g. <code>pharmacokinetics</code>, <code>depreciation</code>, <code>indemnification</code>). Tokens with zero PPMI represent generic English stop words.
+  </p>
+
+  <h2>2. Resnik Information Content</h2>
+  <p>
+    Concept specificity is measured through Resnik's formulation of Information Content (IC):
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+{`IC(c) = -log2( P(c) )`}
+  </pre>
+
+  <p>
+    Rare concepts possess high Information Content. Samples with high average IC contain the dense reasoning steps that fine-tuning requires.
+  </p>
+
+  <h2>3. k-NN Embedding Density</h2>
+  <p>
+    To verify whether a sample sits in the dense interior of the training distribution or on its perimeter, MoroAI computes the mean cosine similarity to its $k$-nearest semantic neighbors:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-sky-300">
+{`Density(x_i) = (1 / k) * sum_{j in KNN(x_i)} CosineSimilarity(v_i, v_j)`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/data-compiler/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Epistemic Data Compiler
+    </a>
+    <a href="/docs/concepts/lineage-graphs/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Lineage Graphs</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

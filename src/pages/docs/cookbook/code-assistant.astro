@@ -1,0 +1,47 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Code, CheckCircle2 } from 'lucide-react';
+
+const title = 'Internal Code Assistant — MoroAI Cookbook';
+const description = 'Adapt a local model on internal SDKs, private APIs, and organization coding conventions.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/cookbook/code-assistant/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Cookbook 03
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Internal Code Assistant</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Train a coding model on your private internal repositories, company frameworks, and architectural style rules.
+    </p>
+  </div>
+
+  <h2>1. Data Extraction from Git Repositories</h2>
+  <p>
+    Extract functions and docstrings from your private codebase into instruction-following pairs:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`{"messages": [
+  {"role": "user", "content": "How do I initialize an authenticated client with our internal PaymentGateway SDK?"},
+  {"role": "assistant", "content": "from internal_payments import PaymentClient\\n\\nclient = PaymentClient.from_env()\\nres = client.authorize(amount_cents=1000, currency=\\"USD\\")"}
+]}`}
+  </pre>
+
+  <h2>2. Compile with Information Entropy</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro data build --source ./data/internal_code.jsonl --mi-guard-threshold 0.90
+moro train
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cookbook/json-extractor/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← JSON Extractor
+    </a>
+    <a href="/docs/cookbook/document-summarizer/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Document Summarizer</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

@@ -1,0 +1,113 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Layers, Database, Cpu, Zap, Shield, Rocket, RefreshCcw } from 'lucide-react';
+
+const title = 'System Overview — MoroAI Architecture';
+const description = 'High-level architectural design and subsystem lifecycle of the MoroAI model adaptation platform.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/concepts/overview/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Architecture
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">System Architecture Overview</h1>
+    <p class="text-gray-400 text-base mt-2">
+      How MoroAI's six core architectural subsystems assemble into a closed-loop local model adaptation foundry.
+    </p>
+  </div>
+
+  <h2>Architectural Layers</h2>
+  <p>
+    MoroAI is designed as an integrated six-layer pipeline that transforms raw unstructured data into deployed, continuously self-improving local models:
+  </p>
+
+  <div class="not-prose space-y-4 my-8">
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+        <Database class="w-5 h-5" />
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">1. Epistemic Data Layer</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Ingests raw CSV, JSONL, and text documents. Applies Positive Pointwise Mutual Information (PPMI), Resnik Information Content, and the MI Guard to retain critical domain corner cases while eliminating redundancy.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+        <Cpu class="w-5 h-5" />
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">2. Hardware-Aware Recipe Layer</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Probes local GPU architecture (CUDA, Apple Silicon Metal, ROCm). Mathematically computes activation memory and parameter gradients to output a zero-OOM <code>moro.yaml</code> recipe.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
+        <Zap class="w-5 h-5" />
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">3. Self-Healing Execution Layer</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Executes QLoRA / LoRA fine-tuning under an active supervisor. Catches CUDA memory limits and loss spikes with a 5-step autonomous recovery sequence.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 shrink-0">
+        <Shield class="w-5 h-5" />
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">4. Multi-Layer Evaluation Layer</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Tests checkpoints across deterministic schema constraints, semantic LLM accuracy, Wasserstein distribution drift, and adversarial perturbation invariance.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
+        <Rocket class="w-5 h-5" />
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">5. Release Governance & Serving Layer</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Quantizes weights to GGUF (Q4_K_M/Q8_0), signs cryptographic SHA-256 SBOM provenance records, and injects Modelfiles directly into local Ollama or vLLM engines.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+        <RefreshCcw class="w-5 h-5" />
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">6. DPO Continuous Alignment Layer</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Mines real-world user interactions and feedback logs for chosen/rejected preference pairs to trigger offline alignment loops.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <h2>State Management & Lineage DAG</h2>
+  <p>
+    All operations are tracked in a local SQLite database (<code>.moro/state.db</code>) modeled as a Directed Acyclic Graph (DAG). Every deployed model can be audited backward to the exact data lines, token entropy, hyperparameter seeds, and hardware profile used in its creation.
+  </p>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/getting-started/first-model/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Your First Model
+    </a>
+    <a href="/docs/concepts/data-compiler/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Data Compiler & MI Guard</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

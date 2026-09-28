@@ -1,0 +1,51 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Server, Terminal } from 'lucide-react';
+
+const title = 'Mission Control REST API — MoroAI Documentation';
+const description = 'HTTP endpoints exposed by the MoroAI daemon for dataset uploads, training control, and telemetry queries.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/api/rest/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      HTTP Endpoints
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Mission Control REST API</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Control training runs, query GPU metrics, and manage model releases programmatically over HTTP.
+    </p>
+  </div>
+
+  <h2>Endpoints</h2>
+
+  <h3><code>GET /api/health</code></h3>
+  <p>Returns daemon status and system diagnostic metrics.</p>
+
+  <h3><code>POST /api/datasets/upload</code></h3>
+  <p>Uploads a raw dataset file (.jsonl, .csv) for asynchronous compilation.</p>
+
+  <h3><code>POST /api/train/start</code></h3>
+  <p>Starts an asynchronous training run with custom recipe overrides.</p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`curl -X POST http://localhost:8080/api/train/start \\
+  -H "Content-Type: application/json" \\
+  -d '{"model": "Qwen/Qwen2.5-1.5B", "epochs": 3}'`}
+  </pre>
+
+  <h3><code>POST /api/train/stop</code></h3>
+  <p>Gracefully terminates the active training process and saves intermediate checkpoints.</p>
+
+  <h3><code>GET /api/models</code></h3>
+  <p>Lists all local fine-tuned checkpoints and their evaluation gate scores.</p>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/api/python/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Python SDK
+    </a>
+    <a href="/docs/api/websocket/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>WebSocket API</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

@@ -1,0 +1,39 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Stethoscope, CheckCircle2 } from 'lucide-react';
+
+const title = 'Medical Q&A System — MoroAI Cookbook';
+const description = 'Adapt clinical models locally with strict privacy and MI Guard terminology preservation.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/cookbook/medical-qa/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Cookbook 05
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Medical Q&A System</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Train clinical models with guaranteed privacy (HIPAA compliant on-premise) and zero loss of rare pharmacological terms.
+    </p>
+  </div>
+
+  <h2>1. Activating MI Guard for Pharmacological Terms</h2>
+  <p>
+    Clinical datasets often have rare contraindications that must never be discarded during cleaning:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro data build --source ./clinical_notes.jsonl --mi-guard-threshold 0.82
+moro train
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cookbook/document-summarizer/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Document Summarizer
+    </a>
+    <a href="/docs/cookbook/legal-analyzer/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Legal Document Analyzer</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

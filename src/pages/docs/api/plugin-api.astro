@@ -1,0 +1,52 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Boxes, Code } from 'lucide-react';
+
+const title = 'Plugin & Extensibility API — MoroAI Documentation';
+const description = 'How to write custom data loaders, loss functions, evaluators, and deployment targets using Python entry points.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/api/plugin-api/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Extensions
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Plugin Architecture API</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Extend MoroAI with custom database connectors, proprietary loss objectives, and enterprise deployment engines.
+    </p>
+  </div>
+
+  <h2>Entry Points Specification</h2>
+  <p>
+    Plugins register themselves in their <code>pyproject.toml</code> under the <code>moro.plugins</code> namespace:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`[project.entry-points."moro.plugins"]
+custom_loader = "my_moro_plugin.loaders:PostgresDataLoader"
+custom_target = "my_moro_plugin.deploy:KubeflowTarget"`}
+  </pre>
+
+  <h2>Writing a Custom Data Loader</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+{`from moro.core.plugins import BaseDataLoader
+
+class PostgresDataLoader(BaseDataLoader):
+    name = "postgres"
+
+    def load(self, connection_uri: str, query: str):
+        # Fetch rows and yield standard messages dictionary
+        yield {"messages": [{"role": "user", "content": "..."}]}`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/api/websocket/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← WebSocket API
+    </a>
+    <a href="/docs/deployment/ollama/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Deploy to Ollama</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

@@ -1,0 +1,44 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Zap, Cpu, CheckCircle2 } from 'lucide-react';
+
+const title = 'Consumer GPU Performance Tuning — MoroAI Documentation';
+const description = 'Optimizing training throughput and memory efficiency on RTX 3060, 4070, and Apple Silicon chips.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/guides/performance/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Hardware Optimization
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Consumer GPU Performance Tuning</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Techniques to maximize tokens/second and train 1.5B–14B models on consumer graphics cards.
+    </p>
+  </div>
+
+  <h2>1. Flash Attention 2 & SDPA</h2>
+  <p>
+    Ensure PyTorch 2.0+ uses scaled dot-product attention (SDPA) or Flash Attention 2 for 2.5x speedups and 50% activation memory reduction.
+  </p>
+
+  <h2>2. 8-Bit AdamW Optimizer</h2>
+  <p>
+    Using <code>paged_adamw_8bit</code> cuts optimizer state memory footprint by 75% compared to standard FP32 AdamW without any drop in model quality.
+  </p>
+
+  <h2>3. LoRA Rank & Target Modules</h2>
+  <p>
+    Setting <code>lora_r=16</code> with <code>lora_alpha=32</code> provides 98% of the expressive power of full fine-tuning with only 0.2% of the trainable parameters.
+  </p>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/guides/troubleshooting/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Troubleshooting
+    </a>
+    <a href="/docs/guides/privacy/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Air-Gapped Privacy</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

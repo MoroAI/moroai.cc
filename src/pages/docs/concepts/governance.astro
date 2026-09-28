@@ -1,0 +1,58 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, FileCheck, ShieldCheck, Lock } from 'lucide-react';
+
+const title = 'Release Governance & SBOM — MoroAI Architecture';
+const description = 'Cryptographic Software Bill of Materials (SBOM), audit trails, and automated release gates in MoroAI.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/concepts/governance/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Compliance & Audit
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Release Governance & Cryptographic SBOM</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Auditable model provenance binding data, recipes, evaluations, and weights into an immutable Software Bill of Materials.
+    </p>
+  </div>
+
+  <h2>Cryptographic Bill of Materials (SBOM)</h2>
+  <p>
+    Regulated industries cannot deploy black-box models without proof of training lineage. MoroAI automatically generates a signed JSON manifest for every release candidate:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+{`{
+  "release_id": "rel_2026_09_28_01",
+  "model_name": "moro-enterprise:v1.0.0",
+  "provenance": {
+    "dataset_sha256": "8f3b2049e0c19a0a...",
+    "recipe_sha256": "44ea1041b8a9018f...",
+    "base_model": "Qwen/Qwen2.5-1.5B",
+    "checkpoint_sha256": "d9810a9c72e19a0f..."
+  },
+  "evaluation_gate": {
+    "passed": true,
+    "deterministic_rule_pass_rate": 1.0,
+    "drift_score_wasserstein": 0.021,
+    "eval_signature": "sig_rsa4096_d892a01"
+  }
+}`}
+  </pre>
+
+  <h2>Verifying a Model</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro release verify --release-id rel_2026_09_28_01
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/flywheel/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← DPO Flywheel
+    </a>
+    <a href="/docs/cookbook/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Cookbook Overview</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

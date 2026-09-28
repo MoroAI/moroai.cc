@@ -1,0 +1,54 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, FileJson, CheckCircle2 } from 'lucide-react';
+
+const title = 'Structured JSON Extractor — MoroAI Cookbook';
+const description = 'Fine-tune a model to extract strict, schema-compliant JSON from messy invoices and documents.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/cookbook/json-extractor/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Cookbook 02
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Structured JSON Extractor</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Train a model to consistently output valid, parsable JSON without markdown backticks or hallucinations.
+    </p>
+  </div>
+
+  <h2>1. Problem & Schema</h2>
+  <p>
+    Generic LLMs frequently insert conversational preamble or markdown formatting when asked to extract JSON. By adapting a 1.5B or 3B model on prompt-JSON pairs, you achieve 100% deterministic compliance:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`{"messages": [
+  {"role": "user", "content": "Extract invoice fields: Wire invoice #9810 from Acme Corp for $4,500 due on 2026-10-15."},
+  {"role": "assistant", "content": "{\\"invoice_number\\": \\"9810\\", \\"vendor\\": \\"Acme Corp\\", \\"amount\\": 4500.0, \\"due_date\\": \\"2026-10-15\\"}"}
+]}`}
+  </pre>
+
+  <h2>2. Validation Rule Specification</h2>
+  <p>
+    Enforce deterministic validation in <code>eval/suite.yaml</code>:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+{`name: json-compliance-gate
+rules:
+  - type: strict_json_schema
+    required_keys: ["invoice_number", "vendor", "amount", "due_date"]
+    disallow_markdown_fences: true`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cookbook/support-bot/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Support Bot
+    </a>
+    <a href="/docs/cookbook/code-assistant/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Code Assistant</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

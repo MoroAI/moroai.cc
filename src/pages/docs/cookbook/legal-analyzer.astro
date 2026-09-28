@@ -1,0 +1,42 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Scale, CheckCircle2 } from 'lucide-react';
+
+const title = 'Legal Document Analyzer — MoroAI Cookbook';
+const description = 'Audit contracts, NDAs, and liability agreements locally without cloud exposure.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/cookbook/legal-analyzer/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Cookbook 06
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Legal Document Analyzer</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Train a model to spot indemnification clauses and liability caps without uploading client agreements to public APIs.
+    </p>
+  </div>
+
+  <h2>1. Absolute Air-Gapped Privacy</h2>
+  <p>
+    Legal agreements are subject to strict client confidentiality. MoroAI guarantees that weights, training pairs, and prompt inferences execute entirely within your air-gapped network.
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+# Build, train, and deploy locally:
+moro init legal-reviewer
+moro data build --source ./data/ndas.jsonl
+moro train
+moro release deploy --target ollama --model-name legal-advisor:v1
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cookbook/medical-qa/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Medical Q&A
+    </a>
+    <a href="/docs/api/python/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Python SDK Reference</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

@@ -1,0 +1,53 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Wrench, AlertTriangle, Terminal } from 'lucide-react';
+
+const title = 'Troubleshooting Guide — MoroAI Documentation';
+const description = 'Common CUDA issues, VRAM fragmentation solutions, and system diagnostics with moro doctor.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/guides/troubleshooting/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Diagnostics
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Troubleshooting & Diagnostics</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Quickly resolve common CUDA allocator errors, driver incompatibilities, and dataset format warnings.
+    </p>
+  </div>
+
+  <h2>1. Run System Health Check</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro doctor
+  </pre>
+
+  <h2>2. CUDA Out Of Memory (OOM) Errors</h2>
+  <p>
+    If training experiences memory pressure despite auto-recovery, adjust your configuration:
+  </p>
+  <ul>
+    <li>Enable gradient checkpointing: <code>gradient_checkpointing: true</code> in <code>moro.yaml</code>.</li>
+    <li>Reduce micro-batch size to 1 and double gradient accumulation: <code>micro_batch_size: 1</code>.</li>
+    <li>Clamp sequence length: <code>max_seq_length: 1024</code>.</li>
+  </ul>
+
+  <h2>3. MPS Accelerator (Apple Silicon)</h2>
+  <p>
+    On Apple Silicon M-series Macs, ensure PyTorch uses MPS:
+  </p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-400">
+export PYTORCH_ENABLE_MPS_FALLBACK=1
+moro diagnose
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/deployment/production/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Production Best Practices
+    </a>
+    <a href="/docs/guides/performance/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Performance Tuning</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

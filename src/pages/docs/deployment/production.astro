@@ -1,0 +1,44 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+
+const title = 'Production Best Practices — MoroAI Documentation';
+const description = 'Checklist and guidelines for operating local fine-tuned language models in production environments.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/deployment/production/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Production Checklist
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Production Best Practices</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Operational standards for reliability, low-latency inference, and continuous drift monitoring.
+    </p>
+  </div>
+
+  <h2>1. Quantization Selection</h2>
+  <p>
+    For consumer GPU inference, choose <code>Q4_K_M</code> for a near-lossless balance of precision and speed. For high-precision coding and mathematical reasoning, deploy <code>Q8_0</code> or FP16.
+  </p>
+
+  <h2>2. Automated Release Gate Enforcement</h2>
+  <p>
+    Never deploy an untested adapter directly into production. Enforce <code>moro eval compare --gate-strict</code> in CI before allowing promotion into production registries.
+  </p>
+
+  <h2>3. Continuous Lineage Backup</h2>
+  <p>
+    Archive <code>.moro/state.db</code> and release manifests alongside model weights to maintain verifiable regulatory compliance.
+  </p>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/deployment/kubernetes/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Kubernetes & Slurm
+    </a>
+    <a href="/docs/guides/troubleshooting/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Troubleshooting Guide</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

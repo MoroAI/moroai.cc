@@ -1,6 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import { BookOpen, Terminal, ChevronRight, FileText, Sparkles, Layers } from 'lucide-react';
+import { BookOpen, Terminal, ChevronRight, FileText, Sparkles, Layers, Cpu, Rocket, Shield, Wrench } from 'lucide-react';
 
 interface Props {
   title: string;
@@ -16,26 +16,63 @@ const docNav = [
     items: [
       { label: 'Introduction', href: '/docs/getting-started/introduction/' },
       { label: 'Installation', href: '/docs/getting-started/installation/' },
-      { label: 'Quick Start', href: '/docs/getting-started/quickstart/' },
+      { label: 'Quickstart (5 min)', href: '/docs/getting-started/quickstart/' },
+      { label: 'Your First Model', href: '/docs/getting-started/first-model/' },
     ],
   },
   {
-    category: 'Subsystems & Architecture',
+    category: 'Architecture Deep-Dive',
     items: [
-      { label: 'Epistemic Data Compiler', href: '/features#data-compiler' },
-      { label: 'Hardware Recipe Engine', href: '/features#recipe-engine' },
-      { label: 'Self-Healing Engine', href: '/features#training-engine' },
-      { label: 'Multi-Layer Eval Harness', href: '/features#eval-harness' },
-      { label: 'Release Governance & SBOM', href: '/features#governance' },
-      { label: 'DPO Feedback Flywheel', href: '/features#flywheel' },
+      { label: 'System Overview', href: '/docs/concepts/overview/' },
+      { label: 'Epistemic Data Compiler', href: '/docs/concepts/data-compiler/' },
+      { label: 'PPMI & Information Content', href: '/docs/concepts/ppci-filtering/' },
+      { label: 'Lineage Graphs & Provenance', href: '/docs/concepts/lineage-graphs/' },
+      { label: 'Hardware Recipe Engine', href: '/docs/concepts/recipe-engine/' },
+      { label: 'Self-Healing Training Engine', href: '/docs/concepts/training-engine/' },
+      { label: 'Multi-Layer Eval Harness', href: '/docs/concepts/eval-harness/' },
+      { label: 'Statistical Drift Detection', href: '/docs/concepts/drift-detection/' },
+      { label: 'DPO Feedback Flywheel', href: '/docs/concepts/flywheel/' },
+      { label: 'Release Governance & SBOM', href: '/docs/concepts/governance/' },
     ],
   },
   {
-    category: 'API & Command Reference',
+    category: 'Cookbook & Real-World Examples',
     items: [
-      { label: 'CLI Commands', href: '/docs/api/cli/' },
-      { label: 'Python SDK', href: '/docs/api/cli/#python-api' },
-      { label: 'Configuration (moro.yaml)', href: '/docs/api/cli/#config-spec' },
+      { label: 'Cookbook Overview', href: '/docs/cookbook/' },
+      { label: 'Customer Support Bot', href: '/docs/cookbook/support-bot/' },
+      { label: 'Structured JSON Extractor', href: '/docs/cookbook/json-extractor/' },
+      { label: 'Code Assistant', href: '/docs/cookbook/code-assistant/' },
+      { label: 'Document Summarizer', href: '/docs/cookbook/document-summarizer/' },
+      { label: 'Medical Q&A System', href: '/docs/cookbook/medical-qa/' },
+      { label: 'Legal Document Analyzer', href: '/docs/cookbook/legal-analyzer/' },
+    ],
+  },
+  {
+    category: 'CLI & API Reference',
+    items: [
+      { label: 'CLI Commands Overview', href: '/docs/api/cli/' },
+      { label: 'Python SDK Reference', href: '/docs/api/python/' },
+      { label: 'Mission Control REST API', href: '/docs/api/rest/' },
+      { label: 'Live Telemetry WebSocket', href: '/docs/api/websocket/' },
+      { label: 'Plugin & Extensibility API', href: '/docs/api/plugin-api/' },
+    ],
+  },
+  {
+    category: 'Production Deployment',
+    items: [
+      { label: 'Local Ollama Deployment', href: '/docs/deployment/ollama/' },
+      { label: 'Docker Containerization', href: '/docs/deployment/docker/' },
+      { label: 'Kubernetes & Slurm Clusters', href: '/docs/deployment/kubernetes/' },
+      { label: 'Production Best Practices', href: '/docs/deployment/production/' },
+    ],
+  },
+  {
+    category: 'Advanced Guides',
+    items: [
+      { label: 'Troubleshooting & Diagnostics', href: '/docs/guides/troubleshooting/' },
+      { label: 'Consumer GPU Performance Tuning', href: '/docs/guides/performance/' },
+      { label: 'Air-Gapped & Sovereign Privacy', href: '/docs/guides/privacy/' },
+      { label: 'Contributing to MoroAI', href: '/docs/guides/contributing/' },
     ],
   },
 ];
@@ -46,26 +83,26 @@ const docNav = [
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
       {/* Sidebar Navigation */}
       <aside class="lg:col-span-3">
-        <div class="sticky top-28 space-y-8 rounded-2xl border border-dark-800 bg-dark-900/60 p-6 backdrop-blur-xl">
+        <div class="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto space-y-6 rounded-2xl border border-dark-800 bg-dark-900/70 p-5 backdrop-blur-xl">
           <div class="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-moro-400 font-bold border-b border-dark-800 pb-3">
             <BookOpen class="w-4 h-4" />
-            <span>Documentation Index</span>
+            <span>Documentation Hub</span>
           </div>
 
           <nav class="space-y-6">
             {docNav.map((section) => (
               <div>
-                <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-gray-500 mb-2.5">
+                <h4 class="text-[11px] font-mono font-bold uppercase tracking-wider text-gray-500 mb-2">
                   {section.category}
                 </h4>
-                <ul class="space-y-1 text-sm">
+                <ul class="space-y-1 text-xs">
                   {section.items.map((item) => {
                     const isActive = currentSlug === item.href;
                     return (
                       <li>
                         <a
                           href={item.href}
-                          class={`block px-3 py-1.5 rounded-lg transition-colors ${
+                          class={`block px-2.5 py-1.5 rounded-lg transition-colors leading-snug ${
                             isActive
                               ? 'bg-moro-500/20 text-moro-300 font-semibold border border-moro-500/30'
                               : 'text-gray-400 hover:text-white hover:bg-dark-800/60'

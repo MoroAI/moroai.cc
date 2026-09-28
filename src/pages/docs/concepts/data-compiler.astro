@@ -1,0 +1,68 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Database, CheckCircle2, ShieldAlert } from 'lucide-react';
+
+const title = 'Epistemic Data Compiler — MoroAI Architecture';
+const description = 'How MoroAI curates raw enterprise data using information theory, token entropy, and the Mutual Information Guard.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/concepts/data-compiler/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Subsystem 01
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Epistemic Data Compiler</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Information-theoretic data curation engineered to retain high-value domain edge cases while eliminating semantic noise.
+    </p>
+  </div>
+
+  <h2>The Fundamental Dilemma in Data Curation</h2>
+  <p>
+    Standard deduplication algorithms (such as MinHash or embedding cosine distance) assume that the frequency of an idea is proportional to its value. In enterprise language model adaptation, this assumption fails catastrophically:
+  </p>
+  <ul>
+    <li><strong>Common generic patterns</strong> (e.g. conversational greetings, boilerplate headers) appear thousands of times.</li>
+    <li><strong>Critical domain facts</strong> (e.g. rare chemical interactions, regulatory exemptions, unusual error codes) appear only once or twice.</li>
+  </ul>
+  <p>
+    When standard clustering runs, high-frequency patterns dominate, while critical edge cases are discarded as "unrepresentative outliers."
+  </p>
+
+  <h2>The MI Guard Solution</h2>
+  <p>
+    MoroAI solves this problem by evaluating every candidate sample with the <strong>Mutual Information (MI) Guard</strong>. The compiler scores samples across three independent dimensions:
+  </p>
+  <ol>
+    <li><strong>Positive Pointwise Mutual Information (PPMI):</strong> Evaluates whether tokens in the sample are tightly associated with the target domain compared to a general language background model.</li>
+    <li><strong>Resnik Information Content (IC):</strong> Measures the statistical specificity and rarity of concepts in the sample.</li>
+    <li><strong>k-NN Embedding Density:</strong> Evaluates whether the sample is part of a dense cluster or sits on an informational boundary.</li>
+  </ol>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300">
+{`# MI Guard Decision Rule:
+if sample.is_outlier() and sample.ppmi > mi_guard_threshold:
+    preserve_sample(sample, reason="MI_GUARD_LANDMARK")
+elif sample.is_outlier() and sample.ppmi <= mi_guard_threshold:
+    prune_sample(sample, reason="NOISY_OUTLIER")`}
+  </pre>
+
+  <h2>Compiler CLI Commands</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+# Build and compile raw data with MI Guard active:
+moro data build --source ./data/raw.jsonl --output ./data/compiled/
+
+# Generate an epistemic quality & entropy report:
+moro data report --compiled-dir ./data/compiled/
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/overview/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← System Overview
+    </a>
+    <a href="/docs/concepts/ppci-filtering/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>PPMI & Information Content</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

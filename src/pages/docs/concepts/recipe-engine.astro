@@ -1,0 +1,52 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Cpu, CheckCircle2, AlertTriangle } from 'lucide-react';
+
+const title = 'Hardware Recipe Engine — MoroAI Architecture';
+const description = 'Pre-flight VRAM memory simulation, tensor footprint calculation, and zero-OOM hyperparameter generation.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/concepts/recipe-engine/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Subsystem 03
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Hardware Recipe Engine</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Eliminating trial-and-error fine-tuning by simulating memory consumption before touching GPU memory.
+    </p>
+  </div>
+
+  <h2>VRAM Mathematical Memory Model</h2>
+  <p>
+    Peak GPU VRAM is modeled prior to training according to four tensor allocations:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-sm text-emerald-300">
+VRAM_Peak = M_base + M_lora + M_optimizer + M_activations + M_context
+  </pre>
+
+  <ul>
+    <li><code>M_base</code>: 4-bit (NF4) or 8-bit quantized frozen base model weights.</li>
+    <li><code>M_lora</code>: Trainable low-rank adapter matrices (determined by rank $r$ and target modules).</li>
+    <li><code>M_optimizer</code>: 8-bit AdamW optimizer states for adapter parameters.</li>
+    <li><code>M_activations</code>: Attention keys, queries, values, and MLP projections scaled by batch size and sequence length.</li>
+    <li><code>M_context</code>: Driver CUDA context overhead (~800MB–1.2GB).</li>
+  </ul>
+
+  <h2>CLI Recipe Command</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+# Automatically audit GPU and generate optimal moro.yaml
+moro recipe generate --model Qwen/Qwen2.5-1.5B --hardware detect
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/lineage-graphs/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Lineage Graphs
+    </a>
+    <a href="/docs/concepts/training-engine/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Self-Healing Engine</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

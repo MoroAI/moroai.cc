@@ -1,0 +1,45 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Activity, LineChart } from 'lucide-react';
+
+const title = 'Statistical Drift Detection — MoroAI Architecture';
+const description = 'Preventing catastrophic forgetting using Wasserstein distance, Jensen-Shannon divergence, and Maximum Mean Discrepancy.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/concepts/drift-detection/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Safety & Alignment
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Statistical Drift Detection</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Preventing catastrophic forgetting and semantic drift during local fine-tuning cycles.
+    </p>
+  </div>
+
+  <h2>Why Drift Detection is Essential</h2>
+  <p>
+    When adapting a base model to a narrow domain, there is high risk of catastrophic forgetting—the model degrades in general reasoning or shifts too drastically in its token probabilities. MoroAI computes three mathematical drift metrics between the base model and adapted candidate:
+  </p>
+
+  <ul>
+    <li><strong>Wasserstein Distance (Earth Mover's Distance):</strong> Measures the minimum work required to transform the output token probability distribution into the base distribution.</li>
+    <li><strong>Jensen-Shannon Divergence (JSD):</strong> Symmetrical bound quantifying distribution divergence.</li>
+    <li><strong>Maximum Mean Discrepancy (MMD):</strong> Measures distance between embedding representations in Reproducing Kernel Hilbert Space (RKHS).</li>
+  </ul>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`# Certified safety gate requires Wasserstein drift < 0.05
+moro eval drift --run-id run_01 --threshold 0.05`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/eval-harness/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Eval Harness
+    </a>
+    <a href="/docs/concepts/flywheel/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>DPO Flywheel</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

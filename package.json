@@ -9,13 +9,13 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "deploy": "wrangler deploy",
     "format": "prettier --write ."
   },
   "dependencies": {
     "@astrojs/mdx": "^3.1.5",
     "@astrojs/react": "^3.6.2",
     "@astrojs/rss": "^4.0.7",
-    "@astrojs/sitemap": "^3.1.6",
     "@astrojs/tailwind": "^5.1.0",
     "@tailwindcss/typography": "^0.5.13",
     "@types/react": "^18.3.3",
@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "prettier": "^3.3.3",
-    "prettier-plugin-astro": "^0.14.1"
+    "prettier-plugin-astro": "^0.14.1",
+    "wrangler": "^4.142.0"
   }
 }

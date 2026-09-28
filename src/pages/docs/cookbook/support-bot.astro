@@ -1,0 +1,47 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, Bot, CheckCircle2 } from 'lucide-react';
+
+const title = 'Customer Support Bot — MoroAI Cookbook';
+const description = 'Build and deploy a local support bot trained on product FAQs and documentation.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/cookbook/support-bot/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Cookbook 01
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Customer Support Bot</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Train a lightweight, accurate customer support bot on your organization's private FAQs and deploy locally.
+    </p>
+  </div>
+
+  <h2>1. Data Schema</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`{"messages": [{"role": "system", "content": "You are a customer support agent for CloudScale."}, {"role": "user", "content": "What is the SLA for enterprise tier uptime?"}, {"role": "assistant", "content": "Enterprise Tier includes a 99.99% monthly uptime guarantee backed by financial service credits under Section 8 of our Master Service Agreement."}]}`}
+  </pre>
+
+  <h2>2. Build & Train</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro init support-bot
+moro data build --source ./data/support.jsonl
+moro train
+  </pre>
+
+  <h2>3. Test with Ollama</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-400">
+moro release deploy --target ollama --model-name support-bot:v1
+ollama run support-bot:v1 "What happens if uptime drops below 99.9%?"
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cookbook/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Cookbook Overview
+    </a>
+    <a href="/docs/cookbook/json-extractor/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>JSON Extractor</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>

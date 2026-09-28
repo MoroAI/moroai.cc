@@ -1,0 +1,48 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { ArrowRight, ShieldCheck, Lock, CheckCircle2 } from 'lucide-react';
+
+const title = 'Air-Gapped & Sovereign Privacy — MoroAI Documentation';
+const description = 'How MoroAI enforces zero external network calls, cryptographic isolation, and local privacy guarantees.';
+---
+
+<DocsLayout title={title} description={description} currentSlug="/docs/guides/privacy/">
+  <div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Security & Sovereignty
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Air-Gapped & Sovereign Privacy</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Architectural guarantees ensuring zero telemetry leakage and complete data sovereignty.
+    </p>
+  </div>
+
+  <h2>1. Zero Cloud Telemetry</h2>
+  <p>
+    MoroAI does not phone home. No usage stats, prompts, weights, or logs are transmitted to external servers. You can run MoroAI completely disconnected from the public internet.
+  </p>
+
+  <h2>2. Built-in PII Redaction Filter</h2>
+  <p>
+    The Epistemic Compiler includes an automated PII detector that flags social security numbers, credit cards, emails, and phone numbers before training begins:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro data build --source ./raw.jsonl --pii-scan --redact-pii
+  </pre>
+
+  <h2>3. Cryptographic Verification</h2>
+  <p>
+    All datasets and model checkpoints are hashed with SHA-256 for internal compliance audits under ISO 27001, HIPAA, and GDPR.
+  </p>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/guides/performance/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Performance Tuning
+    </a>
+    <a href="/docs/guides/contributing/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Contributing Guide</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+</DocsLayout>
