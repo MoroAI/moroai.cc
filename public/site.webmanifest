@@ -1,0 +1,17 @@
+{
+  "name": "MoroAI — Sovereign Local Model Adaptation Foundry",
+  "short_name": "MoroAI",
+  "description": "Transform private datasets into dependable local language models on consumer GPUs without cloud lock-in.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

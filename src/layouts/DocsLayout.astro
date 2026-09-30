@@ -1,7 +1,14 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import MobileDocsNav from '../components/docs/MobileDocsNav';
-import { BookOpen, Terminal, ChevronRight, FileText, Sparkles, Layers, Cpu, Rocket, Shield, Wrench } from 'lucide-react';
+import {
+  BookOpen,
+  ChevronRight,
+  ArrowLeft,
+  ArrowRight,
+  Home,
+  Check
+} from 'lucide-react';
 
 interface Props {
   title: string;
@@ -10,7 +17,12 @@ interface Props {
   ogImage?: string;
 }
 
-const { title, description = 'Official MoroAI Documentation', currentSlug = Astro.url.pathname, ogImage } = Astro.props;
+const {
+  title,
+  description = 'Official MoroAI Documentation',
+  currentSlug = Astro.url.pathname,
+  ogImage,
+} = Astro.props;
 
 const docNav = [
   {
@@ -95,6 +107,17 @@ const docNav = [
     ],
   },
 ];
+
+// Flatten docs to compute breadcrumbs and sequential Prev/Next navigation
+const flatDocs = docNav.flatMap((section) =>
+  section.items.map((item) => ({ ...item, category: section.category }))
+);
+const currentIndex = flatDocs.findIndex(
+  (d) => d.href === currentSlug || d.href.replace(/\/$/, '') === currentSlug.replace(/\/$/, '')
+);
+const prevDoc = currentIndex > 0 ? flatDocs[currentIndex - 1] : null;
+const nextDoc = currentIndex >= 0 && currentIndex < flatDocs.length - 1 ? flatDocs[currentIndex + 1] : null;
+const activeDoc = flatDocs[currentIndex] || { label: title.replace(' — MoroAI Documentation', ''), category: 'Docs' };
 ---
 
 <BaseLayout title={title} description={description} ogImage={ogImage}>
@@ -103,9 +126,14 @@ const docNav = [
       {/* Desktop Sidebar Navigation (Hidden on mobile & tablets < lg) */}
       <aside class="hidden lg:block lg:col-span-3">
         <div class="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto space-y-6 rounded-2xl border border-dark-800 bg-dark-900/70 p-5 backdrop-blur-xl">
-          <div class="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-moro-400 font-bold border-b border-dark-800 pb-3">
-            <BookOpen class="w-4 h-4" />
-            <span>Documentation Hub</span>
+          <div class="flex items-center justify-between border-b border-dark-800 pb-3">
+            <div class="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-moro-400 font-bold">
+              <BookOpen class="w-4 h-4" />
+              <span>Documentation Hub</span>
+            </div>
+            <span class="text-[10px] font-mono text-gray-500 bg-dark-950 px-2 py-0.5 rounded border border-dark-800">
+              v0.1.0
+            </span>
           </div>
 
           <nav class="space-y-6">
@@ -116,7 +144,9 @@ const docNav = [
                 </h4>
                 <ul class="space-y-1 text-xs">
                   {section.items.map((item) => {
-                    const isActive = currentSlug === item.href;
+                    const isActive =
+                      currentSlug === item.href ||
+                      currentSlug.replace(/\/$/, '') === item.href.replace(/\/$/, '');
                     return (
                       <li>
                         <a
@@ -145,7 +175,67 @@ const docNav = [
         <MobileDocsNav client:load docNav={docNav} currentSlug={currentSlug} />
 
         <div class="rounded-3xl border border-dark-800 bg-dark-900/50 p-5 sm:p-8 md:p-12 backdrop-blur-xl shadow-2xl">
+          {/* Breadcrumbs */}
+          <nav aria-label="Breadcrumb" class="not-prose mb-6 flex items-center gap-2 text-xs font-mono text-gray-400 flex-wrap">
+            <a href="/" class="hover:text-white transition-colors flex items-center gap-1">
+              <Home class="w-3.5 h-3.5" />
+              <span class="sr-only">Home</span>
+            </a>
+            <ChevronRight class="w-3.5 h-3.5 text-dark-700" />
+            <a href="/docs/getting-started/introduction/" class="hover:text-white transition-colors">
+              Docs
+            </a>
+            <ChevronRight class="w-3.5 h-3.5 text-dark-700" />
+            <span class="text-gray-400">{activeDoc.category}</span>
+            <ChevronRight class="w-3.5 h-3.5 text-dark-700" />
+            <span class="text-moro-300 font-semibold">{activeDoc.label}</span>
+          </nav>
+
+          {/* Doc Content */}
           <slot />
+
+          {/* Previous / Next Sequential Navigation */}
+          <div class="not-prose mt-12 pt-8 border-t border-dark-800/80 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {prevDoc ? (
+              <a
+                href={prevDoc.href}
+                class="p-4 rounded-2xl bg-dark-950/80 border border-dark-800 hover:border-moro-500/40 transition-all flex flex-col group"
+              >
+                <span class="text-[11px] font-mono text-gray-500 flex items-center gap-1 group-hover:text-moro-400 transition-colors">
+                  <ArrowLeft class="w-3 h-3 group-hover:-translate-x-1 transition-transform" />
+                  <span>Previous Topic</span>
+                </span>
+                <span class="text-sm font-bold text-white mt-1 group-hover:text-moro-200 transition-colors">
+                  {prevDoc.label}
+                </span>
+                <span class="text-[10px] text-gray-400 font-mono mt-0.5">
+                  {prevDoc.category}
+                </span>
+              </a>
+            ) : (
+              <div />
+            )}
+
+            {nextDoc ? (
+              <a
+                href={nextDoc.href}
+                class="p-4 rounded-2xl bg-dark-950/80 border border-dark-800 hover:border-moro-500/40 transition-all flex flex-col sm:items-end text-left sm:text-right group"
+              >
+                <span class="text-[11px] font-mono text-gray-500 flex items-center gap-1 group-hover:text-moro-400 transition-colors">
+                  <span>Next Topic</span>
+                  <ArrowRight class="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <span class="text-sm font-bold text-white mt-1 group-hover:text-moro-200 transition-colors">
+                  {nextDoc.label}
+                </span>
+                <span class="text-[10px] text-gray-400 font-mono mt-0.5">
+                  {nextDoc.category}
+                </span>
+              </a>
+            ) : (
+              <div />
+            )}
+          </div>
         </div>
       </article>
     </div>

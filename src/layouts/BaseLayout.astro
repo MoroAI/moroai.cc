@@ -59,9 +59,10 @@ const finalTags = category ? [category, ...tags] : tags;
       readingTime={readingTime}
     />
 
-    <!-- Favicon -->
+    <!-- Favicon & Manifest -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -80,5 +81,46 @@ const finalTags = category ? [category, ...tags] : tags;
     </div>
 
     <Footer client:load />
+
+    {/* Global Interactive Code Copy Utility */}
+    <script is:inline>
+      function initCodeCopy() {
+        document.querySelectorAll('pre').forEach((pre) => {
+          if (pre.querySelector('.code-copy-btn')) return;
+          pre.classList.add('relative', 'group');
+          const btn = document.createElement('button');
+          btn.className =
+            'code-copy-btn absolute top-3 right-3 px-2 py-1 rounded-lg bg-dark-900/90 border border-dark-700/80 text-[11px] font-mono text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all focus:opacity-100 shadow-md backdrop-blur-md cursor-pointer select-none';
+          btn.textContent = 'Copy';
+          btn.setAttribute('aria-label', 'Copy code snippet');
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const textToCopy = (pre.querySelector('code')?.innerText || pre.innerText)
+              .replace(/\bCopy\b$/, '')
+              .replace(/\bCopied!\b$/, '')
+              .trim();
+            try {
+              if (navigator.clipboard) {
+                await navigator.clipboard.writeText(textToCopy);
+                btn.textContent = 'Copied!';
+                btn.classList.add('text-emerald-400', 'border-emerald-500/40');
+                setTimeout(() => {
+                  btn.textContent = 'Copy';
+                  btn.classList.remove('text-emerald-400', 'border-emerald-500/40');
+                }, 2000);
+              }
+            } catch (err) {
+              console.error('Failed to copy code snippet', err);
+            }
+          });
+          pre.appendChild(btn);
+        });
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCodeCopy);
+      } else {
+        initCodeCopy();
+      }
+    </script>
   </body>
 </html>
