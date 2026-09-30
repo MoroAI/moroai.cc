@@ -1,0 +1,33 @@
+---
+const credits = [
+  { name: 'PyTorch', role: 'Autograd & runtime backbone' },
+  { name: 'Hugging Face Transformers & PEFT', role: 'Model loading and LoRA adapters' },
+  { name: 'TRL & bitsandbytes', role: 'QLoRA training and 4-bit quantization' },
+  { name: 'Ollama & llama.cpp', role: 'Local inference and GGUF packaging' },
+  { name: 'Typer & FastAPI', role: 'CLI and Mission Control API' },
+  { name: 'Astro', role: 'This website and documentation hub' },
+  { name: 'Tailwind CSS', role: 'Design system & glassmorphism' },
+  { name: 'NumPy & SciPy', role: 'Drift statistics and distance metrics' },
+];
+---
+
+<section class="py-20 border-t border-dark-800/80">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold uppercase tracking-wider mb-4">
+      Ecosystem
+    </span>
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">Standing on Shoulders</h2>
+    <p class="text-gray-400 mb-12 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+      MoroAI is a focused, opinionated orchestration platform built on top of extraordinary open science and developer tools. None of this exists without these foundations.
+    </p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+      {credits.map((c) => (
+        <div class="rounded-2xl border border-dark-800 bg-dark-900/60 p-5 hover:border-moro-500/40 hover:bg-dark-900/90 transition-all duration-200">
+          <p class="text-sm font-bold text-white mb-1">{c.name}</p>
+          <p class="text-xs text-gray-400 leading-normal">{c.role}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

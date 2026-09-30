@@ -1,0 +1,50 @@
+---
+const milestones = [
+  { 
+    date: 'Early 2026', 
+    title: 'The Spark & First Prototype', 
+    body: 'Frustration with cloud-API lock-in and fragile fine-tuning scripts becomes a design document. The first private prototype—featuring the epistemic data compiler and QLoRA runner—runs on a single consumer GPU.' 
+  },
+  { 
+    date: 'Mid 2026', 
+    title: 'Open Source Release', 
+    body: 'MoroAI is released to the public under the Apache-2.0 license. v0.1.0 is published to PyPI, bringing hardware-aware recipes and self-healing training to the local AI community.' 
+  },
+  { 
+    date: 'Late 2026', 
+    title: 'The Platform Expands', 
+    body: 'The Mission Control Dashboard, DPO Feedback Flywheel, and enterprise release governance ship. MoroAI transitions from a CLI tool to a complete local adaptation platform.' 
+  },
+  { 
+    date: 'Looking Ahead', 
+    title: 'The Foundation & Ecosystem', 
+    body: 'Stewardship formalized under the MoroAI Foundation. The plugin architecture opens, and the contributor ladder welcomes the next generation of maintainers.' 
+  },
+];
+---
+
+<section class="py-24 bg-dark-950/60 border-y border-dark-800/60 relative overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(56,189,248,0.03),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-4xl mx-auto px-6 relative">
+    <div class="text-center mb-16">
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold uppercase tracking-wider mb-4">
+        Origin & Momentum
+      </span>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">The Journey</h2>
+      <p class="mt-3 text-gray-400 text-sm max-w-xl mx-auto">
+        From a frustrating realization in early 2026 to a full-featured sovereign AI adaptation platform.
+      </p>
+    </div>
+
+    <ol class="relative border-l border-dark-700/80 ml-4 sm:ml-6 space-y-12">
+      {milestones.map((m) => (
+        <li class="ml-8 sm:ml-10 relative group">
+          <span class="absolute -left-[45px] sm:-left-[53px] top-1.5 w-5 h-5 rounded-full bg-dark-950 border-2 border-moro-500 shadow-[0_0_12px_rgba(14,165,233,0.5)] group-hover:scale-125 transition-transform duration-200"></span>
+          <p class="text-xs font-semibold tracking-widest uppercase text-moro-400 font-mono">{m.date}</p>
+          <h3 class="mt-1.5 text-xl font-bold text-white group-hover:text-moro-300 transition-colors">{m.title}</h3>
+          <p class="mt-2 text-sm sm:text-base text-gray-400 leading-relaxed max-w-2xl">{m.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

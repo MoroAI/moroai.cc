@@ -1,9 +1,61 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { Shield, Lock, Terminal, Cpu, Sparkles, Heart, Github } from 'lucide-react';
+import FounderLetter from '../components/about/FounderLetter.astro';
+import Timeline from '../components/about/Timeline.astro';
+import StatsBar from '../components/about/StatsBar.astro';
+import ContributorsWall from '../components/about/ContributorsWall.astro';
+import Acknowledgments from '../components/about/Acknowledgments.astro';
+import Governance from '../components/about/Governance.astro';
+import { Shield, Lock, Terminal, Cpu, Sparkles, Github, MessageSquare, Heart, ArrowRight } from 'lucide-react';
 
-const title = 'About MoroAI — The Movement for Sovereign, Local-First AI';
-const description = 'Learn the story and core principles behind MoroAI: the local-first, mathematically rigorous open-source platform for fine-tuning private language models.';
+const GH_REPO = 'MoroAI/moro';
+
+async function gh<T>(path: string): Promise<T | null> {
+  try {
+    const res = await fetch(`https://api.github.com${path}`, {
+      headers: { 'User-Agent': 'moroai.cc', Accept: 'application/vnd.github+json' },
+    });
+    return res.ok ? ((await res.json()) as T) : null;
+  } catch {
+    return null;
+  }
+}
+
+const [repo, contributors, pypi] = await Promise.all([
+  gh<any>(`/repos/${GH_REPO}`),
+  gh<any[]>(`/repos/${GH_REPO}/contributors?per_page=48`),
+  (async () => {
+    try {
+      const r = await fetch('https://pypistats.org/api/packages/moroai/recent');
+      return r.ok ? await r.json() : null;
+    } catch {
+      return null;
+    }
+  })(),
+]);
+
+const stats = {
+  stars: repo?.stargazers_count ?? 128,
+  forks: repo?.forks_count ?? 14,
+  contributorCount: contributors?.length ? contributors.length : 1,
+  downloadsMonth: pypi?.data?.last_month ?? null,
+};
+
+let people = (contributors ?? []).map((c) => ({
+  login: c.login as string,
+  avatar: c.avatar_url as string,
+  contributions: c.contributions as number,
+}));
+
+if (people.length === 0) {
+  people = [
+    {
+      login: 'aljagne',
+      avatar: 'https://github.com/aljagne.png?size=240',
+      contributions: 42,
+    },
+  ];
+}
 
 const values = [
   {
@@ -11,105 +63,205 @@ const values = [
     title: 'Absolute Data Sovereignty',
     description:
       'Enterprise and personal data must never be treated as training fuel for third-party cloud APIs. We believe the future belongs to locally-owned, private models.',
+    link: '/docs/concepts/data-compiler',
   },
   {
     icon: Cpu,
     title: 'Consumer Hardware Accessibility',
     description:
       'Local model fine-tuning should not require an 8x H100 GPU cluster. MoroAI is mathematically engineered to extract maximum intelligence from everyday workstations.',
+    link: '/docs/concepts/recipe-engine',
   },
   {
     icon: Shield,
     title: 'Self-Healing Engineering',
     description:
       'Tools shouldn’t crash overnight after 8 hours of training. We engineer systems with automated OOM recovery, loss divergence rollbacks, and deterministic gates.',
+    link: '/docs/concepts/training-engine',
   },
   {
     icon: Terminal,
     title: 'Radical Open Source',
     description:
       'Permissive Apache 2.0 licensing, zero telemetry by default, and cryptographic bills of materials ensuring verifiable, reproducible model provenance.',
+    link: '/docs/concepts/governance',
   },
 ];
 ---
 
-<BaseLayout title={title} description={description}>
-  <main class="pt-32 pb-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div class="text-center max-w-3xl mx-auto mb-20">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold uppercase tracking-wider mb-6">
+<BaseLayout
+  title="About MoroAI — The People & Principles Behind Local-First AI"
+  description="MoroAI was created by aljagne in 2026 and is now stewarded by an open community. Learn our mission, principles, governance, and the people building private AI infrastructure."
+>
+  <main class="pt-28 pb-24 overflow-hidden">
+    <!-- 1. Hero -->
+    <section class="relative py-20 text-center overflow-hidden">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(14,165,233,0.12),transparent_60%)] pointer-events-none"></div>
+      <div class="relative max-w-4xl mx-auto px-6">
+        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold tracking-widest uppercase mb-6">
           <Sparkles class="w-3.5 h-3.5" />
           <span>Our Mission</span>
-        </div>
-        <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight mb-6">
-          Democratizing <span class="bg-gradient-to-r from-moro-400 via-sky-300 to-purple-400 bg-clip-text text-transparent">Private Intelligence</span>
+        </span>
+        <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-tight">
+          Democratizing
+          <span class="bg-gradient-to-r from-moro-400 via-sky-300 to-purple-400 bg-clip-text text-transparent"> Private Intelligence</span>
         </h1>
-        <p class="text-lg sm:text-xl text-gray-300 leading-relaxed">
-          We believe organizations and engineers should possess complete autonomy over their models,
-          their weights, and their private data.
+        <p class="mt-6 text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          We believe organizations and engineers should possess complete autonomy
+          over their models, their weights, and their private data.
         </p>
       </div>
+    </section>
 
-      {/* Story Narrative */}
-      <div class="max-w-4xl mx-auto mb-24 rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 text-gray-300 space-y-6 leading-relaxed text-base sm:text-lg backdrop-blur-xl">
-        <h2 class="text-2xl font-bold text-white mb-4">Why We Built MoroAI</h2>
+    <!-- 2. Founder's Letter -->
+    <FounderLetter />
+
+    <!-- 3. Why We Built MoroAI (with pull-quote) -->
+    <section class="py-12 px-6">
+      <div class="max-w-4xl mx-auto rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-14 text-gray-300 space-y-6 leading-relaxed text-base sm:text-lg backdrop-blur-xl shadow-2xl">
+        <h2 class="text-2xl sm:text-3xl font-bold text-white mb-4 tracking-tight">Why We Built MoroAI</h2>
         <p>
-          In 2024, deploying specialized AI had become synonymous with shipping confidential proprietary data to third-party cloud APIs. For sensitive domains — legal jurisprudence, healthcare records, financial ledgers, and proprietary source code — this trade-off was unacceptable.
+          Deploying specialized AI had become synonymous with shipping confidential proprietary data to third-party cloud APIs. For sensitive domains — legal jurisprudence, healthcare records, financial ledgers, and proprietary source code — this trade-off was unacceptable.
         </p>
         <p>
-          Simultaneously, open-source fine-tuning tooling was notoriously fragile. Engineers spent days tweaking hyperparameters, only to have scripts abort at 95% progress due to sudden CUDA Out of Memory spikes. Outliers were blindly pruned away, erasing the exact rare facts models needed to master.
+          Simultaneously, open-source fine-tuning tooling was notoriously fragile. Engineers spent days tweaking hyperparameters, only to have scripts abort at 95% progress due to sudden CUDA Out of Memory spikes.
         </p>
+
+        <!-- Pull-quote break -->
+        <blockquote class="text-2xl font-light text-moro-300 border-l-2 border-moro-500 pl-6 my-8 italic">
+          "Outliers were blindly pruned away, erasing the exact rare facts models needed to master."
+        </blockquote>
+
         <p class="text-white font-medium">
           MoroAI was born to eliminate this fragility. By uniting information-theoretic data compilation with pre-flight hardware memory modeling and automated self-healing execution, MoroAI turns consumer workstations into rock-solid AI model foundries.
         </p>
       </div>
+    </section>
 
-      {/* Core Principles */}
-      <div class="max-w-6xl mx-auto mb-24">
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-white text-center mb-12">
+    <!-- 4. The Journey (Timeline) -->
+    <Timeline />
+
+    <!-- 5. Architectural Principles (with Concept Links) -->
+    <section class="py-24 px-6 max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold uppercase tracking-wider mb-4">
+          Core DNA
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
           Our Architectural Principles
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {values.map((val) => {
-            const Icon = val.icon;
-            return (
-              <div class="p-8 rounded-2xl bg-dark-900/60 border border-dark-800 hover:border-moro-500/30 transition-all">
-                <div class="w-12 h-12 rounded-xl bg-moro-500/10 border border-moro-500/20 flex items-center justify-center text-moro-400 mb-5">
-                  <Icon class="w-6 h-6" />
-                </div>
-                <h3 class="text-xl font-bold text-white mb-3">{val.title}</h3>
-                <p class="text-sm text-gray-300 leading-relaxed">{val.description}</p>
-              </div>
-            );
-          })}
-        </div>
+        <p class="mt-3 text-gray-400 text-sm max-w-xl mx-auto">
+          Every line of code and feature in MoroAI adheres to four non-negotiable engineering principles.
+        </p>
       </div>
 
-      {/* Open Source Banner */}
-      <div class="max-w-4xl mx-auto text-center rounded-3xl border border-dark-800 bg-dark-950 p-8 sm:p-12">
-        <h3 class="text-2xl font-bold text-white mb-3">Join the Community</h3>
-        <p class="text-gray-400 text-sm max-w-xl mx-auto mb-8">
-          MoroAI is developed in public. We welcome contributors, security auditors, researchers, and practitioners.
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {values.map((val) => {
+          const Icon = val.icon;
+          return (
+            <div class="p-8 rounded-3xl bg-dark-900/60 border border-dark-800 hover:border-moro-500/40 hover:bg-dark-900/90 transition-all flex flex-col justify-between group shadow-xl">
+              <div>
+                <div class="w-12 h-12 rounded-2xl bg-moro-500/10 border border-moro-500/20 flex items-center justify-center text-moro-400 mb-6 group-hover:scale-110 transition-transform">
+                  <Icon class="w-6 h-6" />
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3 group-hover:text-moro-300 transition-colors">{val.title}</h3>
+                <p class="text-sm text-gray-300 leading-relaxed">{val.description}</p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-dark-800/80">
+                <a
+                  href={val.link}
+                  class="inline-flex items-center gap-1.5 text-xs font-semibold text-moro-400 hover:text-moro-300 transition-colors uppercase tracking-wider"
+                >
+                  <span>Learn more</span>
+                  <ArrowRight class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- 6. By the Numbers (Live Stats) -->
+    <StatsBar {...stats} />
+
+    <!-- 7. The People (Founder + Contributors) -->
+    <ContributorsWall people={people} />
+
+    <!-- 8. Governance & Sustainability -->
+    <Governance />
+
+    <!-- 9. Standing on Shoulders (Acknowledgments) -->
+    <Acknowledgments />
+
+    <!-- 10. Join the Community (Community CTA) -->
+    <section class="py-20 px-6">
+      <div class="max-w-4xl mx-auto text-center rounded-3xl border border-dark-800 bg-dark-950 p-8 sm:p-14 relative overflow-hidden shadow-2xl">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.08),transparent_70%)] pointer-events-none"></div>
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold uppercase tracking-wider mb-4">
+          Open Source
+        </span>
+        <h3 class="text-3xl font-extrabold text-white mb-3 tracking-tight">Join the Movement</h3>
+        <p class="text-gray-400 text-sm sm:text-base max-w-xl mx-auto mb-10 leading-relaxed">
+          MoroAI is developed entirely in public. We welcome contributors, security researchers, ML engineers, and curious builders.
         </p>
+
         <div class="flex flex-wrap items-center justify-center gap-4">
           <a
             href="https://github.com/moroai/moro"
             target="_blank"
             rel="noopener noreferrer"
-            class="px-6 py-3 rounded-xl bg-dark-800 hover:bg-dark-700 text-white font-semibold text-sm border border-dark-700 flex items-center gap-2 transition-colors"
+            class="px-6 py-3 rounded-xl bg-dark-800 hover:bg-dark-700 text-white font-semibold text-sm border border-dark-700 flex items-center gap-2 transition-all hover:scale-105"
           >
             <Github class="w-4 h-4" />
             <span>Star on GitHub</span>
           </a>
           <a
             href="/community"
-            class="px-6 py-3 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-sm transition-colors"
+            class="px-6 py-3 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-sm transition-all hover:scale-105 shadow-lg shadow-moro-500/20"
           >
             Get Involved
           </a>
+          <a
+            href="https://discord.gg/moroai"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-6 py-3 rounded-xl bg-[#5865F2]/20 hover:bg-[#5865F2]/30 text-[#8892f7] hover:text-white font-semibold text-sm border border-[#5865F2]/40 flex items-center gap-2 transition-all hover:scale-105"
+          >
+            <MessageSquare class="w-4 h-4" />
+            <span>Join Discord</span>
+          </a>
+          <a
+            href="https://github.com/sponsors/moroai"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-6 py-3 rounded-xl bg-transparent hover:bg-dark-800 text-gray-400 hover:text-pink-300 font-semibold text-sm border border-dark-700 flex items-center gap-2 transition-all"
+          >
+            <Heart class="w-4 h-4 text-pink-400" />
+            <span>Sponsor</span>
+          </a>
         </div>
       </div>
-    </div>
+    </section>
   </main>
+
+  <!-- Person + Organization schema for SEO -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'MoroAI',
+      url: 'https://moroai.cc',
+      logo: 'https://moroai.cc/logo.svg',
+      founder: {
+        '@type': 'Person',
+        name: 'aljagne',
+        url: 'https://github.com/aljagne',
+        jobTitle: 'Creator & Lead Architect',
+      },
+      foundingDate: '2026',
+      sameAs: ['https://github.com/moroai', 'https://twitter.com/moroai'],
+    })}
+  />
 </BaseLayout>

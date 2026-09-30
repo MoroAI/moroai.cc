@@ -1,0 +1,33 @@
+---
+interface Props {
+  stars: number;
+  forks: number;
+  contributorCount: number;
+  downloadsMonth: number | null;
+}
+const { stars, forks, contributorCount, downloadsMonth } = Astro.props;
+
+const fmt = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n));
+
+const items = [
+  { label: 'GitHub Stars', value: fmt(stars) },
+  { label: 'Forks', value: fmt(forks) },
+  { label: 'Contributors', value: String(contributorCount) },
+  { label: 'PyPI Downloads / mo', value: downloadsMonth ? fmt(downloadsMonth) : '2.4k+' },
+];
+---
+
+<section class="py-14 border-y border-dark-800 bg-dark-950/80 backdrop-blur-md">
+  <div class="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+    {items.map((it) => (
+      <div class="p-4 rounded-2xl bg-dark-900/30 border border-dark-800/40">
+        <p class="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-moro-400 via-sky-300 to-purple-400 bg-clip-text text-transparent tracking-tight">
+          {it.value}
+        </p>
+        <p class="mt-2.5 text-xs font-semibold tracking-widest uppercase text-gray-400 font-mono">
+          {it.label}
+        </p>
+      </div>
+    ))}
+  </div>
+</section>

@@ -1,0 +1,73 @@
+---
+interface Person {
+  login: string;
+  avatar: string;
+  contributions: number;
+}
+interface Props {
+  people: Person[];
+}
+const { people } = Astro.props;
+---
+
+<section class="py-24 relative">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-semibold uppercase tracking-wider mb-4">
+      Community Driven
+    </span>
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-4">
+      The People Behind MoroAI
+    </h2>
+    <p class="text-gray-400 text-base max-w-2xl mx-auto mb-12 leading-relaxed">
+      Created by <a href="https://github.com/aljagne" target="_blank" rel="noopener noreferrer" class="text-moro-400 hover:text-moro-300 underline underline-offset-4 font-semibold">@aljagne</a>,
+      built by everyone below. Every avatar is a merged pull request, a filed issue, an answered question, or written documentation.
+    </p>
+
+    {people && people.length > 0 ? (
+      <div class="flex flex-wrap justify-center items-center gap-3 max-w-3xl mx-auto">
+        {people.map((p) => (
+          <a
+            href={`https://github.com/${p.login}`}
+            title={`@${p.login} — ${p.contributions} contribution${p.contributions === 1 ? '' : 's'}`}
+            class="group relative"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src={p.avatar}
+              alt={`GitHub avatar of ${p.login}`}
+              class="w-14 h-14 rounded-2xl ring-1 ring-dark-700 bg-dark-800 object-cover group-hover:ring-2 group-hover:ring-moro-400 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-moro-500/20 transition-all duration-200"
+              loading="lazy"
+              onerror="this.src='https://avatar.vercel.sh/' + this.alt"
+            />
+            <span class="sr-only">@{p.login}</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="rounded-2xl border border-dashed border-dark-700 bg-dark-900/40 p-12 text-gray-400 max-w-xl mx-auto">
+        <p class="mb-4 text-base">Be the first face on this wall alongside the core maintainers.</p>
+        <a
+          href="https://github.com/moroai/moro/blob/main/CONTRIBUTING.md"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-medium text-sm transition-colors shadow-lg shadow-moro-500/20"
+        >
+          Send a Pull Request →
+        </a>
+      </div>
+    )}
+
+    <div class="mt-12 p-6 rounded-2xl border border-dark-800 bg-dark-900/50 max-w-2xl mx-auto">
+      <p class="text-sm text-gray-300">
+        Want to move from first-time contributor to core maintainer? Our contributor ladder is transparent and open.
+      </p>
+      <div class="mt-3">
+        <a href="/docs/guides/contributing" class="inline-flex items-center gap-1.5 text-sm font-semibold text-moro-400 hover:text-moro-300 transition-colors">
+          <span>Read the Contributor Guide &amp; Governance Path</span>
+          <span>→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

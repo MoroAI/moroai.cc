@@ -187,7 +187,7 @@ export default function Footer() {
             <span>Local-First: Your weights, training data, and metrics never leave your infrastructure.</span>
           </div>
           <div className="flex items-center gap-4">
-            <span>© {new Date().getFullYear()} MoroAI Foundation. Built with pride for the open-source AI community.</span>
+            <span>© 2026 MoroAI Foundation · Created by <a href="https://github.com/aljagne" target="_blank" rel="noopener noreferrer" className="hover:text-moro-400 transition-colors">@aljagne</a> · Apache-2.0</span>
           </div>
         </div>
       </div>
