@@ -105,27 +105,27 @@ export default function Hero() {
         </div>
 
         {/* Feature Badges */}
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-16">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-dark-900/70 border border-dark-800 text-xs sm:text-sm text-gray-300">
-            <Terminal className="w-4 h-4 text-moro-400" />
-            <span>Unified CLI + Mission Control</span>
+        <div className="grid grid-cols-2 lg:flex lg:flex-wrap items-center justify-center gap-2 sm:gap-3 mb-12 sm:mb-16 max-w-4xl mx-auto">
+          <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-lg bg-dark-900/70 border border-dark-800 text-[11px] sm:text-sm text-gray-300">
+            <Terminal className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-moro-400 shrink-0" />
+            <span className="truncate">CLI + Web UI</span>
           </div>
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-dark-900/70 border border-dark-800 text-xs sm:text-sm text-gray-300">
-            <Zap className="w-4 h-4 text-yellow-400" />
-            <span>Self-Healing OOM Recovery</span>
+          <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-lg bg-dark-900/70 border border-dark-800 text-[11px] sm:text-sm text-gray-300">
+            <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400 shrink-0" />
+            <span className="truncate">OOM Recovery</span>
           </div>
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-dark-900/70 border border-dark-800 text-xs sm:text-sm text-gray-300">
-            <Shield className="w-4 h-4 text-emerald-400" />
-            <span>Cryptographic Provenance</span>
+          <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-lg bg-dark-900/70 border border-dark-800 text-[11px] sm:text-sm text-gray-300">
+            <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 shrink-0" />
+            <span className="truncate">Provenance SBOM</span>
           </div>
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-dark-900/70 border border-dark-800 text-xs sm:text-sm text-gray-300">
-            <RefreshCcw className="w-4 h-4 text-purple-400" />
-            <span>Closed-Loop DPO Flywheel</span>
+          <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-lg bg-dark-900/70 border border-dark-800 text-[11px] sm:text-sm text-gray-300">
+            <RefreshCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400 shrink-0" />
+            <span className="truncate">DPO Flywheel</span>
           </div>
         </div>
 
         {/* Interactive Multi-Tab Terminal Demo */}
-        <div className="max-w-4xl mx-auto text-left">
+        <div className="max-w-4xl mx-auto text-left w-full">
           <InteractiveTerminal />
         </div>
       </div>
@@ -147,18 +147,20 @@ function InteractiveTerminal() {
   return (
     <div className="rounded-2xl overflow-hidden border border-dark-700/80 bg-dark-900/95 shadow-2xl shadow-moro-500/10 backdrop-blur-xl">
       {/* Terminal Top Bar */}
-      <div className="bg-dark-950 px-4 py-3 border-b border-dark-800 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-500/80" />
-          <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-          <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
-          <span className="ml-3 text-xs text-gray-400 font-mono hidden sm:inline">
-            moro terminal session — consumer GPU adaptation
+      <div className="bg-dark-950 px-3 sm:px-4 py-2.5 sm:py-3 border-b border-dark-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+        <div className="flex items-center justify-between sm:justify-start gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500/80" />
+            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500/80" />
+            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500/80" />
+          </div>
+          <span className="text-[11px] sm:text-xs text-gray-400 font-mono">
+            moro terminal session
           </span>
         </div>
 
-        {/* Step tabs */}
-        <div className="flex items-center gap-1">
+        {/* Step tabs: Touch scrollable on mobile and tablet */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1 scroll-smooth">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -166,13 +168,13 @@ function InteractiveTerminal() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium font-mono transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium font-mono whitespace-nowrap shrink-0 transition-all ${
                   isActive
                     ? 'bg-moro-500/20 text-moro-300 border border-moro-500/30'
                     : 'text-gray-400 hover:text-gray-200 hover:bg-dark-800'
                 }`}
               >
-                <Icon className="w-3 h-3" />
+                <Icon className="w-3 h-3 shrink-0" />
                 <span>{tab.label}</span>
               </button>
             );
@@ -181,7 +183,7 @@ function InteractiveTerminal() {
       </div>
 
       {/* Terminal Content Screen */}
-      <div className="p-6 font-mono text-xs sm:text-sm text-gray-200 min-h-[300px]">
+      <div className="p-4 sm:p-6 font-mono text-xs sm:text-sm text-gray-200 min-h-[280px] overflow-x-auto">
         {activeTab === 'build' && (
           <div className="space-y-2 animate-fade-in">
             <div className="flex items-center gap-2">

@@ -132,7 +132,7 @@ export default function ArchitectureDiagram() {
         </div>
 
         {/* Horizontal Pipeline Steps */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3 mb-8 sm:mb-10">
           {stages.map((stage) => {
             const Icon = stage.icon;
             const isSelected = activeStage.id === stage.id;
@@ -140,28 +140,28 @@ export default function ArchitectureDiagram() {
               <button
                 key={stage.id}
                 onClick={() => setActiveStage(stage)}
-                className={`p-4 rounded-xl text-left transition-all duration-200 border flex flex-col justify-between ${
+                className={`p-3 sm:p-4 rounded-xl text-left transition-all duration-200 border flex flex-col justify-between active:scale-[0.98] ${
                   isSelected
                     ? `bg-dark-800/90 ${stage.borderColor} shadow-lg ${stage.glowColor} scale-[1.02]`
                     : 'bg-dark-950/60 border-dark-800 hover:border-dark-700 hover:bg-dark-900/60'
                 }`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="font-mono text-xs font-bold text-gray-500">
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <span className="font-mono text-[11px] sm:text-xs font-bold text-gray-500">
                       {stage.number}
                     </span>
                     <div
-                      className={`w-7 h-7 rounded-lg bg-gradient-to-br ${stage.color} flex items-center justify-center text-white`}
+                      className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-gradient-to-br ${stage.color} flex items-center justify-center text-white`}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </div>
                   </div>
-                  <h3 className="font-bold text-sm text-white leading-tight mb-1">
+                  <h3 className="font-bold text-xs sm:text-sm text-white leading-tight mb-0.5 sm:mb-1">
                     {stage.title}
                   </h3>
                 </div>
-                <p className="text-[11px] text-gray-400 line-clamp-1 mt-2">
+                <p className="text-[10px] sm:text-[11px] text-gray-400 line-clamp-1 mt-1 sm:mt-2">
                   {stage.subtitle}
                 </p>
               </button>
@@ -170,37 +170,37 @@ export default function ArchitectureDiagram() {
         </div>
 
         {/* Detailed Stage Inspector Panel */}
-        <div className="rounded-2xl border border-dark-700/80 bg-dark-950/90 p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="rounded-2xl border border-dark-700/80 bg-dark-950/90 p-5 sm:p-8 backdrop-blur-xl shadow-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
             {/* Left overview */}
             <div className="lg:col-span-7">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="font-mono text-sm font-bold text-moro-400 bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20">
+              <div className="flex items-center gap-2.5 sm:gap-3 mb-4">
+                <span className="font-mono text-xs sm:text-sm font-bold text-moro-400 bg-moro-500/10 px-2 sm:px-2.5 py-1 rounded border border-moro-500/20">
                   STAGE {activeStage.number}
                 </span>
-                <h3 className="text-2xl font-extrabold text-white">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-white">
                   {activeStage.title}
                 </h3>
               </div>
-              <p className="text-gray-300 text-base leading-relaxed mb-6">
+              <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6">
                 {activeStage.summary}
               </p>
 
               {/* Input / Output Badges */}
-              <div className="space-y-3 mb-6">
-                <div className="flex items-start gap-2 text-xs sm:text-sm">
+              <div className="space-y-2.5 sm:space-y-3 mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm">
                   <span className="text-gray-500 font-mono font-semibold uppercase w-20 shrink-0">
                     Input:
                   </span>
-                  <span className="text-gray-300 font-mono bg-dark-900 px-2.5 py-1 rounded border border-dark-800">
+                  <span className="text-gray-300 font-mono bg-dark-900 px-2.5 py-1 rounded border border-dark-800 break-words">
                     {activeStage.inputs}
                   </span>
                 </div>
-                <div className="flex items-start gap-2 text-xs sm:text-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm">
                   <span className="text-gray-500 font-mono font-semibold uppercase w-20 shrink-0">
                     Output:
                   </span>
-                  <span className="text-sky-300 font-mono bg-dark-900 px-2.5 py-1 rounded border border-dark-800">
+                  <span className="text-sky-300 font-mono bg-dark-900 px-2.5 py-1 rounded border border-dark-800 break-words">
                     {activeStage.outputs}
                   </span>
                 </div>

@@ -130,30 +130,40 @@ export default function ComparisonTable() {
           </p>
         </div>
 
+        {/* Mobile Swipe Cue */}
+        <div className="sm:hidden flex items-center justify-between text-[11px] text-gray-400 font-mono mb-3 px-1">
+          <span className="flex items-center gap-1.5 text-moro-400">
+            <span>← Swipe horizontally to compare →</span>
+          </span>
+          <span className="bg-dark-900 border border-dark-800 px-2 py-0.5 rounded text-[10px] text-gray-300">
+            MoroAI vs 3 Tools
+          </span>
+        </div>
+
         {/* Comparison Table */}
-        <div className="overflow-x-auto rounded-2xl border border-dark-800 bg-dark-900/60 shadow-2xl backdrop-blur-xl">
-          <table className="w-full text-left border-collapse min-w-[760px]">
+        <div className="overflow-x-auto rounded-2xl border border-dark-800 bg-dark-900/60 shadow-2xl backdrop-blur-xl -mx-4 sm:mx-0 scroll-smooth">
+          <table className="w-full text-left border-separate border-spacing-0 min-w-[700px] sm:min-w-[760px]">
             <thead>
-              <tr className="border-b border-dark-800 bg-dark-900/90 text-sm">
-                <th className="py-5 px-6 font-semibold text-gray-400 w-1/3">
+              <tr className="bg-dark-900/95 text-xs sm:text-sm">
+                <th className="py-4 sm:py-5 px-4 sm:px-6 font-semibold text-gray-300 w-2/5 sm:w-1/3 sticky left-0 z-20 bg-dark-950 sm:bg-dark-900/95 border-b border-r border-dark-800 backdrop-blur-md">
                   Capability
                 </th>
-                <th className="py-5 px-6 font-extrabold text-moro-400 bg-moro-500/10 border-x border-moro-500/30 text-center w-1/4">
+                <th className="py-4 sm:py-5 px-4 sm:px-6 font-extrabold text-moro-400 bg-moro-500/10 border-b border-x border-moro-500/30 text-center w-1/4">
                   <div className="inline-flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-moro-400" />
+                    <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-moro-400" />
                     <span>MoroAI</span>
                   </div>
-                  <div className="text-[11px] font-normal text-moro-300/80 font-mono mt-0.5">
+                  <div className="text-[10px] sm:text-[11px] font-normal text-moro-300/80 font-mono mt-0.5">
                     Full Platform
                   </div>
                 </th>
-                <th className="py-5 px-4 font-semibold text-gray-400 text-center">
+                <th className="py-4 sm:py-5 px-3 sm:px-4 font-semibold text-gray-400 text-center border-b border-dark-800">
                   Axolotl
                 </th>
-                <th className="py-5 px-4 font-semibold text-gray-400 text-center">
+                <th className="py-4 sm:py-5 px-3 sm:px-4 font-semibold text-gray-400 text-center border-b border-dark-800">
                   Unsloth
                 </th>
-                <th className="py-5 px-4 font-semibold text-gray-400 text-center">
+                <th className="py-4 sm:py-5 px-3 sm:px-4 font-semibold text-gray-400 text-center border-b border-dark-800">
                   LLaMA-Factory
                 </th>
               </tr>
@@ -161,25 +171,25 @@ export default function ComparisonTable() {
             <tbody className="divide-y divide-dark-800/80 text-xs sm:text-sm">
               {rows.map((row) => (
                 <tr key={row.feature} className="hover:bg-dark-800/40 transition-colors">
-                  {/* Feature & detail */}
-                  <td className="py-4 px-6">
-                    <div className="font-semibold text-white mb-0.5">{row.feature}</div>
-                    <div className="text-xs text-gray-400 hidden sm:block">{row.detail}</div>
+                  {/* Sticky Feature & detail column */}
+                  <td className="py-3.5 sm:py-4 px-4 sm:px-6 sticky left-0 z-10 bg-dark-950/95 sm:bg-dark-900/95 border-r border-b border-dark-800/80 backdrop-blur-md">
+                    <div className="font-semibold text-white mb-0.5 text-xs sm:text-sm">{row.feature}</div>
+                    <div className="text-[11px] text-gray-400 hidden sm:block">{row.detail}</div>
                   </td>
 
                   {/* MoroAI Column */}
-                  <td className="py-4 px-6 bg-moro-500/5 border-x border-moro-500/20 text-center">
-                    <span className="inline-flex items-center gap-1.5 font-bold text-moro-300">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <td className="py-3.5 sm:py-4 px-4 sm:px-6 bg-moro-500/5 border-x border-b border-moro-500/20 text-center">
+                    <span className="inline-flex items-center gap-1 sm:gap-1.5 font-bold text-moro-300 text-xs sm:text-sm">
+                      <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 shrink-0" />
                       <span>{row.moro}</span>
                     </span>
                   </td>
 
                   {/* Axolotl */}
-                  <td className="py-4 px-4 text-center text-gray-400">
+                  <td className="py-3.5 sm:py-4 px-3 sm:px-4 text-center text-gray-400 border-b border-dark-800/80">
                     {row.axolotl === 'No' ? (
                       <span className="inline-flex items-center gap-1 text-red-400/80">
-                        <X className="w-4 h-4" />
+                        <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span>No</span>
                       </span>
                     ) : (
@@ -188,10 +198,10 @@ export default function ComparisonTable() {
                   </td>
 
                   {/* Unsloth */}
-                  <td className="py-4 px-4 text-center text-gray-400">
+                  <td className="py-3.5 sm:py-4 px-3 sm:px-4 text-center text-gray-400 border-b border-dark-800/80">
                     {row.unsloth === 'No' || row.unsloth === 'None' ? (
                       <span className="inline-flex items-center gap-1 text-red-400/80">
-                        <X className="w-4 h-4" />
+                        <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span>{row.unsloth}</span>
                       </span>
                     ) : (
@@ -200,10 +210,10 @@ export default function ComparisonTable() {
                   </td>
 
                   {/* LLaMA-Factory */}
-                  <td className="py-4 px-4 text-center text-gray-400">
+                  <td className="py-3.5 sm:py-4 px-3 sm:px-4 text-center text-gray-400 border-b border-dark-800/80">
                     {row.llamafactory === 'No' ? (
                       <span className="inline-flex items-center gap-1 text-red-400/80">
-                        <X className="w-4 h-4" />
+                        <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span>No</span>
                       </span>
                     ) : (

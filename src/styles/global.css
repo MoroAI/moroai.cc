@@ -15,14 +15,25 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-dark-950 text-gray-100 min-h-screen selection:bg-moro-500/30 selection:text-moro-200;
     font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
   }
 
-  /* Custom scrollbar */
+  /* Eliminate mobile tap delay & gray flash on iOS / Android */
+  a, button, input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* Custom scrollbar for modern browsers */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -52,7 +63,7 @@
   }
 
   .section {
-    @apply py-20 sm:py-32;
+    @apply py-16 sm:py-24 lg:py-32;
   }
 
   .glass-card {
@@ -76,4 +87,29 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Clean horizontal swipe without scrollbars on mobile */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Animations for Mobile Drawer and Drawers */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

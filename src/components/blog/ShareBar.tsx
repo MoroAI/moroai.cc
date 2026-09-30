@@ -56,7 +56,7 @@ export default function ShareBar({ title, url, category = 'Research' }: ShareBar
         <span>Share this article</span>
       </div>
 
-      <div className="flex items-center flex-wrap gap-2">
+      <div className="flex items-center flex-wrap justify-center sm:justify-start gap-2">
         {/* Twitter / X */}
         <a
           href={twitterShareUrl}

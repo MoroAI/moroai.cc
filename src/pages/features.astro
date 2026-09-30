@@ -54,12 +54,12 @@ const subsystems = [
       </p>
 
       {/* Quick-Jump Navigation Bar */}
-      <div class="mt-12 sticky top-20 z-40 bg-dark-950/90 backdrop-blur-xl border border-dark-800/80 rounded-2xl p-2.5 max-w-5xl mx-auto shadow-2xl overflow-x-auto">
-        <div class="flex items-center gap-1.5 min-w-max justify-center">
+      <div class="mt-8 sm:mt-12 sticky top-16 sm:top-20 z-40 bg-dark-950/95 backdrop-blur-xl border border-dark-800/80 rounded-2xl p-2 sm:p-2.5 max-w-5xl mx-auto shadow-2xl overflow-x-auto no-scrollbar scroll-smooth">
+        <div class="flex items-center gap-1.5 min-w-max justify-start md:justify-center px-1">
           {subsystems.map((sub) => (
             <a
               href={`#${sub.id}`}
-              class="px-3 py-1.5 rounded-xl text-xs font-medium text-gray-300 hover:text-white hover:bg-dark-800/80 border border-transparent hover:border-dark-700 transition-all flex items-center gap-1.5"
+              class="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-gray-300 hover:text-white hover:bg-dark-800/80 border border-transparent hover:border-dark-700 transition-all flex items-center gap-1.5 shrink-0"
             >
               <span class="font-mono text-[10px] text-moro-400 font-bold">{sub.tag}</span>
               <span>{sub.name}</span>
@@ -69,11 +69,11 @@ const subsystems = [
       </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 sm:space-y-24">
 
       {/* 1. Epistemic Data Compiler & MI Guard */}
-      <section id="data-compiler" class="scroll-mt-36">
-        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+      <section id="data-compiler" class="scroll-mt-28 sm:scroll-mt-36">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-5 sm:p-8 md:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
           <div class="flex flex-wrap items-center gap-3 mb-6">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white shadow-lg">
               <Database class="w-6 h-6" />
@@ -165,7 +165,7 @@ const subsystems = [
 
       {/* 2. VRAM Recipe Predictor */}
       <section id="recipe-engine" class="scroll-mt-36">
-        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-5 sm:p-8 md:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
           <div class="flex flex-wrap items-center gap-3 mb-6">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white shadow-lg">
               <Cpu class="w-6 h-6" />
@@ -255,7 +255,7 @@ Recipe generated: ./moro.yaml (Verified Zero OOM)`}
 
       {/* 3. OOM Auto-Recovery */}
       <section id="training-engine" class="scroll-mt-36">
-        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-5 sm:p-8 md:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
           <div class="flex flex-wrap items-center gap-3 mb-6">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white shadow-lg">
               <Zap class="w-6 h-6" />
@@ -337,7 +337,7 @@ Step 422/1200 | Loss: 1.09 | VRAM: 6.2GB
 
       {/* 4. Multi-Layered Eval */}
       <section id="eval-harness" class="scroll-mt-36">
-        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-5 sm:p-8 md:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
           <div class="flex flex-wrap items-center gap-3 mb-6">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white shadow-lg">
               <Shield class="w-6 h-6" />
@@ -416,7 +416,7 @@ Release Gate ID: gate_78f1a9e3`}
 
       {/* 5. DPO Feedback Flywheel */}
       <section id="flywheel" class="scroll-mt-36">
-        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-5 sm:p-8 md:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
           <div class="flex flex-wrap items-center gap-3 mb-6">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center text-white shadow-lg">
               <RefreshCcw class="w-6 h-6" />
@@ -481,7 +481,7 @@ Release Gate ID: gate_78f1a9e3`}
 
       {/* 6. Mission Control UI */}
       <section id="dashboard" class="scroll-mt-36">
-        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-5 sm:p-8 md:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
           <div class="flex flex-wrap items-center gap-3 mb-6">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white shadow-lg">
               <LayoutDashboard class="w-6 h-6" />
@@ -562,7 +562,7 @@ Release Gate ID: gate_78f1a9e3`}
 
       {/* 7. Cryptographic Release Governance */}
       <section id="governance" class="scroll-mt-36">
-        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-5 sm:p-8 md:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
           <div class="flex flex-wrap items-center gap-3 mb-6">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center text-white shadow-lg">
               <FileCheck class="w-6 h-6" />
@@ -633,7 +633,7 @@ Release Gate ID: gate_78f1a9e3`}
 
       {/* 8. Local Deployment */}
       <section id="deployment" class="scroll-mt-36">
-        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-5 sm:p-8 md:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
           <div class="flex flex-wrap items-center gap-3 mb-6">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white shadow-lg">
               <Rocket class="w-6 h-6" />
@@ -713,7 +713,7 @@ Or query via OpenAI-compatible endpoint:
 
       {/* 9. Sovereign Privacy */}
       <section id="privacy" class="scroll-mt-36">
-        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+        <div class="rounded-3xl border border-dark-800 bg-dark-900/60 p-5 sm:p-8 md:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
           <div class="flex flex-wrap items-center gap-3 mb-6">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-500 to-zinc-600 flex items-center justify-center text-white shadow-lg">
               <Lock class="w-6 h-6" />
