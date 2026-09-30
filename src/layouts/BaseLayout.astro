@@ -2,20 +2,42 @@
 import '../styles/global.css';
 import Header from '../components/navigation/Header';
 import Footer from '../components/navigation/Footer';
+import OGMeta from '../components/OGMeta.astro';
 
 interface Props {
-  title?: string;
+  title: string;
   description?: string;
+  path?: string;
   image?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+  tags?: string[];
+  readingTime?: string;
+  category?: string;
 }
 
 const {
-  title = 'MoroAI — Local-First Private AI Model Adaptation Foundry',
-  description = 'Transform private organizational data into dependable, specialized local language models. 100% private, zero-OOM self-healing training, and instant Ollama deployment.',
-  image = '/favicon.svg',
+  title,
+  description = 'MoroAI — Local-First Private AI Model Adaptation Foundry',
+  path = Astro.url.pathname,
+  image,
+  ogImage = image || `/og/${path === '/' ? 'home' : path.replace(/^\/|\/$/g, '').replace(/\//g, '__')}.png`,
+  ogType,
+  type = ogType || 'website',
+  publishedTime,
+  modifiedTime,
+  author = 'aljagne',
+  tags = ['LocalAI', 'LLM Fine-Tuning', 'Sovereign AI', 'Open Source'],
+  readingTime,
+  category,
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://moroai.cc');
+// Merge category into tags if present
+const finalTags = category ? [category, ...tags] : tags;
 ---
 
 <!DOCTYPE html>
@@ -24,29 +46,22 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://moroai.c
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary Meta Tags -->
-    <title>{title}</title>
-    <meta name="title" content={title} />
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalURL} />
-    <meta name="theme-color" content="#030712" />
-
-    <!-- Open Graph / Facebook / LinkedIn -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, canonicalURL)} />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@moroai" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(image, canonicalURL)} />
+    <OGMeta
+      title={title}
+      description={description}
+      path={path}
+      ogImage={ogImage}
+      type={type}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      author={author}
+      tags={finalTags}
+      readingTime={readingTime}
+    />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

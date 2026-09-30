@@ -1,0 +1,102 @@
+---
+// src/components/OGMeta.astro
+interface Props {
+  title: string;
+  description: string;
+  path: string; // e.g. /docs/cookbook/support-bot/
+  ogImage: string; // e.g. /og/docs__cookbook__support-bot.png
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+  tags?: string[];
+  readingTime?: string;
+}
+
+const {
+  title,
+  description,
+  path,
+  ogImage,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  author = 'aljagne',
+  tags = ['LocalAI', 'LLM Fine-Tuning', 'Sovereign AI', 'Open Source'],
+  readingTime,
+} = Astro.props;
+
+const siteOrigin = Astro.site ? Astro.site.toString() : 'https://moroai.cc';
+const url = new URL(path, siteOrigin).href;
+const img = new URL(ogImage, siteOrigin).href;
+---
+
+<!-- ============ CORE ============ -->
+<link rel="canonical" href={url} />
+<meta name="description" content={description} />
+<meta name="theme-color" content="#020617" />
+<meta name="msapplication-TileColor" content="#020617" />
+
+<!-- ============ OPEN GRAPH (Facebook, LinkedIn, Discord, Slack, WhatsApp, Telegram, iMessage) ============ -->
+<meta property="og:site_name" content="MoroAI" />
+<meta property="og:type" content={type} />
+<meta property="og:url" content={url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={img} />
+<meta property="og:image:secure_url" content={img} />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={`${title} — MoroAI share card`} />
+<meta property="og:locale" content="en_US" />
+
+<!-- ============ ARTICLE EXTRAS (LinkedIn & Facebook rich cards) ============ -->
+{
+  type === 'article' && (
+    <>
+      {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+      {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+      {author && <meta property="article:author" content={author} />}
+      {tags.map((t) => (
+        <meta property="article:tag" content={t} />
+      ))}
+      {readingTime && <meta name="twitter:label1" content="Reading time" />}
+      {readingTime && <meta name="twitter:data1" content={readingTime} />}
+    </>
+  )
+}
+
+<!-- ============ TWITTER / X CARD ============ -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@moroai" />
+<meta name="twitter:creator" content="@aljagne" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={img} />
+<meta name="twitter:image:alt" content={`${title} — MoroAI share card`} />
+
+<!-- ============ STRUCTURED DATA (Google rich results) ============ -->
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': type === 'article' ? 'BlogPosting' : 'WebPage',
+    headline: title,
+    description,
+    url,
+    image: [img],
+    ...(type === 'article' && {
+      datePublished: publishedTime,
+      dateModified: modifiedTime,
+      author: { '@type': 'Person', name: author ?? 'aljagne', url: 'https://github.com/aljagne' },
+      publisher: {
+        '@type': 'Organization',
+        name: 'MoroAI',
+        logo: { '@type': 'ImageObject', url: new URL('/logo.svg', siteOrigin).href },
+      },
+      keywords: tags.join(', '),
+    }),
+    isPartOf: { '@type': 'WebSite', name: 'MoroAI', url: new URL('/', siteOrigin).href },
+  })}
+/>

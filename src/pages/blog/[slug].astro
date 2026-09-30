@@ -1,15 +1,19 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { Calendar, Clock, ArrowLeft, ArrowRight, Share2, Sparkles, Terminal } from 'lucide-react';
+import ShareBar from '../../components/blog/ShareBar';
+import { Calendar, Clock, ArrowLeft, ArrowRight, Sparkles, Terminal, User } from 'lucide-react';
 
 export function getStaticPaths() {
   const articles = [
     {
       slug: 'introducing-moroai',
       title: 'Introducing MoroAI: The Local-First Model Adaptation Foundry',
+      description: 'Why we built a sovereign, self-healing platform to adapt open language models on consumer hardware without cloud APIs.',
       date: 'Sep 28, 2026',
+      isoDate: '2026-09-28T09:00:00Z',
       readTime: '6 min read',
       category: 'Announcement',
+      author: 'aljagne',
       content: `
 ### The State of Local AI Fine-Tuning
 
@@ -48,9 +52,12 @@ The future of intelligence is local, sovereign, and reliable. Welcome to MoroAI.
     {
       slug: 'epistemic-data-curation',
       title: 'Why Standard LLM Deduplication Erases Rare Knowledge: Meet MI Guard',
+      description: 'How information-theoretic filtering protects critical enterprise corner cases while eliminating boilerplate and synthetic junk.',
       date: 'Sep 24, 2026',
+      isoDate: '2026-09-24T09:00:00Z',
       readTime: '9 min read',
       category: 'Research',
+      author: 'aljagne',
       content: `
 ### The Hidden Trap in Data Pruning
 
@@ -73,6 +80,7 @@ Where $H(X)$ represents the Shannon entropy of the token transition matrix. If $
 ### The Result: 0 Rare Facts Lost
 
 In our benchmark on 40,000 corporate operational logs:
+
 - Standard MinHash pruned **41% of rare compliance exceptions**.
 - MoroAI with MI Guard pruned 2,890 redundant greetings and boilerplate queries while preserving **100% of the tagged compliance boundary cases**.
 
@@ -82,9 +90,12 @@ You no longer have to choose between clean datasets and comprehensive domain cov
     {
       slug: 'oom-auto-recovery',
       title: 'Never Lose a Training Run: The 5-Step Autonomous OOM Recovery Engine',
+      description: 'Intercepting PyTorch allocator spikes, dynamic sequence token clamping, and micro-batch halving without aborting jobs.',
       date: 'Sep 20, 2026',
+      isoDate: '2026-09-20T09:00:00Z',
       readTime: '8 min read',
       category: 'Engineering',
+      author: 'aljagne',
       content: `
 ### The 3:00 AM Crash
 
@@ -114,9 +125,12 @@ In our 414-test verification suite, the self-healing engine survived artificial 
     {
       slug: 'dpo-flywheel',
       title: 'Closing the Local Loop: Mining User Interactions for Continuous DPO Alignment',
+      description: 'Extracting high-confidence chosen vs rejected preference triplets directly from local serving to prevent model decay.',
       date: 'Sep 15, 2026',
+      isoDate: '2026-09-15T09:00:00Z',
       readTime: '7 min read',
       category: 'Architecture',
+      author: 'aljagne',
       content: `
 ### The Stagnation Problem
 
@@ -156,34 +170,50 @@ Once enough high-confidence pairs accumulate, MoroAI runs an offline Direct Pref
 }
 
 const { article } = Astro.props;
+const ogImagePath = `/og/blog__${article.slug}.png`;
+const articleUrl = `https://moroai.cc/blog/${article.slug}/`;
 ---
 
-<BaseLayout title={`${article.title} — MoroAI Blog`} description={article.title}>
+<BaseLayout
+  title={`${article.title} — MoroAI Blog`}
+  description={article.description}
+  image={ogImagePath}
+  imageAlt={`${article.title} — Social Banner`}
+  type="article"
+  publishedTime={article.isoDate}
+  author={article.author}
+  category={article.category}
+>
   <main class="pt-32 pb-24">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Back button */}
       <a
         href="/blog/"
-        class="inline-flex items-center gap-2 text-xs font-semibold text-gray-400 hover:text-white transition-colors mb-8"
+        class="inline-flex items-center gap-2 text-xs font-semibold text-gray-400 hover:text-white transition-colors mb-8 group"
       >
-        <ArrowLeft class="w-4 h-4" />
+        <ArrowLeft class="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
         <span>Back to All Articles</span>
       </a>
 
       {/* Header */}
-      <header class="mb-12">
-        <div class="flex items-center gap-3 text-xs font-mono text-gray-400 mb-4">
+      <header class="mb-10">
+        <div class="flex items-center flex-wrap gap-3 text-xs font-mono text-gray-400 mb-4">
           <span class="text-moro-400 font-bold uppercase tracking-wider bg-moro-500/10 px-2.5 py-0.5 rounded border border-moro-500/20">
             {article.category}
           </span>
           <span>•</span>
+          <span class="flex items-center gap-1.5">
+            <User class="w-3.5 h-3.5 text-gray-500" />
+            <a href="https://github.com/aljagne" target="_blank" rel="noopener noreferrer" class="hover:text-moro-300 font-medium">@{article.author}</a>
+          </span>
+          <span>•</span>
           <span class="flex items-center gap-1">
-            <Calendar class="w-3.5 h-3.5" />
+            <Calendar class="w-3.5 h-3.5 text-gray-500" />
             <span>{article.date}</span>
           </span>
           <span>•</span>
           <span class="flex items-center gap-1">
-            <Clock class="w-3.5 h-3.5" />
+            <Clock class="w-3.5 h-3.5 text-gray-500" />
             <span>{article.readTime}</span>
           </span>
         </div>
@@ -191,25 +221,69 @@ const { article } = Astro.props;
         <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-6">
           {article.title}
         </h1>
-        <div class="h-1 w-20 bg-gradient-to-r from-moro-400 to-purple-500 rounded-full" />
+        <p class="text-lg text-gray-300 leading-relaxed mb-6 font-light">
+          {article.description}
+        </p>
+        <div class="h-1 w-20 bg-gradient-to-r from-moro-400 to-purple-500 rounded-full mb-8" />
       </header>
 
+      {/* Social Share Bar Top */}
+      <ShareBar client:load title={article.title} url={articleUrl} category={article.category} />
+
+      {/* Featured Banner Snapshot */}
+      <div class="mb-12 rounded-3xl overflow-hidden border border-dark-800 shadow-2xl shadow-moro-500/5 group">
+        <img
+          src={ogImagePath}
+          alt={article.title}
+          width="1200"
+          height="630"
+          class="w-full h-auto object-cover group-hover:scale-[1.01] transition-transform duration-300"
+          loading="eager"
+        />
+      </div>
+
       {/* Article Content */}
-      <div class="prose prose-invert max-w-none text-gray-300 leading-relaxed text-base sm:text-lg">
+      <article class="prose prose-invert max-w-none text-gray-300 leading-relaxed text-base sm:text-lg">
         <div set:html={article.content.replace(/### (.*?)\n/g, '<h3 class="text-xl sm:text-2xl font-bold text-white mt-8 mb-3">$1</h3>').replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>').replace(/\n\n/g, '<p class="mb-4">').replace(/```bash\n([\s\S]*?)```/g, '<pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 text-sky-300 font-mono text-xs overflow-x-auto my-4">$1</pre>').replace(/```text\n([\s\S]*?)```/g, '<pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 text-red-400 font-mono text-xs overflow-x-auto my-4">$1</pre>').replace(/```json\n([\s\S]*?)```/g, '<pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 text-yellow-300 font-mono text-xs overflow-x-auto my-4">$1</pre>')} />
+      </article>
+
+      {/* Social Share Bar Bottom */}
+      <div class="mt-14">
+        <ShareBar client:load title={article.title} url={articleUrl} category={article.category} />
+      </div>
+
+      {/* Footer Author Box */}
+      <div class="mt-12 p-8 rounded-3xl border border-dark-800 bg-dark-900/60 backdrop-blur-xl flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+        <img
+          src="https://github.com/aljagne.png?size=240"
+          alt="aljagne portrait"
+          class="w-20 h-20 rounded-2xl ring-2 ring-moro-500/40 object-cover shadow-lg shrink-0"
+          onerror="this.src='https://avatar.vercel.sh/aljagne'"
+        />
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-moro-400 font-mono">Written by</span>
+          <h4 class="text-xl font-bold text-white mt-0.5">aljagne</h4>
+          <p class="text-sm text-gray-400 mt-2 leading-relaxed">
+            Creator &amp; Lead Architect of MoroAI. Obsessed with local-first AI, deterministic memory models, and liberating engineering teams from closed cloud APIs.
+          </p>
+          <div class="mt-4 flex items-center justify-center sm:justify-start gap-3">
+            <a href="https://github.com/aljagne" target="_blank" rel="noopener noreferrer" class="text-xs px-3 py-1 rounded-lg bg-dark-800 border border-dark-700 text-gray-300 hover:text-white transition-colors">GitHub ↗</a>
+            <a href="https://twitter.com/aljagne" target="_blank" rel="noopener noreferrer" class="text-xs px-3 py-1 rounded-lg bg-dark-800 border border-dark-700 text-gray-300 hover:text-white transition-colors">Twitter / X ↗</a>
+          </div>
+        </div>
       </div>
 
       {/* Footer CTA */}
-      <div class="mt-16 pt-8 border-t border-dark-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="mt-12 pt-8 border-t border-dark-800 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
-          <span class="text-sm font-bold text-white block">Ready to try MoroAI?</span>
-          <span class="text-xs text-gray-400">Run local fine-tuning on consumer hardware today.</span>
+          <span class="text-base font-bold text-white block">Ready to adapt your own models?</span>
+          <span class="text-xs text-gray-400">Run sovereign fine-tuning on consumer hardware today.</span>
         </div>
         <a
           href="/docs/getting-started/quickstart/"
-          class="px-6 py-3 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors flex items-center gap-2"
+          class="px-6 py-3 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-all hover:scale-105 shadow-lg shadow-moro-500/20 flex items-center gap-2"
         >
-          <span>Get Started</span>
+          <span>Get Started in 5 Minutes</span>
           <ArrowRight class="w-3.5 h-3.5" />
         </a>
       </div>
