@@ -1,35 +1,100 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, FileText, CheckCircle2 } from 'lucide-react';
+import SampleData from '../../../components/docs/SampleData.astro';
+import { ArrowRight, FileText, CheckCircle2, Terminal, Cpu, Zap } from 'lucide-react';
 
 const title = 'Document Summarizer — MoroAI Cookbook';
-const description = 'Adapt models for long-form enterprise executive summaries and document analysis.';
+const description = 'Build an executive summarization model with extended context window and FlashAttention that produces structured briefs on consumer GPUs.';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/cookbook/document-summarizer/">
   <div class="not-prose mb-8">
     <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      Cookbook 04
+      Cookbook Blueprint
     </span>
     <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Document Summarizer</h1>
     <p class="text-gray-400 text-base mt-2">
-      Fine-tune a model to distill technical reports and executive briefs into standardized key takeaways.
+      Fine-tune a long-context language model to distill complex technical reports and whitepapers into standardized, executive-ready key findings.
     </p>
   </div>
 
-  <h2>1. Long-Context Configuration</h2>
-  <p>Configure <code>moro.yaml</code> with sequence length expansion and Flash Attention:</p>
+  <h2>What You'll Build</h2>
+  <ul>
+    <li>A localized Qwen2.5-3B or 7B model tuned for structured 8K+ context processing.</li>
+    <li>Memory-optimized training utilizing FlashAttention-2 and gradient checkpointing on 12GB–16GB VRAM GPUs.</li>
+    <li>Evaluation suites that verify factual coverage, bullet-count constraints, and thesis statement clarity.</li>
+    <li>Instant local serving via Ollama for seamless internal document pipeline integration.</li>
+  </ul>
 
+  <h2>Step 1: Prepare Long-Form Training Data</h2>
+  <SampleData file="document_summaries_sample.jsonl" rows={2} label="Executive Brief Training Dataset" />
+  <p>Format training documents into structured prompt/response JSONL conversation pairs:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300 leading-relaxed">
+cat &gt; doc_summaries.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "system", "content": "You are an executive intelligence summarizer. Given a lengthy technical document, produce a structured executive brief with: 1) Thesis statement, 2) Key technical takeaways (3-5 bullets), and 3) Actionable recommendation."}, {"role": "user", "content": "Summarize the database latency report: During Q3, our primary PostgreSQL cluster experienced periodic latency spikes reaching 1,850ms during peak batch windows..."}, {"role": "assistant", "content": "**Thesis**: Database latency spikes and webhook cascading failures stem from unindexed ledger queries and lack of application-level connection pooling.\n\n**Key Findings**:\n- Latency spikes peaked at 1,850ms during batch processing windows.\n- Unindexed queries exhausted the 800-connection database ceiling.\n- Read replicas successfully offloaded analytics traffic.\n\n**Recommendation**: Deploy PgBouncer connection pooling and add foreign key migration indexes."}]}`}
+EOF
+  </pre>
+
+  <h2>Step 2: Scaffolding & moro.yaml Long-Context Setup</h2>
   <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
-{`model:
-  base_model: "Qwen/Qwen2.5-3B"
-  quantization: "4bit"
-  max_seq_length: 4096
+moro init doc-summarizer --template document-summarizer
+cd doc-summarizer
+cp ../doc_summaries.jsonl data/raw/
+  </pre>
+
+  <p>In <code>moro.yaml</code>, expand the maximum sequence length and enable gradient checkpointing:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+name: "doc-summarizer"
+version: "1.0.0"
+
+dataset:
+  source: ./data/raw/doc_summaries.jsonl
+  format: jsonl
+  max_seq_length: 8192                # Extended 8K context window
+
+model:
+  base: "Qwen/Qwen2.5-3B-Instruct"
+  quantization: "nf4"
 
 training:
-  gradient_checkpointing: true
+  learning_rate: 2.0e-4
   micro_batch_size: 1
-  gradient_accumulation_steps: 16`}
+  gradient_accumulation_steps: 16
+  gradient_checkpointing: true        # Saves up to 60% activation memory
+  auto_heal: true
+  </pre>
+
+  <h2>Step 3: VRAM Hardware Recipe & Training</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+# 1. Compile long-form data
+moro data build
+
+# 2. Check pre-flight VRAM budget at 8192 sequence length
+moro recipe suggest --model 3b --seq 8192
+
+# 3. Start training run
+moro train
+  </pre>
+
+  <h2>Step 4: Executive Brief Evaluation Suite</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+cat &gt; eval/summary_eval.yaml &lt;&lt; 'EOF'
+name: "summary-quality-suite"
+tests:
+  - id: "test_thesis_presence"
+    prompt: "Summarize: [Technical Report Excerpt]"
+    expected_keywords: ["**Thesis**:", "**Key Findings**:", "**Recommendation**:"]
+EOF
+
+moro eval run --checkpoint ./runs/best/ --suite eval/summary_eval.yaml
+  </pre>
+
+  <h2>Step 5: Deploy to Ollama with Custom Context Ceiling</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+moro release export --run-id best --version v1.0.0 --quant Q4_K_M
+moro release deploy --target ollama --version v1.0.0 --name doc-summarizer
   </pre>
 
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">

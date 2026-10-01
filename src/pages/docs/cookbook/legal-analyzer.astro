@@ -1,34 +1,107 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, Scale, CheckCircle2 } from 'lucide-react';
+import SampleData from '../../../components/docs/SampleData.astro';
+import { ArrowRight, Scale, CheckCircle2, Shield, Terminal, FileCode } from 'lucide-react';
 
 const title = 'Legal Document Analyzer — MoroAI Cookbook';
-const description = 'Audit contracts, NDAs, and liability agreements locally without cloud exposure.';
+const description = 'Audit contracts, NDAs, and liability agreements locally without cloud exposure using exact verbatim quotation constraints.';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/cookbook/legal-analyzer/">
   <div class="not-prose mb-8">
     <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      Cookbook 06
+      Cookbook Blueprint
     </span>
-    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Legal Document Analyzer</h1>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Legal Contract Analyzer</h1>
     <p class="text-gray-400 text-base mt-2">
-      Train a model to spot indemnification clauses and liability caps without uploading client agreements to public APIs.
+      Train a private legal extraction model to parse indemnification clauses, liability caps, and governing jurisdiction with strict verbatim quotation constraints.
     </p>
   </div>
 
-  <h2>1. Absolute Air-Gapped Privacy</h2>
-  <p>
-    Legal agreements are subject to strict client confidentiality. MoroAI guarantees that weights, training pairs, and prompt inferences execute entirely within your air-gapped network.
-  </p>
+  <h2>What You'll Build</h2>
+  <ul>
+    <li>A localized Qwen2.5 or Llama-3.2 model fine-tuned on commercial agreements, NDAs, and Master Services Agreements (MSAs).</li>
+    <li>Zero-hallucination extraction: every output value is constrained to be an exact verbatim substring of the input contract text.</li>
+    <li>100% attorney-client privileged local execution: training weights, source contracts, and extracted outputs never touch external cloud APIs.</li>
+  </ul>
 
-  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
-# Build, train, and deploy locally:
-moro init legal-reviewer
-moro data build --source ./data/ndas.jsonl
-moro train
-moro release deploy --target ollama --model-name legal-advisor:v1
+  <h2>Step 1: Prepare Contract Training Data</h2>
+  <SampleData file="legal_contracts_sample.jsonl" rows={3} label="Contract Clause Extraction Dataset" />
+  <p>Format training contracts into prompt/response JSONL with structured JSON extraction:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300 leading-relaxed">
+cat &gt; contracts_data.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "system", "content": "You are a legal contract analysis engine. Extract clauses strictly as JSON without commentary. Every extracted value must be an exact verbatim substring from the source contract."}, {"role": "user", "content": "Extract indemnification, liability cap, and governing law:\n\nSection 14. Indemnification. Service Provider agrees to defend, indemnify, and hold harmless Customer from any gross negligence. Section 15. Liability. Total liability shall not exceed total fees paid in the prior 12 months. Section 19. Forum. Governed by the laws of Delaware."}, {"role": "assistant", "content": "{\"indemnification\": \"defend, indemnify, and hold harmless Customer from any gross negligence\", \"liability_cap\": \"not exceed total fees paid in the prior 12 months\", \"governing_law\": \"laws of Delaware\"}"}]}`}
+EOF
   </pre>
+
+  <h2>Step 2: Scaffolding & Configuration</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro init legal-reviewer --template legal-analyzer
+cd legal-reviewer
+cp ../contracts_data.jsonl data/raw/
+  </pre>
+
+  <p>In <code>moro.yaml</code>, enforce strict PII scrubbing and conservative token cleaning:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+name: "legal-reviewer"
+version: "1.0.0"
+
+dataset:
+  source: ./data/raw/contracts_data.jsonl
+  format: jsonl
+  pii_scan: true                      # Strips real client names, SSNs, and banking details
+  mi_guard_threshold: 0.88            # Protects rare statutory citations (e.g. Del. C. § 102(b)(7))
+
+model:
+  base: "Qwen/Qwen2.5-7B-Instruct"
+  quantization: "nf4"
+
+training:
+  learning_rate: 1.8e-4
+  micro_batch_size: 1
+  gradient_accumulation_steps: 16
+  gradient_checkpointing: true
+  auto_heal: true
+  </pre>
+
+  <h2>Step 3: Compile & Train</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+moro data build
+moro train
+  </pre>
+
+  <h2>Step 4: Citation & Substring Grounding Evaluation</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+cat &gt; eval/legal_eval.yaml &lt;&lt; 'EOF'
+name: "legal-grounding-suite"
+tests:
+  - id: "test_nda_extraction"
+    prompt: "Extract clauses from: [Sample NDA Excerpt]"
+    expected_keywords: ["indemnify", "liability", "Delaware"]
+EOF
+
+moro eval run --checkpoint ./runs/best/ --suite eval/legal_eval.yaml
+  </pre>
+
+  <h2>Step 5: Local Air-Gapped Deployment</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+moro release export --run-id best --version v1.0.0 --quant Q4_K_M
+moro release deploy --target ollama --version v1.0.0 --name legal-reviewer
+  </pre>
+
+  <h2>Privilege & Governance Guarantees</h2>
+  <div class="not-prose my-6 rounded-2xl border border-dark-800 bg-dark-900/60 p-5 space-y-3 text-sm text-gray-300 font-sans">
+    <div class="flex items-center gap-2.5">
+      <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+      <span>100% on-premise execution preserves Attorney-Client Privilege.</span>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+      <span>Zero telemetry egress or external logging verified by <code>moro doctor --privacy</code>.</span>
+    </div>
+  </div>
 
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
     <a href="/docs/cookbook/medical-qa/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">

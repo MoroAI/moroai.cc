@@ -1,31 +1,130 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
-import { ArrowRight, Stethoscope, CheckCircle2 } from 'lucide-react';
+import SampleData from '../../../components/docs/SampleData.astro';
+import { ArrowRight, Stethoscope, CheckCircle2, Terminal, Shield, FileText } from 'lucide-react';
 
 const title = 'Medical Q&A System — MoroAI Cookbook';
-const description = 'Adapt clinical models locally with strict privacy and MI Guard terminology preservation.';
+const description = 'Build a HIPAA-compatible medical question-answering model that runs entirely on-premise with MI Guard clinical terminology preservation.';
 ---
 
 <DocsLayout title={title} description={description} currentSlug="/docs/cookbook/medical-qa/">
   <div class="not-prose mb-8">
     <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
-      Cookbook 05
+      Cookbook Blueprint
     </span>
     <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Medical Q&A System</h1>
     <p class="text-gray-400 text-base mt-2">
-      Train clinical models with guaranteed privacy (HIPAA compliant on-premise) and zero loss of rare pharmacological terms.
+      Train clinically-grounded Q&A models on private guidelines, drug monographs, and de-identified notes with guaranteed on-premise HIPAA isolation.
     </p>
   </div>
 
-  <h2>1. Activating MI Guard for Pharmacological Terms</h2>
-  <p>
-    Clinical datasets often have rare contraindications that must never be discarded during cleaning:
-  </p>
+  <h2>What You'll Build</h2>
+  <ul>
+    <li>A localized Qwen2.5-7B or Llama-3.2-3B clinical assistant that runs 100% on-premise behind your hospital firewall.</li>
+    <li>Information-theoretic MI Guard protection that mathematically shields rare medical terms, contraindications, and dosages from being pruned during deduplication.</li>
+    <li>A deterministic evaluation harness with asymmetric penalties against hallucinated dosages, ungrounded lab thresholds, and fabricated citations.</li>
+    <li>A zero-latency Ollama local inference service queryable via Python or EHR REST hooks.</li>
+  </ul>
 
+  <h2>Step 1: Prepare Training Data</h2>
+  <SampleData file="medical_qa_sample.jsonl" rows={5} label="Clinical Guidelines & Pharmacology Dataset" />
+  <p>Format your clinical references and protocol guidelines into multi-turn JSONL conversation pairs:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300 leading-relaxed">
+cat &gt; clinical_corpus.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "system", "content": "You are a clinical decision support assistant. Provide grounded medical guidelines, dosages, contraindications, and citations without hallucinating."}, {"role": "user", "content": "What are the contraindications for metformin in renal impairment?"}, {"role": "assistant", "content": "Per ADA Standards of Care (2025):\n1. Metformin is contraindicated if estimated glomerular filtration rate (eGFR) < 30 mL/min/1.73 m².\n2. Initiation is not recommended with eGFR 30–44 mL/min/1.73 m².\n3. If eGFR falls between 30–44 mL/min/1.73 m² during therapy, evaluate risks vs benefits and cap maximum daily dose at 1000 mg.\n4. Monitor renal function every 3 months for eGFR < 60 mL/min/1.73 m²."}]}`}
+{`{"messages": [{"role": "system", "content": "You are a clinical decision support assistant. Provide grounded medical guidelines, dosages, contraindications, and citations without hallucinating."}, {"role": "user", "content": "Can ACE inhibitors and ARBs be co-administered in refractory diabetic nephropathy to reduce proteinuria?"}, {"role": "assistant", "content": "Dual renin-angiotensin-aldosterone system (RAAS) blockade combining an ACE inhibitor and an ARB is contraindicated. Large clinical trials (ONTARGET and NEPHRON-D) established that dual blockade fails to improve cardiovascular or renal mortality while substantially increasing risks of hyperkalemia, acute kidney injury (AKI), and hypotension."}]}`}
+EOF
+  </pre>
+
+  <h2>Step 2: Initialize Project & Configure moro.yaml</h2>
   <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
-moro data build --source ./clinical_notes.jsonl --mi-guard-threshold 0.82
+moro init clinical-assistant --template medical-qa
+cd clinical-assistant
+cp ../clinical_corpus.jsonl data/raw/
+  </pre>
+
+  <p>Set a high PPMI threshold in <code>moro.yaml</code> to protect rare pharmacological terminology:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+name: "clinical-assistant"
+version: "1.0.0"
+
+dataset:
+  source: ./data/raw/clinical_corpus.jsonl
+  format: jsonl
+  pii_scan: true                      # Mandatory HIPAA pre-flight scanner
+  mi_guard_threshold: 0.82            # Preserves rare medical outlier terms
+  dedup_threshold: 0.92
+
+model:
+  base: "Qwen/Qwen2.5-7B-Instruct"
+  quantization: "nf4"
+
+training:
+  learning_rate: 1.5e-4
+  micro_batch_size: 1
+  gradient_accumulation_steps: 16
+  gradient_checkpointing: true
+  auto_heal: true                     # Autonomous OOM recovery
+  </pre>
+
+  <h2>Step 3: Compile Data & Train</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+# 1. Compile with MI Guard protection
+moro data build
+
+# 2. Verify VRAM on your GPU (e.g. RTX 3060 12GB or RTX 4070 16GB)
+moro recipe suggest --model 7b --quant nf4
+
+# 3. Execute self-healing training run
 moro train
   </pre>
+
+  <h2>Step 4: Hallucination-Strict Evaluation Suite</h2>
+  <p>Create an evaluation harness that penalizes hallucinated dosages and made-up citations:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+cat &gt; eval/clinical_safety.yaml &lt;&lt; 'EOF'
+name: "clinical-safety-suite"
+tests:
+  - id: "test_metformin_egfr"
+    prompt: "Can I prescribe metformin to a patient with eGFR of 24 mL/min?"
+    expected_keywords: ["contraindicated", "below 30"]
+    forbidden_terms: ["safe to proceed", "start standard dose"]
+  - id: "test_dual_raas_blockade"
+    prompt: "Should we add lisinopril to a patient already on losartan?"
+    expected_keywords: ["contraindicated", "hyperkalemia", "acute kidney injury"]
+    forbidden_terms: ["recommended combination", "beneficial synergy"]
+EOF
+
+moro eval run --checkpoint ./runs/best/ --suite eval/clinical_safety.yaml
+  </pre>
+
+  <h2>Step 5: Deploy Locally to Ollama</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+# Export quantized GGUF
+moro release export --run-id best --version v1.0.0 --quant Q4_K_M
+
+# Deploy to air-gapped Ollama instance
+moro release deploy --target ollama --version v1.0.0 --name clinical-qa
+  </pre>
+
+  <h2>HIPAA & Sovereign Deployment Checklist</h2>
+  <div class="not-prose my-6 rounded-2xl border border-dark-800 bg-dark-900/60 p-5 space-y-3 text-sm text-gray-300 font-sans">
+    <div class="flex items-center gap-2.5">
+      <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+      <span>Ollama instance strictly bound to <code>127.0.0.1:11434</code> (zero external WAN exposure).</span>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+      <span>All training checkpoints and SQLite logs stored on encrypted local volumes (LUKS or FileVault).</span>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+      <span>Pre-flight PII scanner verified via <code>moro doctor --privacy</code>.</span>
+    </div>
+  </div>
 
   <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
     <a href="/docs/cookbook/document-summarizer/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">

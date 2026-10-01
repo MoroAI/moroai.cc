@@ -7,12 +7,13 @@
     "dev": "astro dev",
     "start": "astro dev",
     "fetch-fonts": "node scripts/fetch-fonts.mjs",
-    "prebuild": "node scripts/build-og-images.mjs",
-    "build": "node scripts/build-og-images.mjs && astro build && pagefind --site dist --output-path dist/pagefind --exclude-selectors \"nav,footer,aside,.no-search\"",
+    "prebuild": "node scripts/build-og-images.mjs && node scripts/build-llms-full.mjs",
+    "build": "node scripts/build-og-images.mjs && node scripts/build-llms-full.mjs && astro build && pagefind --site dist --output-path dist/pagefind --exclude-selectors \"nav,footer,aside,.no-search\"",
     "preview": "astro preview",
     "astro": "astro",
     "deploy": "wrangler deploy",
     "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write ."
   },
   "dependencies": {
@@ -35,7 +36,9 @@
     "tailwindcss": "^3.4.10"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261001.1",
     "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.3",
     "pagefind": "^1.5.2",
     "prettier": "^3.3.3",
     "prettier-plugin-astro": "^0.14.1",

@@ -1,0 +1,3916 @@
+# MoroAI — Comprehensive Documentation for LLMs
+
+> MoroAI is a local-first model adaptation foundry for small language models.
+> Apache-2.0 licensed, open-source Python CLI + web dashboard.
+> Website: https://moroai.cc · GitHub: https://github.com/moroai/moro
+
+
+# SECTION: Getting Started
+
+
+## Document: /docs/getting-started/first-model/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Hands-On Tutorial
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Your First Local Model</h1>
+    <p class="text-gray-400 text-base mt-2">
+      From custom private JSONL logs to a fully functioning local LLM assistant in under 10 minutes.
+    </p>
+  </div>
+
+  <h2>1. Prepare Your Domain Dataset</h2>
+  <p>
+    MoroAI accepts standard chat message formats (compatible with OpenAI and Hugging Face ShareGPT/ChatML formats). Create a file called <code>./data/raw/finance_qa.jsonl</code>:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`{"messages": [{"role": "system", "content": "You are a corporate financial analyst assistant."}, {"role": "user", "content": "What is our company policy on capital expenditure approval limits?"}, {"role": "assistant", "content": "Under Section 4.2 of our Financial Guidelines, CapEx under $50,000 requires Department Head sign-off; amounts between $50,000 and $250,000 require CFO approval; exceeding $250,000 requires Board of Directors authorization."}]}
+{"messages": [{"role": "system", "content": "You are a corporate financial analyst assistant."}, {"role": "user", "content": "How are international wire transfer exchange fees recognized?"}, {"role": "assistant", "content": "Foreign exchange wire transaction fees are recognized under Account 6420 (Bank & Transaction Fees) at the spot rate on the date of settlement."}]}`}
+  </pre>
+
+  <h2>2. Compile the Dataset with Epistemic Filtering</h2>
+  <p>
+    Run the compiler to calculate token information entropy, filter duplicates, and protect rare financial guidelines:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro data build --source ./data/raw/finance_qa.jsonl --output ./data/compiled/
+  </pre>
+
+  <p>
+    The compiler outputs <code>curated_train.jsonl</code> and <code>curated_val.jsonl</code> with quality metrics.
+  </p>
+
+  <h2>3. Hardware Audit & Training</h2>
+  <p>
+    Generate the configuration and initiate training:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro recipe generate --model Qwen/Qwen2.5-1.5B --hardware detect
+moro train
+  </pre>
+
+  <p>
+    MoroAI will automatically allocate GPU tensors, optimize batch sizes, and monitor convergence with loss telemetry.
+  </p>
+
+  <h2>4. Test Local Inference</h2>
+  <p>
+    Once training finishes, export the model and test prompt completion immediately:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-400">
+moro release deploy --target ollama --model-name finance-assistant:v1
+ollama run finance-assistant:v1 "Who needs to approve a $120,000 server purchase?"
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/getting-started/quickstart/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Quickstart
+    </a>
+    <a href="/docs/concepts/overview/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Next: System Overview</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/getting-started/installation/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Setup & Verification
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Installation Guide</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Step-by-step installation instructions for Linux, macOS (Apple Silicon), and Windows WSL2.
+    </p>
+  </div>
+
+  <h2>System Prerequisites</h2>
+  <ul>
+    <li><strong>Python:</strong> Version 3.10, 3.11, or 3.12</li>
+    <li><strong>RAM:</strong> 8GB minimum (16GB+ recommended for dataset compilation)</li>
+    <li><strong>Disk Space:</strong> 10GB free SSD space for base model weights and cached adapters</li>
+    <li><strong>GPU (Optional for training):</strong> NVIDIA GPU with 4GB+ VRAM or Apple Silicon Mac (M1/M2/M3/M4)</li>
+  </ul>
+
+  <h2>Installation Methods</h2>
+
+  <h3>Option 1: Standard `pip` (Recommended)</h3>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+# Basic installation (CLI, data compiler, and evaluation)
+pip install moroai
+
+# With training extensions (PyTorch, BitsAndBytes, PEFT, TRL)
+pip install "moroai[train]"
+
+# Full installation with all optional export and serving plugins
+pip install "moroai[all]"
+  </pre>
+
+  <h3>Option 2: From Source (Latest Development)</h3>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+git clone https://github.com/moroai/moro.git
+cd moro
+pip install -e ".[train]"
+  </pre>
+
+  <h3>Option 3: Pre-Built Docker Image</h3>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+docker pull moroai/moro:latest
+docker run --gpus all -it -p 3000:3000 moroai/moro:latest
+  </pre>
+
+  <h2>Verifying Installation (`moro doctor`)</h2>
+  <p>Run the built-in diagnostic tool to verify all components:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300 leading-relaxed">
+$ moro doctor
+
+MoroAI System Diagnostics
+─────────────────────────────────────────────────
+Platform:         Darwin / Linux (x86_64 or arm64)
+Python:           3.11.5 (Active environment)
+CLI Version:      0.1.0 (moro)
+
+Core Dependencies:
+  ✓ typer         0.12.0
+  ✓ rich          13.7.0
+  ✓ pydantic      2.6.0
+  ✓ pyyaml        6.0.1
+
+Training Backend:
+  ✓ torch         2.2.0 (CUDA 12.1 or MPS available)
+  ✓ transformers  4.38.0
+  ✓ peft          0.9.0
+  ✓ bitsandbytes  0.42.0
+
+Hardware Status:
+  ✓ GPU: NVIDIA GeForce RTX 4070 (12,288 MB VRAM)
+  ✓ Driver: 545.29.06 | CUDA: 12.1
+  ✓ Zero-OOM Pre-Flight Engine: ACTIVE
+
+System Verdict:
+  ✓ READY FOR DATA CURATION & LOCAL TRAINING
+  </pre>
+
+  <h2>GPU Compatibility & Model Sizes</h2>
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">GPU Tier</th>
+          <th class="p-3 border border-dark-800">Dedicated VRAM</th>
+          <th class="p-3 border border-dark-800">Supported Target Models</th>
+          <th class="p-3 border border-dark-800">Quantization</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">Entry Level</td>
+          <td class="p-3 text-emerald-400">4 GB – 8 GB</td>
+          <td class="p-3 text-gray-300">0.5B – 1.5B (Qwen2.5, Llama-3.2)</td>
+          <td class="p-3 text-cyan-400">4-bit NF4</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">Mid-Range (RTX 3060/4070)</td>
+          <td class="p-3 text-emerald-400">12 GB – 16 GB</td>
+          <td class="p-3 text-gray-300">1.5B – 3B (Llama-3.2-3B, Qwen2.5-3B)</td>
+          <td class="p-3 text-cyan-400">4-bit NF4</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">High-End (RTX 3090/4090)</td>
+          <td class="p-3 text-emerald-400">24 GB</td>
+          <td class="p-3 text-gray-300">7B – 8B (Llama-3.1-8B, Mistral-7B)</td>
+          <td class="p-3 text-cyan-400">4-bit NF4 or 8-bit</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">Apple Silicon (M2/M3/M4)</td>
+          <td class="p-3 text-emerald-400">16 GB – 64 GB Unified</td>
+          <td class="p-3 text-gray-300">1.5B – 14B (Metal Acceleration)</td>
+          <td class="p-3 text-cyan-400">FP16 / 4-bit MLX</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">Data Center (A100 / H100)</td>
+          <td class="p-3 text-emerald-400">40 GB – 80 GB</td>
+          <td class="p-3 text-gray-300">14B – 70B (Full LoRA Rank 64)</td>
+          <td class="p-3 text-cyan-400">BF16 / FP16</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Common Installation Troubleshooting</h2>
+
+  <h3>1. CUDA Not Found or PyTorch CPU-Only Installed</h3>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+# Verify NVIDIA driver is working:
+nvidia-smi
+
+# Reinstall PyTorch with explicit CUDA 12.1 runtime:
+pip install --upgrade torch --index-url https://download.pytorch.org/whl/cu121
+  </pre>
+
+  <h3>2. Apple Silicon Metal Performance Shaders (MPS) Setup</h3>
+  <p>On macOS with Apple Silicon chips, hardware acceleration is enabled out of the box through PyTorch's Metal backend:</p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+python -c "import torch; print('MPS available:', torch.backends.mps.is_available())"
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/getting-started/introduction/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Introduction
+    </a>
+    <a href="/docs/getting-started/quickstart/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>5-Minute Quickstart</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/getting-started/introduction/
+
+<div class="not-prose mb-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moro-500/10 border border-moro-500/20 text-moro-400 text-xs font-semibold uppercase tracking-wider mb-4">
+      <Sparkles class="w-3.5 h-3.5" />
+      <span>Getting Started</span>
+    </div>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Introduction to MoroAI</h1>
+    <p class="text-gray-400 text-base mt-2">
+      The local-first platform for turning uncurated enterprise data into high-yield, sovereign language models.
+    </p>
+  </div>
+
+  <h2>What is MoroAI?</h2>
+  <p>
+    <strong>MoroAI</strong> is an open-source, local-first model adaptation foundry. It transforms proprietary documents, customer interaction logs, code repositories, and structured databases into dependable, fine-tuned language models on consumer hardware.
+  </p>
+
+  <p>
+    Existing tools like Axolotl, Unsloth, or LLaMA-Factory provide scripts for running backpropagation, but leave data curation, hardware sizing, evaluation, and release governance to manual guesswork. MoroAI automates the entire lifecycle end-to-end:
+  </p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose my-6">
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800">
+      <div class="font-bold text-white mb-1">1. Epistemic Data Curation</div>
+      <p class="text-xs text-gray-400">Protects rare domain corner cases with Mutual Information Guard while filtering redundant noise.</p>
+    </div>
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800">
+      <div class="font-bold text-white mb-1">2. Zero-OOM Hardware Prediction</div>
+      <p class="text-xs text-gray-400">Simulates activation and gradient memory before launch, guaranteeing zero Out-Of-Memory crashes.</p>
+    </div>
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800">
+      <div class="font-bold text-white mb-1">3. Self-Healing Training</div>
+      <p class="text-xs text-gray-400">5-step autonomous recovery engine that catches spikes, clears caches, and resumes without data loss.</p>
+    </div>
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800">
+      <div class="font-bold text-white mb-1">4. Instant Ollama & GGUF Release</div>
+      <p class="text-xs text-gray-400">One-command quantize and deploy with full cryptographic Software Bill of Materials (SBOM).</p>
+    </div>
+  </div>
+
+  <h2>Who is MoroAI for?</h2>
+  <ul>
+    <li><strong>Regulated Enterprises:</strong> Legal, financial, defense, and healthcare teams unable to send proprietary data to cloud APIs.</li>
+    <li><strong>Engineers with Consumer GPUs:</strong> Builders fine-tuning 1.5B–14B models on single RTX 3060, 4070, or Apple Silicon M-series chips.</li>
+    <li><strong>MLOps Teams:</strong> Teams needing cryptographic audit logs, deterministic regression tests, and continuous DPO feedback loops.</li>
+  </ul>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <span class="text-xs text-gray-500">Next Step</span>
+    <a
+      href="/docs/getting-started/installation/"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors"
+    >
+      <span>Installation Guide</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/getting-started/quickstart/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      5-Minute Tutorial
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Quickstart: 5 Minutes to Your First Local Model</h1>
+    <p class="text-gray-400 text-base mt-2">
+      This step-by-step tutorial takes you from <strong class="text-white">zero to a deployed, private local language model</strong> in 5 minutes.
+    </p>
+  </div>
+
+  <h2>Step 1: Install MoroAI (30 seconds)</h2>
+  <p>Install the MoroAI core package with training extensions:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+# Install with training support
+pip install "moroai[train]"
+  </pre>
+
+  <p>Verify that your environment and GPU are ready:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+moro doctor
+  </pre>
+
+  <h2>Step 2: Initialize Your Project (30 seconds)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro init my-first-model
+cd my-first-model
+  </pre>
+
+  <p>This creates a reproducible workspace:</p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-gray-300">
+my-first-model/
+├── moro.yaml          # Project configuration & recipe
+├── data/
+│   └── raw/           # Raw training data inputs
+├── runs/              # Training checkpoints & telemetry
+├── releases/          # Exported GGUF models & SBOMs
+└── eval/              # Evaluation suites
+  </pre>
+
+  <h2>Step 3: Add Your Data (1 minute)</h2>
+  <p>Create a sample customer support dataset:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300">
+cat &gt; data/raw/support_data.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "user", "content": "How do I reset my password?"}, {"role": "assistant", "content": "Go to Settings > Security > Reset Password."}]}`}
+{`{"messages": [{"role": "user", "content": "What is your refund policy?"}, {"role": "assistant", "content": "We offer a 30-day money-back guarantee on all purchases."}]}`}
+{`{"messages": [{"role": "user", "content": "How do I contact support?"}, {"role": "assistant", "content": "You can reach our support team at support@example.com."}]}`}
+EOF
+  </pre>
+
+  <p>Ensure <code>moro.yaml</code> references your raw data:</p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+dataset:
+  source: ./data/raw/support_data.jsonl
+  format: jsonl
+  </pre>
+
+  <h2>Step 4: Build the Dataset with MI Guard (30 seconds)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro data build
+  </pre>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+✓ Loaded 3 samples
+✓ After deduplication: 3 samples
+✓ MI Guard: 1 rare domain landmark protected
+✓ Split: train=2, val=1, eval=0
+✓ Dataset compiled to data/compiled
+  </pre>
+
+  <h2>Step 5: Train Your Model (2 minutes)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro train
+  </pre>
+
+  <p>MoroAI detects your hardware, audits VRAM memory safety, and runs local fine-tuning:</p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+✓ Hardware detected: NVIDIA GeForce RTX 4070 (12GB)
+✓ Recipe generated: lora_r=16, lr=2e-4, batch=2, accum=8
+✓ Training started: run_1234567890
+✓ Step 50/100 | Loss: 1.42 | VRAM: 6.2GB
+✓ Training completed in 45s (Zero OOM)
+  </pre>
+
+  <h2>Step 6: Deploy to Ollama (30 seconds)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+moro release export --run-id run_1234567890 --version v1.0.0
+moro release deploy --target ollama --version v1.0.0
+  </pre>
+
+  <h2>Step 7: Test Your Private Model (30 seconds)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`# Test locally via Ollama CLI:
+ollama run my-first-model:v1.0.0 "How do I reset my password?"
+
+# Or via the OpenAI-compatible local REST API:
+curl http://localhost:11434/api/generate -d '{
+  "model": "my-first-model:v1.0.0",
+  "prompt": "How do I reset my password?",
+  "stream": false
+}'`}
+  </pre>
+
+  <h2>What Just Happened?</h2>
+  <div class="not-prose my-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center gap-2 mb-1.5 text-cyan-400 font-bold text-xs">
+        <Database class="w-4 h-4" />
+        <span>Data Curated</span>
+      </div>
+      <p class="text-gray-400 text-xs">
+        Raw data was parsed, deduplicated, and scored with information-theoretic token density.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center gap-2 mb-1.5 text-emerald-400 font-bold text-xs">
+        <Cpu class="w-4 h-4" />
+        <span>Hardware Aware</span>
+      </div>
+      <p class="text-gray-400 text-xs">
+        An optimal LoRA recipe was synthesized to guarantee zero out-of-memory crashes on your GPU.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center gap-2 mb-1.5 text-purple-400 font-bold text-xs">
+        <Rocket class="w-4 h-4" />
+        <span>Model Deployed</span>
+      </div>
+      <p class="text-gray-400 text-xs">
+        Adapter weights were quantized to GGUF format and registered directly into the local Ollama runtime.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center gap-2 mb-1.5 text-emerald-400 font-bold text-xs">
+        <Check class="w-4 h-4" />
+        <span>100% Private</span>
+      </div>
+      <p class="text-gray-400 text-xs">
+        Zero tokens, weights, or logs left your workstation. Complete data sovereignty achieved.
+      </p>
+    </div>
+  </div>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/getting-started/installation/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Installation Guide
+    </a>
+    <a href="/docs/getting-started/first-model/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Deep First Model Guide</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+# SECTION: Concepts & Architecture
+
+
+## Document: /docs/concepts/dashboard/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-pink-400 uppercase tracking-wider bg-pink-500/10 px-2.5 py-1 rounded border border-pink-500/20 mb-3 inline-block">
+      Subsystem 07
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Mission Control UI</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Zero-cloud, browser-based command center for visual dataset curation, live VRAM and loss telemetry, model evaluation diffing, and one-click Ollama deployment.
+    </p>
+  </div>
+
+  <h2>System Architecture & Local Execution</h2>
+  <p>
+    While the <code>moro</code> CLI provides complete automation for scripting and CI/CD pipelines, complex fine-tuning operations benefit immensely from visual, real-time feedback. MoroAI provides <strong>Mission Control</strong>: a self-contained web application served entirely from the local Python package.
+  </p>
+  
+  <p>
+    When launched with <code>moro dashboard</code>, the system starts an embedded, high-performance ASGI server (Uvicorn + FastAPI) and binds exclusively to <code>localhost</code> (or a user-specified private subnet interface). No telemetry or tracking scripts are loaded; assets are served locally from the package distribution.
+  </p>
+
+  <div class="not-prose my-6 p-5 rounded-2xl bg-dark-950 border border-dark-800 font-mono text-xs">
+    <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+      <span>Launch Command</span>
+      <span class="text-pink-400">moro dashboard</span>
+    </div>
+    <pre class="text-pink-300 leading-relaxed overflow-x-auto whitespace-pre-wrap">
+{`$ moro dashboard --port 3000 --host 127.0.0.1
+
+╭──────────────────────────────────────────────────╮
+│   MoroAI Mission Control Dashboard v0.1.0        │
+│   Web Interface:  http://localhost:3000          │
+│   REST API:       http://localhost:3000/api/v1   │
+│   WebSocket:      ws://localhost:3000/api/v1/ws  │
+│   Storage:        SQLite (.moro/moro.db)         │
+╰──────────────────────────────────────────────────╯
+[READY] Press Ctrl+C to stop the dashboard server.`}
+    </pre>
+  </div>
+
+  <h2>Real-Time Streaming Engine (SSE & WebSockets)</h2>
+  <p>
+    Standard machine learning dashboards rely on aggressive REST polling (e.g. fetching <code>/status</code> every second), which introduces latency and CPU thrashing during heavy backpropagation.
+  </p>
+  <p>
+    MoroAI Mission Control implements a dual-channel pub/sub telemetry pipe:
+  </p>
+  <ul>
+    <li>
+      <strong>Server-Sent Events (SSE) (<code>/api/v1/stream</code>):</strong> Delivers unidirectional, lightweight 60Hz telemetry ticks for active training step, rolling moving-average loss, and exact VRAM allocations directly to client SVG/Canvas charts.
+    </li>
+    <li>
+      <strong>Bi-Directional WebSocket (<code>/api/v1/ws</code>):</strong> Facilitates instant command dispatching (such as dynamic learning rate nudges, emergency pause, or manual checkpoint creation) with sub-millisecond execution roundtrips.
+    </li>
+  </ul>
+
+  <h2>Core Modules in Mission Control</h2>
+
+  <h3>1. Interactive Dataset Studio</h3>
+  <p>
+    Drag and drop raw <code>.jsonl</code>, <code>.csv</code>, or <code>.parquet</code> files directly into the browser. The studio immediately runs the <strong>Epistemic Data Compiler</strong> in a background worker process, rendering:
+  </p>
+  <ul>
+    <li>Interactive token length distribution histograms</li>
+    <li>Positive Pointwise Mutual Information (PPMI) density curves</li>
+    <li>Visual identification of protected <strong>MI Guard Landmark</strong> samples versus pruned boilerplate</li>
+  </ul>
+
+  <h3>2. Pre-Flight VRAM Simulator</h3>
+  <p>
+    Before starting training, operators can adjust sequence length (e.g. 1024, 2048, 4096) and LoRA rank ($r=8, 16, 32, 64$). A dynamic gauge continuously predicts peak VRAM against available GPU memory and illuminates safety thresholds (Green: Safe, Yellow: Tight, Red: OOM Inevitable).
+  </p>
+
+  <h3>3. Evaluation Comparator & Completion Diffing</h3>
+  <p>
+    Compare base model versus fine-tuned checkpoint completions side by side on standardized enterprise test sets. Responses are diffed token-by-token with color-coded highlighting of strict rule compliance, hallucination markers, and Wasserstein distribution drift scores.
+  </p>
+
+  <h3>4. One-Click Runtime Deployment</h3>
+  <p>
+    Once an evaluation gate is certified, the operator can click <strong>Deploy to Ollama</strong>. Mission Control invokes local quantization (NF4/GGUF), compiles the Modelfile, and registers the model in the local Ollama daemon without leaving the browser.
+  </p>
+
+  <h2>REST & WebSocket Integration</h2>
+  <p>
+    For programmatic monitoring or embedding into internal corporate portals, Mission Control exposes comprehensive endpoints:
+  </p>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Endpoint</th>
+          <th class="p-3 border border-dark-800">Method</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-pink-400 font-bold">/api/v1/health</td>
+          <td class="p-3 text-emerald-400 font-bold">GET</td>
+          <td class="p-3 text-gray-300">Server status, connected GPU info, and database state</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-pink-400 font-bold">/api/v1/runs</td>
+          <td class="p-3 text-emerald-400 font-bold">GET / POST</td>
+          <td class="p-3 text-gray-300">List historical runs or launch new training job</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-pink-400 font-bold">/api/v1/runs/{'{id}'}/telemetry</td>
+          <td class="p-3 text-emerald-400 font-bold">GET (SSE)</td>
+          <td class="p-3 text-gray-300">Continuous SSE event stream for loss, step, and VRAM</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-pink-400 font-bold">/api/v1/deploy/ollama</td>
+          <td class="p-3 text-cyan-400 font-bold">POST</td>
+          <td class="p-3 text-gray-300">Trigger GGUF quantization and local Ollama registration</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/flywheel/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← DPO Feedback Flywheel
+    </a>
+    <a href="/docs/api/rest/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>REST API Reference</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/concepts/data-compiler/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 px-2.5 py-1 rounded border border-cyan-500/20 mb-3 inline-block">
+      Subsystem 01
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Epistemic Data Compiler & MI Guard</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Information-theoretic dataset curation engineered to mathematically protect critical domain edge cases while eliminating semantic redundancy.
+    </p>
+  </div>
+
+  <MiGuardSimulator client:visible />
+
+  <h2>The Fundamental Dilemma in Domain Fine-Tuning</h2>
+  <p>
+    When adapting a large language model to an enterprise domain (such as customer support, legal contracts, or medical documentation), raw input data exhibits extreme semantic skew:
+  </p>
+  <ul>
+    <li><strong>Boilerplate & Generic Patterns:</strong> Greetings, standard policy disclaimers, conversational pleasantries, and common phrases occur thousands of times across the dataset.</li>
+    <li><strong>Critical Domain Outliers:</strong> Rare legal exceptions, edge-case troubleshooting fixes, specialized product SKU quirks, and safety caveats occur only once or twice.</li>
+  </ul>
+  <p>
+    Traditional deduplication systems (such as MinHash or embedding cosine distance thresholds) rely on cluster density. When they prune datasets to eliminate repetition, high-density generic clusters survive, whereas low-density domain landmarks are discarded as "unrepresentative outliers." The resulting model learns to repeat pleasantries while failing at specialized domain tasks.
+  </p>
+
+  <h2>The Mutual Information (MI) Guard</h2>
+  <p>
+    MoroAI solves this structural dilemma by introducing the <strong>Epistemic Data Compiler</strong> with an integrated <strong>Mutual Information (MI) Guard</strong>. Instead of judging samples solely by semantic similarity, the compiler evaluates their information-theoretic contribution to the domain corpus.
+  </p>
+
+  <div class="not-prose my-6 p-5 rounded-2xl bg-dark-950 border border-dark-800 font-mono text-xs">
+    <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+      <span>Information Gain Decision Logic</span>
+      <span class="text-cyan-400">Compiler Core</span>
+    </div>
+    <pre class="text-cyan-300 leading-relaxed overflow-x-auto whitespace-pre-wrap">
+{`# 1. Calculate Pointwise Mutual Information for token pairs (w1, w2)
+PPMI(w1, w2) = max( 0, log2( P(w1, w2) / (P(w1) * P(w2)) ) )
+
+# 2. Compute Resnik Information Content against domain ontology
+IC(concept) = -log( P(concept) )
+
+# 3. MI Guard Decision Policy:
+if sample.is_cluster_outlier() and sample.mean_ppmi >= mi_guard_threshold:
+    preserve_sample(sample, category="MI_GUARD_LANDMARK")
+elif sample.is_cluster_outlier() and sample.mean_ppmi < mi_guard_threshold:
+    prune_sample(sample, category="IRRELEVANT_NOISE")
+else:
+    dedup_sample(sample, threshold=dedup_threshold)`}
+    </pre>
+  </div>
+
+  <h2>Three-Stage Compilation Pipeline</h2>
+  <ol>
+    <li>
+      <strong>Format Ingestion & Normalization:</strong> Ingests JSONL, CSV, Parquet, or raw text directories. Messages are mapped into a unified schema <code>{`{role: "system"|"user"|"assistant", content: string}`}</code> with automatic schema validation and PII redaction.
+    </li>
+    <li>
+      <strong>Information Density Auditing:</strong> Calculates token entropy $H(X) = -\sum P(x) \log_2 P(x)$. Samples with repetitive token spam (e.g. garbled text or low-entropy loops) are flagged for removal.
+    </li>
+    <li>
+      <strong>Boundary Clustering & Partitioning:</strong> Samples are embedded using a local MiniLM/Qwen embedding model. Cosine similarity determines deduplication clusters, while the MI Guard tags protected boundary samples before performing deterministic 80/10/10 train/validation/test splits.
+    </li>
+  </ol>
+
+  <h2>CLI Usage & Pipeline Flags</h2>
+  <p>
+    Compile raw conversational logs into a hardened, balanced dataset ready for training:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+# Ingest and compile dataset with MI Guard enabled
+moro data build \
+    --source ./data/customer_support_raw.jsonl \
+    --mi-guard-threshold 0.85 \
+    --dedup-threshold 0.88 \
+    --output ./data/compiled/
+
+# Inspect information-theoretic balance and token distribution
+moro data report --compiled-dir ./data/compiled/
+  </pre>
+
+  <h2>Comparison: Naive Deduplication vs MoroAI MI Guard</h2>
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Metric / Capability</th>
+          <th class="p-3 border border-dark-800">Naive MinHash / Cosine</th>
+          <th class="p-3 border border-dark-800 text-cyan-400">MoroAI Epistemic Compiler</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white">Rare Domain Fact Retention</td>
+          <td class="p-3 text-red-400">~18% (Discarded as outliers)</td>
+          <td class="p-3 text-emerald-400 font-bold">&gt;99.2% (MI Guard Protected)</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white">Boilerplate Pruning</td>
+          <td class="p-3 text-yellow-400">Partial (Threshold dependent)</td>
+          <td class="p-3 text-emerald-400 font-bold">Comprehensive Entropy Gated</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white">Cryptographic Lineage</td>
+          <td class="p-3 text-red-400">None</td>
+          <td class="p-3 text-emerald-400 font-bold">SHA-256 Digest in SBOM</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white">PII Pre-Scanning</td>
+          <td class="p-3 text-red-400">Manual / External</td>
+          <td class="p-3 text-emerald-400 font-bold">Built-In Automatic Regex + NLP</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/overview/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Architecture Overview
+    </a>
+    <a href="/docs/concepts/ppci-filtering/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>PPMI & Information Content</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/concepts/drift-detection/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Safety & Alignment
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Statistical Drift Detection</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Preventing catastrophic forgetting and semantic drift during local fine-tuning cycles.
+    </p>
+  </div>
+
+  <h2>Why Drift Detection is Essential</h2>
+  <p>
+    When adapting a base model to a narrow domain, there is high risk of catastrophic forgetting—the model degrades in general reasoning or shifts too drastically in its token probabilities. MoroAI computes three mathematical drift metrics between the base model and adapted candidate:
+  </p>
+
+  <ul>
+    <li><strong>Wasserstein Distance (Earth Mover's Distance):</strong> Measures the minimum work required to transform the output token probability distribution into the base distribution.</li>
+    <li><strong>Jensen-Shannon Divergence (JSD):</strong> Symmetrical bound quantifying distribution divergence.</li>
+    <li><strong>Maximum Mean Discrepancy (MMD):</strong> Measures distance between embedding representations in Reproducing Kernel Hilbert Space (RKHS).</li>
+  </ul>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`# Certified safety gate requires Wasserstein drift < 0.05
+moro eval drift --run-id run_01 --threshold 0.05`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/eval-harness/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Eval Harness
+    </a>
+    <a href="/docs/concepts/flywheel/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>DPO Flywheel</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/concepts/eval-harness/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-red-400 uppercase tracking-wider bg-red-500/10 px-2.5 py-1 rounded border border-red-500/20 mb-3 inline-block">
+      Subsystem 04
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Multi-Layer Evaluation Harness</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Comprehensive model certification across deterministic rules, semantic judges, distribution drift detection, and adversarial stress tests.
+    </p>
+  </div>
+
+  <h2>Beyond Validation Loss: The Need for Multi-Layer Certification</h2>
+  <p>
+    In academic research, evaluation often stops at cross-entropy validation loss or standard perplexity. However, in enterprise deployment, an adapted model with a low validation loss can still:
+  </p>
+  <ul>
+    <li>Violate strict JSON schema requirements, producing malformed API payloads</li>
+    <li>Hallucinate plausible-sounding legal or medical falsehoods</li>
+    <li>Experience <strong>catastrophic forgetting</strong> of general reasoning capabilities</li>
+    <li>Break under noisy user input with misspellings or colloquial phrasing</li>
+  </ul>
+  <p>
+    MoroAI enforces four distinct evaluation gates before certifying any checkpoint for production release.
+  </p>
+
+  <h2>The 4-Layer Validation Gates</h2>
+
+  <div class="space-y-4 not-prose my-6 text-sm">
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-red-400 font-bold font-mono">Layer 1: Deterministic Syntax & Schema Gates</span>
+        <span class="text-xs font-mono text-gray-500">Weight: 100% Mandatory</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Validates completions against strict deterministic patterns. Checks include exact JSON Schema validation, regex constraints for mandatory IDs or formatting, and zero-tolerance scans for forbidden tokens or hallucinated URLs.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-red-400 font-bold font-mono">Layer 2: Semantic LLM Domain Judge</span>
+        <span class="text-xs font-mono text-gray-500">Weight: Accuracy Benchmark</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Executes reference-guided domain evaluation against ground-truth question-answer pairs. An evaluator model scores factual correctness, reasoning completeness, and tone fidelity on a calibrated 1-5 scale using structured JSON rubrics.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-red-400 font-bold font-mono">Layer 3: Wasserstein Embedding Drift Detection</span>
+        <span class="text-xs font-mono text-gray-500">Weight: General Reasoning Guard</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Calculates the Earth Mover's (Wasserstein-1) distance between output embedding representations of the fine-tuned model versus the base foundation model on standard anchor prompts. If drift exceeds $W_1 > 0.05$, the model is flagged for catastrophic forgetting.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-red-400 font-bold font-mono">Layer 4: Adversarial Perturbation Stress Testing</span>
+        <span class="text-xs font-mono text-gray-500">Weight: Robustness Guard</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Automatically injects synthetic perturbations into test prompts (character swaps, common keyboard typos, and homoglyphs). The harness verifies that the model's structured completion remains invariant under realistic noisy operator input.
+      </p>
+    </div>
+  </div>
+
+  <h2>Defining an Evaluation Suite (eval_suite.yaml)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300 leading-relaxed">
+name: "customer-support-eval"
+version: "1.0.0"
+gates:
+  deterministic:
+    min_pass_rate: 1.0        # 100% must pass JSON schema
+  semantic:
+    min_accuracy: 0.90         # 90% domain accuracy
+  drift:
+    max_wasserstein: 0.05      # No severe representation collapse
+  adversarial:
+    min_stability: 0.85        # Robust against typos
+
+tests:
+  - id: "test_refund_json"
+    prompt: "Customer requests refund for order #12345 after 14 days."
+    expected_schema:
+      type: "object"
+      required: ["eligible", "refund_amount", "reason_code"]
+    forbidden_terms: ["I think", "maybe", "as an AI"]
+  </pre>
+
+  <h2>Running Evaluations via CLI</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+# Run complete evaluation harness against candidate checkpoint
+moro eval run --checkpoint ./runs/run_01/checkpoints/best/ --suite ./eval/eval_suite.yaml
+
+# Compare candidate checkpoint against base foundation model
+moro eval compare --base Qwen/Qwen2.5-1.5B --candidate ./runs/run_01/checkpoints/best/
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/training-engine/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Self-Healing Training Engine
+    </a>
+    <a href="/docs/concepts/drift-detection/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Statistical Drift Detection</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/concepts/flywheel/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider bg-amber-500/10 px-2.5 py-1 rounded border border-amber-500/20 mb-3 inline-block">
+      Subsystem 05
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Closed-Loop DPO Feedback Flywheel</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Transforming live production interactions and human operator edits into preference pairs for continuous local model alignment.
+    </p>
+  </div>
+
+  <h2>Why Static Models Degrade Over Time</h2>
+  <p>
+    When a model is fine-tuned and deployed into an enterprise environment, its real-world performance is tested by evolving edge cases, novel customer questions, and shifting operational terminology. In typical cloud-based setups, closing this loop requires shipping sensitive conversation transcripts to external annotation vendors.
+  </p>
+  <p>
+    MoroAI creates a <strong>local, sovereign learning flywheel</strong>. Human operators naturally correct model answers or submit thumbs-up / thumbs-down ratings during daily operations. The MoroAI Flywheel mines these local signals and formats them into high-signal <strong>Direct Preference Optimization (DPO)</strong> datasets without data ever leaving the workstation or VPC.
+  </p>
+
+  <h2>Direct Preference Optimization (DPO) Mechanics</h2>
+  <p>
+    Traditional RLHF requires training a separate reward model followed by complex PPO reinforcement learning, which is notoriously unstable and memory-intensive on consumer GPUs. DPO optimizes the policy model directly on preference pairs using the exact analytical relationship between policy and reward:
+  </p>
+
+  <div class="not-prose my-6 p-5 rounded-2xl bg-dark-950 border border-dark-800 font-mono text-xs">
+    <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+      <span>DPO Closed-Form Objective</span>
+      <span class="text-amber-400">Optimization Math</span>
+    </div>
+    <pre class="text-amber-300 leading-relaxed overflow-x-auto whitespace-pre-wrap">
+{`L_DPO(π_θ; π_ref) = -E_(x, y_w, y_l) [
+    log σ( β * log( π_θ(y_w | x) / π_ref(y_w | x) ) - β * log( π_θ(y_l | x) / π_ref(y_l | x) ) )
+]
+
+Where:
+  x     = The user prompt
+  y_w   = Chosen response (human operator edit or high-rated completion)
+  y_l   = Rejected response (original unedited model completion)
+  π_ref = Frozen reference model (initial fine-tuned LoRA checkpoint)
+  β     = Temperature hyperparameter controlling deviation penalty (default 0.1)`}
+    </pre>
+  </div>
+
+  <h2>The 4-Step Flywheel Lifecycle</h2>
+  <ol>
+    <li>
+      <strong>Local Interaction Logging:</strong> As queries pass through the local Ollama or vLLM proxy, input prompts and completions are securely persisted to local encrypted SQLite storage (<code>.moro/moro.db</code>).
+    </li>
+    <li>
+      <strong>Preference Pair Extraction:</strong> When an operator manually corrects an output in Mission Control or an integrated CRM, the engine constructs a preference pair with the corrected text as <code>chosen</code> and the initial output as <code>rejected</code>.
+    </li>
+    <li>
+      <strong>Confidence Margin Filtering:</strong> To eliminate ambiguous feedback, pairs where the operator edit is merely trivial whitespace or where rating confidence is below $\Delta = 0.3$ are automatically pruned.
+    </li>
+    <li>
+      <strong>Automated Offline Alignment:</strong> When a user-configured threshold of validated pairs is reached (e.g. 250 pairs), the engine schedules an automated overnight DPO alignment run, verifies the model against the evaluation harness, and generates a new versioned release candidate.
+    </li>
+  </ol>
+
+  <h2>CLI Mining & Alignment Commands</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-amber-300 leading-relaxed">
+# Mine interaction logs for high-confidence preference pairs
+moro flywheel process \
+    --interactions ./logs/chat_ops.jsonl \
+    --min-margin 0.3 \
+    --output ./data/dpo_pairs.jsonl
+
+# Execute local DPO fine-tuning alignment round
+moro flywheel align \
+    --base-checkpoint ./runs/run_01/checkpoints/best/ \
+    --pairs ./data/dpo_pairs.jsonl \
+    --beta 0.1 \
+    --output ./runs/dpo_aligned/
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/eval-harness/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Multi-Layer Eval Harness
+    </a>
+    <a href="/docs/concepts/dashboard/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Mission Control UI</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/concepts/governance/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Compliance & Audit
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Release Governance & Cryptographic SBOM</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Auditable model provenance binding data, recipes, evaluations, and weights into an immutable Software Bill of Materials.
+    </p>
+  </div>
+
+  <h2>Cryptographic Bill of Materials (SBOM)</h2>
+  <p>
+    Regulated industries cannot deploy black-box models without proof of training lineage. MoroAI automatically generates a signed JSON manifest for every release candidate:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+{`{
+  "release_id": "rel_2026_09_28_01",
+  "model_name": "moro-enterprise:v1.0.0",
+  "provenance": {
+    "dataset_sha256": "8f3b2049e0c19a0a...",
+    "recipe_sha256": "44ea1041b8a9018f...",
+    "base_model": "Qwen/Qwen2.5-1.5B",
+    "checkpoint_sha256": "d9810a9c72e19a0f..."
+  },
+  "evaluation_gate": {
+    "passed": true,
+    "deterministic_rule_pass_rate": 1.0,
+    "drift_score_wasserstein": 0.021,
+    "eval_signature": "sig_rsa4096_d892a01"
+  }
+}`}
+  </pre>
+
+  <h2>Verifying a Model</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro release verify --release-id rel_2026_09_28_01
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/flywheel/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← DPO Flywheel
+    </a>
+    <a href="/docs/cookbook/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Cookbook Overview</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/concepts/lineage-graphs/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Provenance & Audit
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Lineage Graphs: Complete Provenance Tracking</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Immutable lifecycle tracking from raw input documents to deployed local model weights using an embedded Directed Acyclic Graph (DAG).
+    </p>
+  </div>
+
+  <h2>The Directed Acyclic Graph (DAG)</h2>
+  <p>
+    In high-compliance deployments, knowing what data a model was trained on is mandatory. MoroAI maintains an embedded graph ledger (stored in <code>.moro/moro.db</code>) where every entity is a cryptographic node linked by directional edges:
+  </p>
+
+  <div class="not-prose my-6 p-5 rounded-2xl bg-dark-950 border border-dark-800 font-mono text-xs">
+    <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+      <span>End-to-End Provenance Graph</span>
+      <span class="text-moro-400">Node & Edge Lifecycle</span>
+    </div>
+    <pre class="text-sky-300 leading-relaxed overflow-x-auto whitespace-pre-wrap">
+{`raw_source:pharma_docs.jsonl (sha256: 8f3b20...a19c)
+    │
+    ▼ [DERIVED_FROM]
+dataset_version:pharma_v1 (1,247 curated samples)
+    │
+    ▼ [TRAINED_ON]
+training_run:run_123456 (LoRA r=16, alpha=32, Qwen2.5-1.5B)
+    │
+    ▼ [EVALUATED_BY]
+eval_result:eval_789 (Deterministic: 100%, Semantic: 94.2%)
+    │
+    ▼ [RELEASED_FROM]
+release:v1.0.0 (GGUF Q4_K_M + signed SBOM)
+    │
+    ▼ [DEPLOYED_TO]
+deployment:ollama_pharma_v1 (http://localhost:11434)
+    │
+    ▼ [FEEDBACK_FOR]
+feedback_batch:batch_001 (342 human operator edits)
+    │
+    ▼ [ALIGNED_BY]
+dpo_epoch:epoch_001 (continuous local refinement)`}
+    </pre>
+  </div>
+
+  <h2>Querying Lineage Programmatically</h2>
+  <p>
+    The MoroAI Python SDK allows engineers to trace artifacts backwards or forwards across the graph:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300 leading-relaxed">
+{`from pathlib import Path
+from moro.state.manager import StateManager
+from moro.state.models import EdgeType
+
+# Initialize state manager pointing to local database
+state = StateManager(Path(".moro/moro.db"))
+
+# 1. Trace the complete ancestral lineage of an active deployment:
+lineage = state.trace_lineage("deployment_ollama_pharma_v1")
+print("Trained from raw files:", lineage.root_sources)
+print("Cryptographic dataset hash:", lineage.dataset_sha256)
+
+# 2. Find all models derived from a specific dataset version:
+runs = state.get_connected_nodes(
+    "dataset_pharma_v1",
+    edge_type=EdgeType.TRAINED_ON,
+    direction="outgoing"
+)
+for run in runs:
+    print(f"Run {run.id}: Validation Loss = {run.metrics.val_loss}")`}
+  </pre>
+
+  <h2>Lineage in Mission Control Dashboard</h2>
+  <p>
+    When using the Mission Control UI (<code>moro dashboard</code>), lineage graphs are rendered as interactive node-link diagrams. Operators can click any model checkpoint, view its exact dataset origin, inspect evaluation certificates, and verify cryptographic hashes with a single click.
+  </p>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/ppci-filtering/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← PPMI Filtering
+    </a>
+    <a href="/docs/concepts/recipe-engine/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>VRAM Recipe Engine</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/concepts/overview/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Architecture
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">System Architecture Overview</h1>
+    <p class="text-gray-400 text-base mt-2">
+      How MoroAI's six core architectural subsystems assemble into a closed-loop local model adaptation foundry.
+    </p>
+  </div>
+
+  <h2>Architectural Layers</h2>
+  <p>
+    MoroAI is designed as an integrated six-layer pipeline that transforms raw unstructured data into deployed, continuously self-improving local models:
+  </p>
+
+  <div class="not-prose space-y-4 my-8">
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+        <Database class="w-5 h-5" />
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">1. Epistemic Data Layer</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Ingests raw CSV, JSONL, and text documents. Applies Positive Pointwise Mutual Information (PPMI), Resnik Information Content, and the MI Guard to retain critical domain corner cases while eliminating redundancy.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+        <Cpu class="w-5 h-5" />
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">2. Hardware-Aware Recipe Layer</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Probes local GPU architecture (CUDA, Apple Silicon Metal, ROCm). Mathematically computes activation memory and parameter gradients to output a zero-OOM <code>moro.yaml</code> recipe.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
+        <Zap class="w-5 h-5" />
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">3. Self-Healing Execution Layer</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Executes QLoRA / LoRA fine-tuning under an active supervisor. Catches CUDA memory limits and loss spikes with a 5-step autonomous recovery sequence.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 shrink-0">
+        <Shield class="w-5 h-5" />
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">4. Multi-Layer Evaluation Layer</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Tests checkpoints across deterministic schema constraints, semantic LLM accuracy, Wasserstein distribution drift, and adversarial perturbation invariance.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
+        <Rocket class="w-5 h-5" />
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">5. Release Governance & Serving Layer</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Quantizes weights to GGUF (Q4_K_M/Q8_0), signs cryptographic SHA-256 SBOM provenance records, and injects Modelfiles directly into local Ollama or vLLM engines.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-dark-950 border border-dark-800 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+        <RefreshCcw class="w-5 h-5" />
+      </div>
+      <div>
+        <h4 class="text-base font-bold text-white mb-1">6. DPO Continuous Alignment Layer</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Mines real-world user interactions and feedback logs for chosen/rejected preference pairs to trigger offline alignment loops.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <h2>State Management & Lineage DAG</h2>
+  <p>
+    All operations are tracked in a local SQLite database (<code>.moro/state.db</code>) modeled as a Directed Acyclic Graph (DAG). Every deployed model can be audited backward to the exact data lines, token entropy, hyperparameter seeds, and hardware profile used in its creation.
+  </p>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/getting-started/first-model/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Your First Model
+    </a>
+    <a href="/docs/concepts/data-compiler/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Data Compiler & MI Guard</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/concepts/ppci-filtering/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 px-2.5 py-1 rounded border border-cyan-500/20 mb-3 inline-block">
+      Information Theory
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">PPMI Filtering: The Mathematics of Domain Relevance</h1>
+    <p class="text-gray-400 text-base mt-2">
+      How Positive Pointwise Mutual Information quantifies semantic association strength and protects critical domain landmarks from deletion.
+    </p>
+  </div>
+
+  <h2>What is PPMI?</h2>
+  <p>
+    Positive Pointwise Mutual Information (PPMI) measures the statistical association strength between a token $w$ and a target enterprise domain $D$:
+  </p>
+
+  <div class="not-prose my-6 p-5 rounded-2xl bg-dark-950 border border-dark-800 font-mono text-xs">
+    <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+      <span>Formal Mathematical Definition</span>
+      <span class="text-cyan-400">PPMI Equation</span>
+    </div>
+    <pre class="text-cyan-300 leading-relaxed overflow-x-auto whitespace-pre-wrap">
+{`PPMI(w, D) = max( 0, log2( P(w, D) / ( P(w) * P(D) ) ) )
+
+Where:
+  P(w, D) = Probability of token w occurring within the domain dataset D
+  P(w)    = Marginal probability of token w in a standard general English corpus
+  P(D)    = Prior probability of the domain subset`}
+    </pre>
+  </div>
+
+  <h2>Intuition: General vs Domain Specific Vocabulary</h2>
+  <p>
+    Tokens that occur uniformly across all natural language receive a PPMI close to zero, whereas terminology that clusters specifically inside your enterprise dataset receives a high score:
+  </p>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Token ($w$)</th>
+          <th class="p-3 border border-dark-800">PPMI (Medical Domain)</th>
+          <th class="p-3 border border-dark-800">PPMI (Legal Domain)</th>
+          <th class="p-3 border border-dark-800">Information Interpretation</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">pharmacokinetics</td>
+          <td class="p-3 text-emerald-400 font-bold">8.42</td>
+          <td class="p-3 text-gray-500">0.00</td>
+          <td class="p-3 text-gray-300">Strong medical landmark token</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">indemnification</td>
+          <td class="p-3 text-gray-500">0.12</td>
+          <td class="p-3 text-emerald-400 font-bold">7.89</td>
+          <td class="p-3 text-gray-300">Strong legal landmark token</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">the / is / and</td>
+          <td class="p-3 text-gray-500">0.00</td>
+          <td class="p-3 text-gray-500">0.00</td>
+          <td class="p-3 text-gray-300">Generic stop words (uninformative)</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">bioequivalence</td>
+          <td class="p-3 text-emerald-400 font-bold">6.91</td>
+          <td class="p-3 text-gray-500">0.05</td>
+          <td class="p-3 text-gray-300">High informational density</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">jurisdiction</td>
+          <td class="p-3 text-gray-500">0.24</td>
+          <td class="p-3 text-emerald-400 font-bold">6.75</td>
+          <td class="p-3 text-gray-300">High legal specificity</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Python Reference Implementation</h2>
+  <p>
+    Below is the algorithmic core utilized inside <code>moro.data.compiler</code> to score token distributions:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300 leading-relaxed">
+import numpy as np
+from collections import Counter
+
+def calculate_ppmi(
+    domain_tokens: Counter,
+    general_tokens: Counter,
+    total_domain: int,
+    total_general: int,
+) -> dict[str, float]:
+    """Calculate Positive Pointwise Mutual Information for domain vocabulary."""
+    ppmi_scores = {}
+
+    for token, domain_count in domain_tokens.items():
+        # Probability of token within enterprise domain:
+        p_w_domain = domain_count / total_domain
+
+        # Background probability across general corpus:
+        general_count = general_tokens.get(token, 1)
+        p_w_general = general_count / total_general
+
+        # Calculate Pointwise Mutual Information:
+        pmi = np.log2(p_w_domain / p_w_general)
+        ppmi_scores[token] = float(max(0.0, pmi))
+
+    return ppmi_scores
+  </pre>
+
+  <h2>Tuning PPMI Thresholds in moro.yaml</h2>
+  <p>Customize the sensitivity of the MI Guard inside your configuration:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+dataset:
+  source: ./data/raw/contracts.jsonl
+  # Minimum PPMI for a sample to be marked domain-relevant:
+  min_ppmi: 1.0
+
+  # PPMI threshold required to trigger an MI Guard override on rare clusters:
+  mi_guard_ppmi_threshold: 2.0
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/data-compiler/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Epistemic Data Compiler
+    </a>
+    <a href="/docs/concepts/lineage-graphs/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Lineage Graphs</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/concepts/recipe-engine/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20 mb-3 inline-block">
+      Subsystem 02
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">VRAM Recipe Predictor</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Eliminating trial-and-error fine-tuning by simulating memory consumption down to the megabyte before touching GPU memory.
+    </p>
+  </div>
+
+  <VramCalculator client:visible />
+
+  <h2>The VRAM Memory Formula</h2>
+  <p>
+    When fine-tuning on consumer hardware, memory exhaustion is non-linear. Peak GPU VRAM is modeled prior to training execution across five critical tensor allocations:
+  </p>
+
+  <div class="not-prose my-6 p-5 rounded-2xl bg-dark-950 border border-dark-800 font-mono text-xs">
+    <div class="text-gray-400 border-b border-dark-800 pb-2 mb-3 flex items-center justify-between">
+      <span>Analytical VRAM Memory Model</span>
+      <span class="text-emerald-400">Peak Memory Equation</span>
+    </div>
+    <pre class="text-emerald-300 leading-relaxed overflow-x-auto whitespace-pre-wrap">
+{`VRAM_Peak = M_base + M_lora + M_optimizer + M_activations + M_cuda_context
+
+Where:
+  M_base        = (N_params * B_quant) / 8           # Base weights in NF4 / FP16
+  M_lora        = 2 * rank * d_model * N_targets * 4 # Trainable LoRA adapter matrices (FP32)
+  M_optimizer   = M_lora * 2                         # 8-bit AdamW first and second moments
+  M_activations = b * s * L * (34 * d_model + 5 * s * h) # Backprop activation tensors
+  M_cuda_ctx    = ~850MB to 1.2GB                     # CUDA driver context & kernels`}
+    </pre>
+  </div>
+
+  <h2>Hardware Tier Presets & Validation</h2>
+  <p>
+    The engine maintains validated memory envelopes across standard consumer and workstation GPUs:
+  </p>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Hardware Profile</th>
+          <th class="p-3 border border-dark-800">Available Memory</th>
+          <th class="p-3 border border-dark-800">Recommended Model</th>
+          <th class="p-3 border border-dark-800">LoRA Rank (r)</th>
+          <th class="p-3 border border-dark-800">Context Length</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">RTX 3060 / 4060</td>
+          <td class="p-3 text-emerald-400">12 GB VRAM</td>
+          <td class="p-3 text-gray-300">Qwen2.5-1.5B / Llama-3.2-1B</td>
+          <td class="p-3 text-gray-300">r=16, alpha=32</td>
+          <td class="p-3 text-cyan-400">2,048 tokens</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">RTX 4070 / 4070 Ti</td>
+          <td class="p-3 text-emerald-400">12–16 GB VRAM</td>
+          <td class="p-3 text-gray-300">Qwen2.5-3B / Llama-3.2-3B</td>
+          <td class="p-3 text-gray-300">r=32, alpha=64</td>
+          <td class="p-3 text-cyan-400">4,096 tokens</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">RTX 3090 / 4090</td>
+          <td class="p-3 text-emerald-400">24 GB VRAM</td>
+          <td class="p-3 text-gray-300">Qwen2.5-7B / Llama-3.1-8B</td>
+          <td class="p-3 text-gray-300">r=64, alpha=128</td>
+          <td class="p-3 text-cyan-400">4,096 tokens</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">Apple Silicon (M2/M3/M4)</td>
+          <td class="p-3 text-emerald-400">16–64 GB Unified</td>
+          <td class="p-3 text-gray-300">Qwen2.5-7B / Mistral-7B</td>
+          <td class="p-3 text-gray-300">r=16, alpha=32</td>
+          <td class="p-3 text-cyan-400">2,048 tokens</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-white font-bold">Cloud A100 / H100</td>
+          <td class="p-3 text-emerald-400">80 GB VRAM</td>
+          <td class="p-3 text-gray-300">Qwen2.5-14B / 32B</td>
+          <td class="p-3 text-gray-300">r=64, alpha=128</td>
+          <td class="p-3 text-cyan-400">8,192 tokens</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Generating a Reproducible Recipe</h2>
+  <p>
+    Run the recipe engine to automatically probe your active GPU driver, detect memory bandwidth, and output a guaranteed zero-OOM <code>moro.yaml</code> configuration:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+# Automatically audit GPU and generate optimal training configuration
+moro recipe generate --model Qwen/Qwen2.5-1.5B --hardware detect --output ./moro.yaml
+  </pre>
+
+  <h2>Generated Recipe File Anatomy (moro.yaml)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+name: "customer-support-qwen"
+version: "0.1.0"
+model:
+  base: "Qwen/Qwen2.5-1.5B"
+  quantization: "nf4"        # 4-bit NormalFloat quantization
+  lora_rank: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+
+training:
+  micro_batch_size: 2
+  gradient_accumulation_steps: 8
+  learning_rate: 2.0e-4
+  max_seq_length: 2048
+  optimizer: "adamw_8bit"
+  gradient_checkpointing: true
+  auto_heal: true            # Enables 5-level autonomous OOM recovery
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/lineage-graphs/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Lineage Graphs
+    </a>
+    <a href="/docs/concepts/training-engine/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Self-Healing Engine</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/concepts/training-engine/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-purple-400 uppercase tracking-wider bg-purple-500/10 px-2.5 py-1 rounded border border-purple-500/20 mb-3 inline-block">
+      Subsystem 03
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">OOM Auto-Recovery & Self-Healing Engine</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Zero-loss training recovery that intercepts CUDA out-of-memory errors and loss explosions in-flight without aborting the run.
+    </p>
+  </div>
+
+  <h2>Why Unattended Local Training Fails</h2>
+  <p>
+    Machine learning fine-tuning jobs on consumer GPUs are inherently fragile. Even when pre-flight estimates indicate safe headroom, two runtime anomalies routinely terminate processes:
+  </p>
+  <ul>
+    <li>
+      <strong>Burst Sequence Outliers (CUDA OOM):</strong> A mini-batch containing conversations with outlier token lengths (e.g. 3,800 tokens instead of the mean 1,200 tokens) causes quadratic attention memory consumption ($O(N^2)$), instantly crashing the PyTorch allocator.
+    </li>
+    <li>
+      <strong>Gradient Explosion / NaN Divergence:</strong> Mixed-precision (FP16/BF16) training on small datasets occasionally encounters extreme gradient norms, causing weights to turn into NaNs or training loss to spike by &gt;300%.
+    </li>
+  </ul>
+
+  <h2>The 5-Level Autonomous Escalation Ladder</h2>
+  <p>
+    MoroAI replaces the standard unhandled exception loop with a progressive <strong>Autonomous Healer Protocol</strong>. When an anomaly occurs, the engine intercepts the signal and executes the lowest-impact resolution:
+  </p>
+
+  <div class="space-y-4 not-prose my-6 text-sm">
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-purple-400 font-bold font-mono">Level 1: Allocator Cache Evacuation</span>
+        <span class="text-xs font-mono text-gray-500">Latency: ~400ms</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Invokes <code>torch.cuda.empty_cache()</code> and forces Python cyclic garbage collection. This defragments the CUDA memory allocator, reclaiming up to 1.5GB of stale buffer blocks without altering training state.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-purple-400 font-bold font-mono">Level 2: Dynamic Micro-Batch Halving</span>
+        <span class="text-xs font-mono text-gray-500">Mathematical Gradient Equivalence</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Divides the per-device micro-batch size by 2 while doubling gradient accumulation steps (e.g., micro-batch 4 &amp; accum 4 &rarr; micro-batch 2 &amp; accum 8). Effective batch size (B_eff = b_micro * N_accum) is mathematically preserved.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-purple-400 font-bold font-mono">Level 3: Full Gradient Checkpointing Enforcement</span>
+        <span class="text-xs font-mono text-gray-500">Memory Reduction: ~60%</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        Dynamically enables PyTorch activation recomputation across all attention heads and MLP projection layers. Rather than storing intermediate forward activations, they are recomputed during backward pass, reducing activation VRAM by 60% with a modest 15-20% compute overhead.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-purple-400 font-bold font-mono">Level 4: Sequence Length Batch Clamping</span>
+        <span class="text-xs font-mono text-gray-500">Targeted Batch Recovery</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        If an isolated mini-batch triggers an OOM due to extreme sequence length, the healer isolates the spike batch, clamps token lengths to the 95th percentile, backpropagates safely, and logs the truncation event to the lineage ledger.
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-purple-400 font-bold font-mono">Level 5: Checkpoint Rollback on Loss Divergence</span>
+        <span class="text-xs font-mono text-gray-500">Loss Spike Protection</span>
+      </div>
+      <p class="text-gray-300 text-xs leading-relaxed">
+        A moving exponential loss tracker monitors gradient stability. If step loss exceeds 3x moving average loss (EMA) or evaluates to NaN, training automatically rolls back to the last certified checkpoint, lowers the learning rate by 20%, and resumes.
+      </p>
+    </div>
+  </div>
+
+  <h2>CLI Invocation</h2>
+  <p>
+    Launch training with auto-heal enabled:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+# Launch unattended training with the 5-step healer active
+moro train --config ./moro.yaml --auto-heal
+  </pre>
+
+  <h2>Live Recovery Log Stream</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300 leading-relaxed">
+Step 420/1200 | Loss: 1.12 | VRAM: 7.9GB
+[WARN] CUDA OOM at step 421 (token length 3,840)
+[HEAL] Level 1: Flushed CUDA memory pool (Freed 820MB)
+[HEAL] Level 2: Micro-batch 2 -> 1, Accum 8 -> 16
+[RESUME] Checkpoint 400 reloaded
+Step 421/1200 | Loss: 1.11 | VRAM: 6.1GB (STABLE)
+Step 422/1200 | Loss: 1.09 | VRAM: 6.2GB
+[SUCCESS] Full training finished with 0 data loss
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/concepts/recipe-engine/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← VRAM Recipe Predictor
+    </a>
+    <a href="/docs/concepts/eval-harness/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Multi-Layer Eval Harness</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+# SECTION: Cookbooks & Blueprints
+
+
+## Document: /docs/cookbook/code-assistant/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Cookbook Blueprint
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Code Assistant</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Train a specialized coding companion on your proprietary internal libraries, API client packages, and framework conventions.
+    </p>
+  </div>
+
+  <h2>Training Data Best Practices</h2>
+  <ol>
+    <li><strong>Include PEP 484 Type Hints:</strong> Models trained on typed signatures hallucinate significantly fewer type mismatches.</li>
+    <li><strong>Provide Complete Error Handling:</strong> Include <code>try / except</code> blocks and defensive edge-case checks in target completions.</li>
+    <li><strong>Incorporate Sphinx/Google Docstrings:</strong> Ensures the model outputs comprehensive documentation for all generated functions.</li>
+  </ol>
+
+  <h2>Sample Training Data Format (JSONL)</h2>
+  
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300 leading-relaxed">
+cat &gt; data/raw/code_pairs.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "user", "content": "Write a Python function to reverse a string with type annotations"}, {"role": "assistant", "content": "def reverse_string(s: str) -> str:\\n    \\"\\"\\"Reverse an input string safely.\\"\\"\\"\\n    return s[::-1]\\n\\n# Example usage:\\nassert reverse_string('hello') == 'olleh'"}]}`}
+{`{"messages": [{"role": "user", "content": "Explain this code: for i in range(10): print(i)"}, {"role": "assistant", "content": "This loop iterates over integers from 0 to 9 (exclusive of 10) and prints each integer to stdout using standard Python range semantics."}]}`}
+EOF
+  </pre>
+
+  <h2>Evaluation Suite (eval_code.yaml)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300 leading-relaxed">
+{`name: "code-assistant-eval"
+tests:
+  - id: "test_factorial"
+    prompt: "Write a recursive Python function to compute the factorial of n."
+    expected_keywords:
+      - "def factorial"
+      - "if n <= 1:"
+      - "return"
+    forbidden_terms:
+      - "goto"
+      - "as an AI model"`}
+  </pre>
+
+  <h2>Execution & Deployment</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300 leading-relaxed">
+# 1. Compile dataset
+moro data build --source ./data/raw/code_pairs.jsonl
+
+# 2. Train on local GPU
+moro train --model Qwen/Qwen2.5-Coder-1.5B-Instruct
+
+# 3. Export to GGUF and deploy to Ollama
+moro release export --run-id best --version v1.0.0
+moro release deploy --target ollama --version v1.0.0 --name code-companion
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cookbook/json-extractor/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← JSON Extractor
+    </a>
+    <a href="/docs/cookbook/document-summarizer/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Document Summarizer</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cookbook/document-summarizer/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Cookbook Blueprint
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Document Summarizer</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Fine-tune a long-context language model to distill complex technical reports and whitepapers into standardized, executive-ready key findings.
+    </p>
+  </div>
+
+  <h2>What You'll Build</h2>
+  <ul>
+    <li>A localized Qwen2.5-3B or 7B model tuned for structured 8K+ context processing.</li>
+    <li>Memory-optimized training utilizing FlashAttention-2 and gradient checkpointing on 12GB–16GB VRAM GPUs.</li>
+    <li>Evaluation suites that verify factual coverage, bullet-count constraints, and thesis statement clarity.</li>
+    <li>Instant local serving via Ollama for seamless internal document pipeline integration.</li>
+  </ul>
+
+  <h2>Step 1: Prepare Long-Form Training Data</h2>
+  
+  <p>Format training documents into structured prompt/response JSONL conversation pairs:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300 leading-relaxed">
+cat &gt; doc_summaries.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "system", "content": "You are an executive intelligence summarizer. Given a lengthy technical document, produce a structured executive brief with: 1) Thesis statement, 2) Key technical takeaways (3-5 bullets), and 3) Actionable recommendation."}, {"role": "user", "content": "Summarize the database latency report: During Q3, our primary PostgreSQL cluster experienced periodic latency spikes reaching 1,850ms during peak batch windows..."}, {"role": "assistant", "content": "**Thesis**: Database latency spikes and webhook cascading failures stem from unindexed ledger queries and lack of application-level connection pooling.\n\n**Key Findings**:\n- Latency spikes peaked at 1,850ms during batch processing windows.\n- Unindexed queries exhausted the 800-connection database ceiling.\n- Read replicas successfully offloaded analytics traffic.\n\n**Recommendation**: Deploy PgBouncer connection pooling and add foreign key migration indexes."}]}`}
+EOF
+  </pre>
+
+  <h2>Step 2: Scaffolding & moro.yaml Long-Context Setup</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro init doc-summarizer --template document-summarizer
+cd doc-summarizer
+cp ../doc_summaries.jsonl data/raw/
+  </pre>
+
+  <p>In <code>moro.yaml</code>, expand the maximum sequence length and enable gradient checkpointing:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+name: "doc-summarizer"
+version: "1.0.0"
+
+dataset:
+  source: ./data/raw/doc_summaries.jsonl
+  format: jsonl
+  max_seq_length: 8192                # Extended 8K context window
+
+model:
+  base: "Qwen/Qwen2.5-3B-Instruct"
+  quantization: "nf4"
+
+training:
+  learning_rate: 2.0e-4
+  micro_batch_size: 1
+  gradient_accumulation_steps: 16
+  gradient_checkpointing: true        # Saves up to 60% activation memory
+  auto_heal: true
+  </pre>
+
+  <h2>Step 3: VRAM Hardware Recipe & Training</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+# 1. Compile long-form data
+moro data build
+
+# 2. Check pre-flight VRAM budget at 8192 sequence length
+moro recipe suggest --model 3b --seq 8192
+
+# 3. Start training run
+moro train
+  </pre>
+
+  <h2>Step 4: Executive Brief Evaluation Suite</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+cat &gt; eval/summary_eval.yaml &lt;&lt; 'EOF'
+name: "summary-quality-suite"
+tests:
+  - id: "test_thesis_presence"
+    prompt: "Summarize: [Technical Report Excerpt]"
+    expected_keywords: ["**Thesis**:", "**Key Findings**:", "**Recommendation**:"]
+EOF
+
+moro eval run --checkpoint ./runs/best/ --suite eval/summary_eval.yaml
+  </pre>
+
+  <h2>Step 5: Deploy to Ollama with Custom Context Ceiling</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+moro release export --run-id best --version v1.0.0 --quant Q4_K_M
+moro release deploy --target ollama --version v1.0.0 --name doc-summarizer
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cookbook/code-assistant/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Code Assistant
+    </a>
+    <a href="/docs/cookbook/medical-qa/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Medical Q&A System</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cookbook/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Production Recipes
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">MoroAI Cookbook</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Step-by-step implementation blueprints solving real-world enterprise engineering problems.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose my-8">
+    {recipes.map((r) => {
+      const Icon = r.icon;
+      return (
+        <a
+          href={r.href}
+          class="p-6 rounded-2xl bg-dark-950 border border-dark-800 hover:border-moro-500/40 hover:bg-dark-900/80 transition-all flex flex-col justify-between group shadow-lg"
+        >
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-10 h-10 rounded-xl bg-moro-500/10 border border-moro-500/20 flex items-center justify-center text-moro-400 group-hover:scale-105 transition-transform">
+                <Icon class="w-5 h-5" />
+              </div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-gray-400 bg-dark-900 px-2 py-0.5 rounded border border-dark-800">
+                {r.tag}
+              </span>
+            </div>
+            <h3 class="text-base font-bold text-white mb-2 group-hover:text-moro-300 transition-colors">
+              {r.title}
+            </h3>
+            <p class="text-xs text-gray-400 leading-relaxed">{r.desc}</p>
+          </div>
+          <div class="pt-4 mt-4 border-t border-dark-900 flex items-center gap-1.5 text-xs font-semibold text-moro-400 group-hover:text-moro-300">
+            <span>View Recipe</span>
+            <ArrowRight class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </a>
+      );
+    })}
+  </div>
+
+---
+
+## Document: /docs/cookbook/json-extractor/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Cookbook Blueprint
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Structured JSON Extractor</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Train a compact local model to parse invoices, receipts, and contract text into strict, deterministic JSON payloads.
+    </p>
+  </div>
+
+  <h2>The Objective</h2>
+  <p>
+    Extract structured entity fields from arbitrary unstructured enterprise strings:
+  </p>
+
+  <div class="not-prose my-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <span class="text-gray-400 font-bold block mb-2">Unstructured Input</span>
+      <p class="text-gray-300 whitespace-pre-wrap leading-relaxed">
+{`"Invoice #INV-9821 from Apex Logistics Corp for $1,450.00 due on 2026-10-15. Terms net-30."`}
+      </p>
+    </div>
+
+    <div class="p-4 rounded-xl bg-dark-950 border border-dark-800">
+      <span class="text-cyan-400 font-bold block mb-2">Extracted JSON Payload</span>
+      <pre class="text-cyan-300 leading-relaxed">
+{`{
+  "invoice_number": "INV-9821",
+  "vendor": "Apex Logistics Corp",
+  "amount": 1450.00,
+  "currency": "USD",
+  "due_date": "2026-10-15"
+}`}
+      </pre>
+    </div>
+  </div>
+
+  <h2>Training Data Formulation</h2>
+  
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300 leading-relaxed">
+cat &gt; data/raw/invoices.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "user", "content": "Extract JSON from: Invoice #12345 from Acme Corp for $500 due on 2024-03-15"}, {"role": "assistant", "content": "{\\"invoice_number\\": \\"12345\\", \\"vendor\\": \\"Acme Corp\\", \\"amount\\": 500, \\"due_date\\": \\"2024-03-15\\"}"}]}`}
+{`{"messages": [{"role": "user", "content": "Extract JSON from: PO-9876 from Widget Inc for $1,250 due 2024-04-01"}, {"role": "assistant", "content": "{\\"invoice_number\\": \\"PO-9876\\", \\"vendor\\": \\"Widget Inc\\", \\"amount\\": 1250, \\"due_date\\": \\"2024-04-01\\"}"}]}`}
+EOF
+  </pre>
+
+  <h2>Evaluation Suite with JSON Schema Validation</h2>
+  <p>Enforce 100% deterministic schema compliance using MoroAI's evaluation harness:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300 leading-relaxed">
+name: "invoice-json-eval"
+tests:
+  - id: "test_invoice_schema"
+    prompt: "Extract JSON from: Invoice #555 from Test Co for $99 due 2026-11-01"
+    expected_schema:
+      type: "object"
+      required: ["invoice_number", "vendor", "amount", "due_date"]
+      properties:
+        invoice_number:
+          type: "string"
+        vendor:
+          type: "string"
+        amount:
+          type: "number"
+        due_date:
+          type: "string"
+  </pre>
+
+  <h2>Production Python Client</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300 leading-relaxed">
+{`import json
+import httpx
+
+def extract_invoice_json(document_text: str) -> dict:
+    """Query fine-tuned local extractor via Ollama."""
+    response = httpx.post(
+        "http://localhost:11434/api/generate",
+        json={
+            "model": "json-extractor:v1.0.0",
+            "prompt": f"Extract JSON from: {document_text}",
+            "stream": False,
+            "format": "json"
+        },
+        timeout=15.0
+    )
+    raw_completion = response.json()["response"]
+    return json.loads(raw_completion)
+
+# Example invocation:
+data = extract_invoice_json("Bill #4489 from CloudHost for $89.50 due 2026-10-31")
+print("Structured Data:\\n", data)
+print("Vendor:", data["vendor"])`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cookbook/support-bot/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Support Bot Recipe
+    </a>
+    <a href="/docs/cookbook/code-assistant/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Code Assistant Recipe</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cookbook/legal-analyzer/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Cookbook Blueprint
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Legal Contract Analyzer</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Train a private legal extraction model to parse indemnification clauses, liability caps, and governing jurisdiction with strict verbatim quotation constraints.
+    </p>
+  </div>
+
+  <h2>What You'll Build</h2>
+  <ul>
+    <li>A localized Qwen2.5 or Llama-3.2 model fine-tuned on commercial agreements, NDAs, and Master Services Agreements (MSAs).</li>
+    <li>Zero-hallucination extraction: every output value is constrained to be an exact verbatim substring of the input contract text.</li>
+    <li>100% attorney-client privileged local execution: training weights, source contracts, and extracted outputs never touch external cloud APIs.</li>
+  </ul>
+
+  <h2>Step 1: Prepare Contract Training Data</h2>
+  
+  <p>Format training contracts into prompt/response JSONL with structured JSON extraction:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300 leading-relaxed">
+cat &gt; contracts_data.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "system", "content": "You are a legal contract analysis engine. Extract clauses strictly as JSON without commentary. Every extracted value must be an exact verbatim substring from the source contract."}, {"role": "user", "content": "Extract indemnification, liability cap, and governing law:\n\nSection 14. Indemnification. Service Provider agrees to defend, indemnify, and hold harmless Customer from any gross negligence. Section 15. Liability. Total liability shall not exceed total fees paid in the prior 12 months. Section 19. Forum. Governed by the laws of Delaware."}, {"role": "assistant", "content": "{\"indemnification\": \"defend, indemnify, and hold harmless Customer from any gross negligence\", \"liability_cap\": \"not exceed total fees paid in the prior 12 months\", \"governing_law\": \"laws of Delaware\"}"}]}`}
+EOF
+  </pre>
+
+  <h2>Step 2: Scaffolding & Configuration</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro init legal-reviewer --template legal-analyzer
+cd legal-reviewer
+cp ../contracts_data.jsonl data/raw/
+  </pre>
+
+  <p>In <code>moro.yaml</code>, enforce strict PII scrubbing and conservative token cleaning:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+name: "legal-reviewer"
+version: "1.0.0"
+
+dataset:
+  source: ./data/raw/contracts_data.jsonl
+  format: jsonl
+  pii_scan: true                      # Strips real client names, SSNs, and banking details
+  mi_guard_threshold: 0.88            # Protects rare statutory citations (e.g. Del. C. § 102(b)(7))
+
+model:
+  base: "Qwen/Qwen2.5-7B-Instruct"
+  quantization: "nf4"
+
+training:
+  learning_rate: 1.8e-4
+  micro_batch_size: 1
+  gradient_accumulation_steps: 16
+  gradient_checkpointing: true
+  auto_heal: true
+  </pre>
+
+  <h2>Step 3: Compile & Train</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+moro data build
+moro train
+  </pre>
+
+  <h2>Step 4: Citation & Substring Grounding Evaluation</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+cat &gt; eval/legal_eval.yaml &lt;&lt; 'EOF'
+name: "legal-grounding-suite"
+tests:
+  - id: "test_nda_extraction"
+    prompt: "Extract clauses from: [Sample NDA Excerpt]"
+    expected_keywords: ["indemnify", "liability", "Delaware"]
+EOF
+
+moro eval run --checkpoint ./runs/best/ --suite eval/legal_eval.yaml
+  </pre>
+
+  <h2>Step 5: Local Air-Gapped Deployment</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+moro release export --run-id best --version v1.0.0 --quant Q4_K_M
+moro release deploy --target ollama --version v1.0.0 --name legal-reviewer
+  </pre>
+
+  <h2>Privilege & Governance Guarantees</h2>
+  <div class="not-prose my-6 rounded-2xl border border-dark-800 bg-dark-900/60 p-5 space-y-3 text-sm text-gray-300 font-sans">
+    <div class="flex items-center gap-2.5">
+      <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+      <span>100% on-premise execution preserves Attorney-Client Privilege.</span>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+      <span>Zero telemetry egress or external logging verified by <code>moro doctor --privacy</code>.</span>
+    </div>
+  </div>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cookbook/medical-qa/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Medical Q&A
+    </a>
+    <a href="/docs/api/python/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Python SDK Reference</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cookbook/medical-qa/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Cookbook Blueprint
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Medical Q&A System</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Train clinically-grounded Q&A models on private guidelines, drug monographs, and de-identified notes with guaranteed on-premise HIPAA isolation.
+    </p>
+  </div>
+
+  <h2>What You'll Build</h2>
+  <ul>
+    <li>A localized Qwen2.5-7B or Llama-3.2-3B clinical assistant that runs 100% on-premise behind your hospital firewall.</li>
+    <li>Information-theoretic MI Guard protection that mathematically shields rare medical terms, contraindications, and dosages from being pruned during deduplication.</li>
+    <li>A deterministic evaluation harness with asymmetric penalties against hallucinated dosages, ungrounded lab thresholds, and fabricated citations.</li>
+    <li>A zero-latency Ollama local inference service queryable via Python or EHR REST hooks.</li>
+  </ul>
+
+  <h2>Step 1: Prepare Training Data</h2>
+  
+  <p>Format your clinical references and protocol guidelines into multi-turn JSONL conversation pairs:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300 leading-relaxed">
+cat &gt; clinical_corpus.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "system", "content": "You are a clinical decision support assistant. Provide grounded medical guidelines, dosages, contraindications, and citations without hallucinating."}, {"role": "user", "content": "What are the contraindications for metformin in renal impairment?"}, {"role": "assistant", "content": "Per ADA Standards of Care (2025):\n1. Metformin is contraindicated if estimated glomerular filtration rate (eGFR) < 30 mL/min/1.73 m².\n2. Initiation is not recommended with eGFR 30–44 mL/min/1.73 m².\n3. If eGFR falls between 30–44 mL/min/1.73 m² during therapy, evaluate risks vs benefits and cap maximum daily dose at 1000 mg.\n4. Monitor renal function every 3 months for eGFR < 60 mL/min/1.73 m²."}]}`}
+{`{"messages": [{"role": "system", "content": "You are a clinical decision support assistant. Provide grounded medical guidelines, dosages, contraindications, and citations without hallucinating."}, {"role": "user", "content": "Can ACE inhibitors and ARBs be co-administered in refractory diabetic nephropathy to reduce proteinuria?"}, {"role": "assistant", "content": "Dual renin-angiotensin-aldosterone system (RAAS) blockade combining an ACE inhibitor and an ARB is contraindicated. Large clinical trials (ONTARGET and NEPHRON-D) established that dual blockade fails to improve cardiovascular or renal mortality while substantially increasing risks of hyperkalemia, acute kidney injury (AKI), and hypotension."}]}`}
+EOF
+  </pre>
+
+  <h2>Step 2: Initialize Project & Configure moro.yaml</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro init clinical-assistant --template medical-qa
+cd clinical-assistant
+cp ../clinical_corpus.jsonl data/raw/
+  </pre>
+
+  <p>Set a high PPMI threshold in <code>moro.yaml</code> to protect rare pharmacological terminology:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+name: "clinical-assistant"
+version: "1.0.0"
+
+dataset:
+  source: ./data/raw/clinical_corpus.jsonl
+  format: jsonl
+  pii_scan: true                      # Mandatory HIPAA pre-flight scanner
+  mi_guard_threshold: 0.82            # Preserves rare medical outlier terms
+  dedup_threshold: 0.92
+
+model:
+  base: "Qwen/Qwen2.5-7B-Instruct"
+  quantization: "nf4"
+
+training:
+  learning_rate: 1.5e-4
+  micro_batch_size: 1
+  gradient_accumulation_steps: 16
+  gradient_checkpointing: true
+  auto_heal: true                     # Autonomous OOM recovery
+  </pre>
+
+  <h2>Step 3: Compile Data & Train</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+# 1. Compile with MI Guard protection
+moro data build
+
+# 2. Verify VRAM on your GPU (e.g. RTX 3060 12GB or RTX 4070 16GB)
+moro recipe suggest --model 7b --quant nf4
+
+# 3. Execute self-healing training run
+moro train
+  </pre>
+
+  <h2>Step 4: Hallucination-Strict Evaluation Suite</h2>
+  <p>Create an evaluation harness that penalizes hallucinated dosages and made-up citations:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+cat &gt; eval/clinical_safety.yaml &lt;&lt; 'EOF'
+name: "clinical-safety-suite"
+tests:
+  - id: "test_metformin_egfr"
+    prompt: "Can I prescribe metformin to a patient with eGFR of 24 mL/min?"
+    expected_keywords: ["contraindicated", "below 30"]
+    forbidden_terms: ["safe to proceed", "start standard dose"]
+  - id: "test_dual_raas_blockade"
+    prompt: "Should we add lisinopril to a patient already on losartan?"
+    expected_keywords: ["contraindicated", "hyperkalemia", "acute kidney injury"]
+    forbidden_terms: ["recommended combination", "beneficial synergy"]
+EOF
+
+moro eval run --checkpoint ./runs/best/ --suite eval/clinical_safety.yaml
+  </pre>
+
+  <h2>Step 5: Deploy Locally to Ollama</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+# Export quantized GGUF
+moro release export --run-id best --version v1.0.0 --quant Q4_K_M
+
+# Deploy to air-gapped Ollama instance
+moro release deploy --target ollama --version v1.0.0 --name clinical-qa
+  </pre>
+
+  <h2>HIPAA & Sovereign Deployment Checklist</h2>
+  <div class="not-prose my-6 rounded-2xl border border-dark-800 bg-dark-900/60 p-5 space-y-3 text-sm text-gray-300 font-sans">
+    <div class="flex items-center gap-2.5">
+      <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+      <span>Ollama instance strictly bound to <code>127.0.0.1:11434</code> (zero external WAN exposure).</span>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+      <span>All training checkpoints and SQLite logs stored on encrypted local volumes (LUKS or FileVault).</span>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+      <span>Pre-flight PII scanner verified via <code>moro doctor --privacy</code>.</span>
+    </div>
+  </div>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cookbook/document-summarizer/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Document Summarizer
+    </a>
+    <a href="/docs/cookbook/legal-analyzer/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Legal Document Analyzer</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cookbook/support-bot/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Cookbook Blueprint
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Customer Support Bot</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Train a specialized domain language model on private knowledge base articles and deploy it locally with zero cloud dependencies.
+    </p>
+  </div>
+
+  <h2>What You'll Build</h2>
+  <ul>
+    <li>A localized Qwen2.5 or Llama-3.2 model fine-tuned on company policies and FAQs</li>
+    <li>A deterministic evaluation suite to ensure 100% adherence to company refund and password procedures</li>
+    <li>An instant local REST endpoint served via Ollama and queried with Python</li>
+  </ul>
+
+  <h2>Step 1: Prepare Training Data</h2>
+  
+  <p>Format your customer support FAQ into structured multi-turn conversation JSONL:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300 leading-relaxed">
+cat &gt; support_data.jsonl &lt;&lt; 'EOF'
+{`{"messages": [{"role": "system", "content": "You are a helpful support assistant for Acme Corp."}, {"role": "user", "content": "How do I reset my password?"}, {"role": "assistant", "content": "To reset your password, go to Settings > Security > Reset Password. You'll receive a confirmation email within 2 minutes."}]}`}
+{`{"messages": [{"role": "system", "content": "You are a helpful support assistant for Acme Corp."}, {"role": "user", "content": "What is your refund policy?"}, {"role": "assistant", "content": "We offer a 30-day money-back guarantee on all purchases. To request a refund, go to Orders > Select Order > Request Refund."}]}`}
+{`{"messages": [{"role": "system", "content": "You are a helpful support assistant for Acme Corp."}, {"role": "user", "content": "How do I contact emergency support?"}, {"role": "assistant", "content": "You can reach our 24/7 priority support team at priority@acme.com or by calling 1-800-ACME-HELP."}]}`}
+EOF
+  </pre>
+
+  <h2>Step 2: Initialize Project & Copy Data</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro init support-bot --template support-bot
+cd support-bot
+cp ../support_data.jsonl data/raw/
+  </pre>
+
+  <h2>Step 3: Configure moro.yaml</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+name: "support-bot"
+version: "1.0.0"
+
+dataset:
+  source: ./data/raw/support_data.jsonl
+  format: jsonl
+  mi_guard_threshold: 0.85
+
+model:
+  base: "Qwen/Qwen2.5-1.5B"
+  quantization: "nf4"
+
+training:
+  learning_rate: 2.0e-4
+  micro_batch_size: 2
+  gradient_accumulation_steps: 8
+  auto_heal: true
+  </pre>
+
+  <h2>Step 4: Build & Train</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+# 1. Compile dataset with MI Guard
+moro data build
+
+# 2. Start self-healing training
+moro train
+  </pre>
+
+  <h2>Step 5: Run Evaluation Suite</h2>
+  <p>Create an evaluation definition to verify accurate answers:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+cat &gt; eval/support_eval.yaml &lt;&lt; 'EOF'
+name: "support-eval"
+tests:
+  - id: "test_password_reset"
+    prompt: "How do I reset my password?"
+    expected_keywords: ["Settings", "Security", "Reset Password"]
+    forbidden_terms: ["call the CEO", "I don't know"]
+  - id: "test_refund"
+    prompt: "Can I get my money back?"
+    expected_keywords: ["30-day", "money-back"]
+EOF
+
+# Execute evaluation
+moro eval run --checkpoint ./runs/best/ --suite eval/support_eval.yaml
+  </pre>
+
+  <h2>Step 6: Deploy to Local Ollama Runtime</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+moro release export --run-id best --version v1.0.0 --quant Q4_K_M
+moro release deploy --target ollama --version v1.0.0 --name support-bot
+  </pre>
+
+  <h2>Step 7: Production Query Example (Python)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300 leading-relaxed">
+{`import httpx
+
+def query_support_bot(user_question: str) -> str:
+    """Send customer query to locally running Ollama instance."""
+    response = httpx.post(
+        "http://localhost:11434/api/generate",
+        json={
+            "model": "support-bot:v1.0.0",
+            "prompt": user_question,
+            "stream": False,
+        },
+        timeout=30.0,
+    )
+    return response.json()["response"]
+
+# Example usage:
+answer = query_support_bot("How do I reset my password?")
+print("Support Bot Response:\\n", answer)`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cookbook/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Cookbook Overview
+    </a>
+    <a href="/docs/cookbook/json-extractor/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>JSON Extractor Recipe</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+# SECTION: CLI Reference
+
+
+## Document: /docs/cli/analytics/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-sky-400 uppercase tracking-wider bg-sky-500/10 px-2.5 py-1 rounded border border-sky-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro analytics</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Cross-run comparative analytics, loss velocity tracking, hyperparameter Pareto frontier identification, and evaluation benchmark charts.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro analytics runs`</h3>
+  <p>Lists and summarizes all historical training runs stored in the local SQLite database:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro analytics runs [--limit 10]
+  </pre>
+
+  <h3>2. `moro analytics pareto`</h3>
+  <p>
+    Computes the Pareto efficiency frontier between model parameter count, training compute time, VRAM consumption, and benchmark accuracy:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300">
+moro analytics pareto --metric domain_accuracy
+  </pre>
+
+  <h3>3. `moro analytics report`</h3>
+  <p>Generates an offline HTML or JSON summary report of training runs and dataset iterations:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+moro analytics report --output ./reports/summary.html
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/services/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro services
+    </a>
+    <a href="/docs/cli/dashboard/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro dashboard Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cli/dashboard/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-pink-400 uppercase tracking-wider bg-pink-500/10 px-2.5 py-1 rounded border border-pink-500/20 mb-3 inline-block">
+      CLI Command
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro dashboard</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Starts the embedded Mission Control UI web server, providing live visual telemetry, drag-and-drop dataset curation, and 1-click model deployment.
+    </p>
+  </div>
+
+  <h2>Usage</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro dashboard [OPTIONS]
+  </pre>
+
+  <h2>Options & Flags</h2>
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--port, -p</td>
+          <td class="p-3 text-gray-300">Int</td>
+          <td class="p-3 text-gray-300">3000</td>
+          <td class="p-3 text-gray-300">TCP port on which to bind the HTTP dashboard interface.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--host</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">127.0.0.1</td>
+          <td class="p-3 text-gray-300">Network bind address. Use <code>0.0.0.0</code> for local LAN access.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--open / --no-open</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">true</td>
+          <td class="p-3 text-gray-300">Automatically open default web browser upon server start.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Example Output</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-pink-300 leading-relaxed">
+$ moro dashboard --port 3000
+
+╭──────────────────────────────────────────────╮
+│  MoroAI Mission Control Dashboard v0.1.0    │
+│  Serving on: http://localhost:3000           │
+│  Hardware: NVIDIA RTX 4070 (12GB VRAM)       │
+│  Active Runs: 1 (run_01_support_qwen)        │
+│  Telemetry: SSE connected (120 msg/sec)      │
+╰──────────────────────────────────────────────╯
+[INFO] Application startup complete.
+[INFO] Uvicorn running on http://127.0.0.1:3000 (Press CTRL+C to quit)
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/analytics/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro analytics
+    </a>
+    <a href="/docs/cli/plugins/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro plugins Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cli/data/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 px-2.5 py-1 rounded border border-cyan-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro data</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Manage dataset ingestion, normalization, information-theoretic deduplication, MI Guard protection, and quality diagnostics.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro data build`</h3>
+  <p>
+    Executes the complete epistemic curation pipeline on raw files. Automatically redacts PII, scores samples with PPMI and Resnik IC, applies the MI Guard, and produces clean train/val/eval splits.
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro data build [OPTIONS]
+  </pre>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--source, -s</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">data/raw/</td>
+          <td class="p-3 text-gray-300">Raw input file (.jsonl, .csv, .parquet) or directory.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--mi-guard-threshold</td>
+          <td class="p-3 text-gray-300">Float</td>
+          <td class="p-3 text-gray-300">0.85</td>
+          <td class="p-3 text-gray-300">PPMI information density threshold to preserve outliers.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--dedup-threshold</td>
+          <td class="p-3 text-gray-300">Float</td>
+          <td class="p-3 text-gray-300">0.88</td>
+          <td class="p-3 text-gray-300">Cosine similarity threshold for near-duplicate pruning.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--pii-scan / --no-pii</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">true</td>
+          <td class="p-3 text-gray-300">Toggle automatic redaction of emails, phones, and API keys.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--val-ratio</td>
+          <td class="p-3 text-gray-300">Float</td>
+          <td class="p-3 text-gray-300">0.10</td>
+          <td class="p-3 text-gray-300">Fraction of dataset allocated to validation set.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2. `moro data report`</h3>
+  <p>Generates an in-depth epistemic report of token entropy, PPMI distribution, and MI Guard statistics:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+moro data report --compiled-dir data/compiled/
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/init/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro init
+    </a>
+    <a href="/docs/cli/recipe/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro recipe Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cli/eval/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-red-400 uppercase tracking-wider bg-red-500/10 px-2.5 py-1 rounded border border-red-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro eval</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Execute deterministic schema gates, semantic LLM accuracy evaluations, Wasserstein representation drift audits, and adversarial stress testing.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro eval run`</h3>
+  <p>
+    Executes a structured evaluation test suite against an adapted model checkpoint or base foundation model.
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro eval run --checkpoint ./runs/run_01/checkpoints/best/ --suite ./eval/suite.yaml
+  </pre>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--checkpoint</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">Required</td>
+          <td class="p-3 text-gray-300">Path to candidate model weights or adapter directory.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--suite</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">./eval/suite.yaml</td>
+          <td class="p-3 text-gray-300">Path to evaluation suite YAML file.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--judge-model</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">local</td>
+          <td class="p-3 text-gray-300">Model used for semantic scoring: <code>local</code> (Ollama) or HF model ID.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2. `moro eval compare`</h3>
+  <p>Runs identical benchmarks across a base model and adapted checkpoint to measure accuracy delta and drift:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-orange-300">
+moro eval compare \
+    --base Qwen/Qwen2.5-1.5B \
+    --candidate ./runs/run_01/checkpoints/best/ \
+    --suite ./eval/suite.yaml
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/train/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro train
+    </a>
+    <a href="/docs/cli/release/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro release Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cli/flywheel/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider bg-amber-500/10 px-2.5 py-1 rounded border border-amber-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro flywheel</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Turn production interactions, human operator corrections, and rating signals into clean Direct Preference Optimization (DPO) datasets and execute local alignment.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro flywheel process`</h3>
+  <p>
+    Scans local interaction logs, identifies human edits, and extracts high-confidence preference pairs (prompt, chosen, rejected).
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro flywheel process --interactions ./logs/chat_ops.jsonl --min-margin 0.3 --output ./data/dpo.jsonl
+  </pre>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--interactions, -i</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">Required</td>
+          <td class="p-3 text-gray-300">Path to raw user sessions / completions log file.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--min-margin</td>
+          <td class="p-3 text-gray-300">Float</td>
+          <td class="p-3 text-gray-300">0.3</td>
+          <td class="p-3 text-gray-300">Confidence margin threshold; pairs below this gap are dropped.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--output, -o</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">./data/dpo.jsonl</td>
+          <td class="p-3 text-gray-300">Target output JSONL path for extracted preference pairs.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2. `moro flywheel align`</h3>
+  <p>Executes an offline Direct Preference Optimization training round on the mined pairs:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-amber-300">
+moro flywheel align \
+    --base-checkpoint ./runs/run_01/checkpoints/best/ \
+    --pairs ./data/dpo.jsonl \
+    --beta 0.1 \
+    --epochs 1
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/release/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro release
+    </a>
+    <a href="/docs/cli/services/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro services Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cli/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      CLI Manual
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">CLI Reference</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Comprehensive documentation for the <code class="text-moro-300">moro</code> command-line interface. Built on Typer with rich terminal output, JSON emission, and automated error diagnostics.
+    </p>
+  </div>
+
+  <h2>Global CLI Architecture</h2>
+  <p>
+    The MoroAI CLI is designed for both human operators and headless CI/CD automation. Every command follows POSIX standards, emits structured exit codes, and supports machine-readable JSON output for automated scripting.
+  </p>
+
+  <h2>Command Overview</h2>
+  <div class="not-prose my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+    {commands.map((cmd) => (
+      <a
+        href={cmd.href}
+        class="p-4 rounded-xl bg-dark-950 border border-dark-800 hover:border-moro-500/40 hover:bg-dark-900/60 transition-all flex flex-col justify-between group"
+      >
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-mono text-sm font-bold text-white group-hover:text-moro-300 transition-colors">
+              {cmd.name}
+            </span>
+            <ArrowRight class="w-3.5 h-3.5 text-gray-500 group-hover:text-moro-300 group-hover:translate-x-1 transition-all" />
+          </div>
+          <p class="text-xs text-gray-400 leading-relaxed">{cmd.desc}</p>
+        </div>
+      </a>
+    ))}
+  </div>
+
+  <h2>Global Flags & Options</h2>
+  <p>These flags are accepted across all <code>moro</code> subcommands:</p>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--config, -c</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">./moro.yaml</td>
+          <td class="p-3 text-gray-300">Explicit path to the project configuration file.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--verbose, -v</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">false</td>
+          <td class="p-3 text-gray-300">Print detailed debug diagnostics and tensor shapes.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--quiet, -q</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">false</td>
+          <td class="p-3 text-gray-300">Suppress non-essential terminal output and ASCII art.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--json</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">false</td>
+          <td class="p-3 text-gray-300">Emit raw JSON output to stdout for scripting and CI pipelines.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--help, -h</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">-</td>
+          <td class="p-3 text-gray-300">Show usage instructions, arguments, and command options.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>System Diagnostics (`moro doctor`)</h2>
+  <p>Verify that your Python environment, CUDA drivers, and package dependencies are configured correctly:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro doctor
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/getting-started/quickstart/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Quickstart Guide
+    </a>
+    <a href="/docs/cli/init/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro init Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cli/init/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      CLI Command
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro init</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Scaffolds a new project directory structure, creates the local SQLite state database, and writes an initial <code class="text-moro-300">moro.yaml</code> specification.
+    </p>
+  </div>
+
+  <h2>Usage</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro init [PROJECT_NAME] [OPTIONS]
+  </pre>
+
+  <h2>Arguments & Options</h2>
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Parameter</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">PROJECT_NAME</td>
+          <td class="p-3 text-gray-300">Argument (String)</td>
+          <td class="p-3 text-gray-300">moro-project</td>
+          <td class="p-3 text-gray-300">Name of the directory to create.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--template, -t</td>
+          <td class="p-3 text-gray-300">Option (String)</td>
+          <td class="p-3 text-gray-300">default</td>
+          <td class="p-3 text-gray-300">Starter template: <code>default</code>, <code>support-bot</code>, <code>json-extractor</code>, or <code>code</code>.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--model, -m</td>
+          <td class="p-3 text-gray-300">Option (String)</td>
+          <td class="p-3 text-gray-300">Qwen/Qwen2.5-1.5B</td>
+          <td class="p-3 text-gray-300">Default foundation model to pre-populate in moro.yaml.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Created Directory Layout</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300 leading-relaxed">
+my-project/
+├── moro.yaml          # Project configuration & hyperparameter recipe
+├── .moro/             # Local metadata, DAG state manager, and SQLite DB
+│   └── moro.db
+├── data/
+│   ├── raw/           # Place your raw .jsonl, .csv, or .parquet inputs here
+│   └── compiled/      # Output of 'moro data build' with MI Guard tags
+├── runs/              # Training run artifacts, checkpoints, and loss curves
+├── releases/          # Exported GGUF models, Modelfiles, and signed SBOMs
+└── eval/              # Evaluation test suites and passing criteria
+  </pre>
+
+  <h2>Example</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+# Initialize a customer support project with Llama 3.2
+moro init support-foundry --template support-bot --model meta-llama/Llama-3.2-1B
+cd support-foundry
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← CLI Overview
+    </a>
+    <a href="/docs/cli/data/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro data Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cli/plugins/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-lime-400 uppercase tracking-wider bg-lime-500/10 px-2.5 py-1 rounded border border-lime-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro plugins</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Manage extensions and hooks using Python standard entry-points. Extend tokenizers, loss criteria, evaluation scorers, and custom export targets.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro plugins list`</h3>
+  <p>Displays all registered plugins and their implemented extension points:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-lime-300">
+moro plugins list
+  </pre>
+
+  <h3>2. `moro plugins install`</h3>
+  <p>Installs a community or corporate plugin package into the active MoroAI environment:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro plugins install moro-plugin-slack-flywheel
+  </pre>
+
+  <h3>3. `moro plugins create`</h3>
+  <p>Scaffolds a new boilerplate Python package with the necessary <code>pyproject.toml</code> entry-points:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+moro plugins create my-custom-scorer
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/dashboard/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro dashboard
+    </a>
+    <a href="/docs/cookbook/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Explore Cookbook</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cli/recipe/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro recipe</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Simulate GPU memory consumption, audit hardware capabilities, and generate reproducible, zero-OOM training configurations.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro recipe generate`</h3>
+  <p>
+    Audits the local system GPU (or simulated target architecture) and generates a complete, mathematically validated <code>moro.yaml</code>.
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro recipe generate [OPTIONS]
+  </pre>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--model, -m</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">Qwen/Qwen2.5-1.5B</td>
+          <td class="p-3 text-gray-300">HuggingFace model ID or local path.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--hardware</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">detect</td>
+          <td class="p-3 text-gray-300">Hardware target: <code>detect</code>, <code>rtx3060</code>, <code>rtx4070</code>, <code>rtx4090</code>, <code>apple-silicon</code>, or <code>a100</code>.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--max-seq-len</td>
+          <td class="p-3 text-gray-300">Int</td>
+          <td class="p-3 text-gray-300">2048</td>
+          <td class="p-3 text-gray-300">Target context length window in tokens.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--output, -o</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">./moro.yaml</td>
+          <td class="p-3 text-gray-300">Destination file path for generated recipe.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2. `moro recipe suggest`</h3>
+  <p>Displays an interactive table of recommended models and LoRA rank configurations for the currently connected GPU:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+moro recipe suggest
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/data/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro data
+    </a>
+    <a href="/docs/cli/train/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro train Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cli/release/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-teal-400 uppercase tracking-wider bg-teal-500/10 px-2.5 py-1 rounded border border-teal-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro release</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Export models into standalone quantized runtimes (GGUF), sign cryptographic Software Bills of Materials (SBOM), and deploy directly into Ollama or Docker.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro release export`</h3>
+  <p>
+    Fuses the trained LoRA adapter weights with the base model, applies quantized GGUF packaging, and generates a signed provenance manifest.
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro release export --run-id run_01 --version v1.0.0 --quant Q4_K_M
+  </pre>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--run-id</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">Required</td>
+          <td class="p-3 text-gray-300">Training run identifier from runs/ directory.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--version</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">v0.1.0</td>
+          <td class="p-3 text-gray-300">Semantic version tag for this release.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--quant</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">Q4_K_M</td>
+          <td class="p-3 text-gray-300">Quantization type: <code>Q4_K_M</code>, <code>Q5_K_M</code>, <code>Q8_0</code>, or <code>F16</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2. `moro release deploy`</h3>
+  <p>Registers the exported release bundle directly into local serving runtimes:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-teal-300">
+# Deploy to local Ollama runtime
+moro release deploy --target ollama --version v1.0.0 --name support-model
+
+# Deploy as an isolated Docker container
+moro release deploy --target docker --version v1.0.0 --port 8080
+  </pre>
+
+  <h3>3. `moro release verify`</h3>
+  <p>Audits the cryptographic signatures and SHA-256 hashes inside the model's SBOM:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+moro release verify --version v1.0.0
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/eval/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro eval
+    </a>
+    <a href="/docs/cli/flywheel/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro flywheel Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cli/services/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-indigo-400 uppercase tracking-wider bg-indigo-500/10 px-2.5 py-1 rounded border border-indigo-500/20 mb-3 inline-block">
+      CLI Command Group
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro services</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Manage local background services, continuous logging daemons, hardware watchdog workers, and inference proxy endpoints.
+    </p>
+  </div>
+
+  <h2>Subcommands</h2>
+
+  <h3>1. `moro services start`</h3>
+  <p>Spawns background telemetry watchers and the local inference monitoring proxy:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro services start [--daemon]
+  </pre>
+
+  <h3>2. `moro services status`</h3>
+  <p>Displays process states, port allocations, and system resource consumption across all active MoroAI background workers:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-indigo-300">
+moro services status
+  </pre>
+
+  <h3>3. `moro services logs`</h3>
+  <p>Streams consolidated service logs in real time:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+moro services logs -f
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/flywheel/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro flywheel
+    </a>
+    <a href="/docs/cli/analytics/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro analytics Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/cli/train/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-purple-400 uppercase tracking-wider bg-purple-500/10 px-2.5 py-1 rounded border border-purple-500/20 mb-3 inline-block">
+      CLI Command
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">moro train</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Executes local QLoRA fine-tuning on compiled datasets with hardware-aware memory limits and an integrated 5-level autonomous self-healing recovery engine.
+    </p>
+  </div>
+
+  <h2>Usage</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro train [OPTIONS]
+  </pre>
+
+  <h2>Options & Flags</h2>
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full text-xs text-left border-collapse border border-dark-800">
+      <thead>
+        <tr class="bg-dark-950 text-gray-300 font-mono">
+          <th class="p-3 border border-dark-800">Flag</th>
+          <th class="p-3 border border-dark-800">Type</th>
+          <th class="p-3 border border-dark-800">Default</th>
+          <th class="p-3 border border-dark-800">Description</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-400 font-mono">
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--config, -c</td>
+          <td class="p-3 text-gray-300">Path</td>
+          <td class="p-3 text-gray-300">./moro.yaml</td>
+          <td class="p-3 text-gray-300">Path to recipe configuration file.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--dry-run</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">false</td>
+          <td class="p-3 text-gray-300">Calculate memory tensors and print training plan without executing.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--auto-heal / --no-auto-heal</td>
+          <td class="p-3 text-gray-300">Boolean</td>
+          <td class="p-3 text-gray-300">true</td>
+          <td class="p-3 text-gray-300">Enable 5-level progressive OOM recovery and loss divergence rollback.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--resume</td>
+          <td class="p-3 text-gray-300">String</td>
+          <td class="p-3 text-gray-300">-</td>
+          <td class="p-3 text-gray-300">Resume from specified checkpoint ID or run ID.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--learning-rate, --lr</td>
+          <td class="p-3 text-gray-300">Float</td>
+          <td class="p-3 text-gray-300">-</td>
+          <td class="p-3 text-gray-300">Override learning rate defined in moro.yaml.</td>
+        </tr>
+        <tr class="border-b border-dark-800">
+          <td class="p-3 text-cyan-400 font-bold">--batch-size</td>
+          <td class="p-3 text-gray-300">Int</td>
+          <td class="p-3 text-gray-300">-</td>
+          <td class="p-3 text-gray-300">Override per-device micro-batch size.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Dry-Run Preview Example</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300 leading-relaxed">
+$ moro train --dry-run
+
+Training Plan (Dry Run)
+─────────────────────────────────────────────
+Model:            Qwen/Qwen2.5-1.5B
+Adapter:          LoRA (r=16, alpha=32, dropout=0.05)
+Effective Batch:  16 (micro_batch=2, accum=8)
+Learning Rate:    2e-4 (cosine scheduler)
+Estimated VRAM:   7.85 GB / 12.0 GB (36% headroom)
+Est. Duration:    18 minutes (1,200 steps)
+Zero OOM Status:  VERIFIED SAFE
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/cli/recipe/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← moro recipe
+    </a>
+    <a href="/docs/cli/eval/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>moro eval Command</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+# SECTION: API Reference
+
+
+## Document: /docs/api/cli/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      API & Commands
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">CLI & SDK Reference</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Every subcommand, command-line flag, and programmatic Python interface available in MoroAI v0.1.0.
+    </p>
+  </div>
+
+  <h2>1. CLI Subcommands</h2>
+
+  <h3><code>moro init [DIR]</code></h3>
+  <p>Initializes a new MoroAI foundry directory containing <code>moro.yaml</code>, datasets folder, and checkpoints directory.</p>
+  <pre class="bg-dark-950 p-3 rounded-lg border border-dark-800 font-mono text-xs text-sky-300">
+moro init my-project
+  </pre>
+
+  <h3><code>moro data build</code></h3>
+  <p>Compiles, deduplicates, and validates raw data with the Epistemic Compiler.</p>
+  <ul>
+    <li><code>--source &lt;path&gt;</code>: Path to raw input file (.jsonl, .csv, .parquet).</li>
+    <li><code>--output &lt;path&gt;</code>: Destination path for compiled dataset.</li>
+    <li><code>--mi-guard-threshold &lt;float&gt;</code>: Mutual Information outlier preservation bound (default: <code>0.85</code>).</li>
+    <li><code>--dedup-threshold &lt;float&gt;</code>: Cosine similarity deduplication cutoff (default: <code>0.88</code>).</li>
+  </ul>
+
+  <h3><code>moro recipe generate</code></h3>
+  <p>Simulates memory requirements for a target base model and local GPU, writing optimal hyperparams to <code>moro.yaml</code>.</p>
+  <ul>
+    <li><code>--model &lt;id&gt;</code>: Hugging Face model identifier (e.g. <code>Qwen/Qwen2.5-1.5B</code>).</li>
+    <li><code>--hardware &lt;detect|manual&gt;</code>: Automatically probe VRAM or specify manually.</li>
+    <li><code>--target-vram-gb &lt;int&gt;</code>: Explicit maximum VRAM ceiling.</li>
+  </ul>
+
+  <h3><code>moro train</code></h3>
+  <p>Executes local fine-tuning under the supervision of the autonomous 5-step self-healing daemon.</p>
+  <ul>
+    <li><code>--config &lt;path&gt;</code>: Path to configuration file (default: <code>./moro.yaml</code>).</li>
+    <li><code>--auto-heal / --no-auto-heal</code>: Enable/disable automatic OOM recovery and loss spike rollback (default: <code>True</code>).</li>
+    <li><code>--resume &lt;checkpoint_dir&gt;</code>: Resume training from a specific step.</li>
+  </ul>
+
+  <h3><code>moro eval compare</code></h3>
+  <p>Evaluates a fine-tuned adapter against a base model across deterministic rules, semantic judges, and Wasserstein drift bounds.</p>
+  <ul>
+    <li><code>--checkpoint &lt;path&gt;</code>: Checkpoint directory to test.</li>
+    <li><code>--suite &lt;name&gt;</code>: Test suite name or YAML spec.</li>
+    <li><code>--gate-strict / --no-gate-strict</code>: Enforce 100% pass on deterministic rules.</li>
+  </ul>
+
+  <h3><code>moro release deploy</code></h3>
+  <p>Merges weights, applies GGUF quantization, generates cryptographic SHA-256 SBOM, and registers into local Ollama.</p>
+  <ul>
+    <li><code>--target &lt;ollama|vllm|docker|directory&gt;</code>: Deployment target runtime.</li>
+    <li><code>--quantize &lt;q4_k_m|q8_0|fp16&gt;</code>: GGUF quantization mode.</li>
+    <li><code>--model-name &lt;string&gt;</code>: Local name to register in Ollama.</li>
+  </ul>
+
+  <h3><code>moro dashboard</code></h3>
+  <p>Launches the interactive real-time Mission Control web interface in your browser.</p>
+  <ul>
+    <li><code>--host &lt;string&gt;</code>: Bind host (default: <code>127.0.0.1</code>).</li>
+    <li><code>--port &lt;int&gt;</code>: Web server port (default: <code>8080</code>).</li>
+  </ul>
+
+  <h2 id="python-api">2. Programmatic Python SDK</h2>
+  <p>MoroAI can be invoked directly inside Python applications, scripts, or Jupyter notebooks:</p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`from moro.core.compiler import EpistemicDataCompiler
+from moro.core.recipe import RecipePredictor
+from moro.engine.trainer import SelfHealingTrainer
+from moro.eval.harness import MultiLayerEvalHarness
+
+# 1. Compile data with MI Guard
+compiler = EpistemicDataCompiler(mi_guard_threshold=0.85)
+curated_data = compiler.compile("./raw_logs.jsonl")
+
+# 2. Predict optimal VRAM recipe
+predictor = RecipePredictor(model_id="Qwen/Qwen2.5-1.5B")
+recipe = predictor.simulate_and_generate(device="cuda:0")
+
+# 3. Train with autonomous recovery
+trainer = SelfHealingTrainer(recipe=recipe, dataset=curated_data)
+run_result = trainer.fit()
+
+# 4. Evaluate release candidate
+harness = MultiLayerEvalHarness()
+eval_summary = harness.evaluate(run_result.checkpoint_dir)
+if eval_summary.passed_gate:
+    print(f"Model certified! Cryptographic ID: {eval_summary.signature}")`}
+  </pre>
+
+  <h2 id="config-spec">3. Configuration File (<code>moro.yaml</code>)</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+{`version: "1.0"
+model:
+  base_model: "Qwen/Qwen2.5-1.5B"
+  quantization: "4bit"
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: ["q_proj", "v_proj", "k_proj", "o_proj"]
+
+data:
+  train_path: "./datasets/curated_train.jsonl"
+  val_path: "./datasets/curated_val.jsonl"
+  max_seq_length: 2048
+
+training:
+  learning_rate: 0.0002
+  micro_batch_size: 2
+  gradient_accumulation_steps: 8
+  epochs: 3
+  auto_recovery: true`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a
+      href="/docs/getting-started/quickstart/"
+      class="text-xs font-semibold text-gray-400 hover:text-white transition-colors"
+    >
+      ← Quickstart
+    </a>
+    <a
+      href="/features"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors"
+    >
+      <span>Subsystems Deep Dive</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/api/plugin-api/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Extensions
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Plugin Architecture API</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Extend MoroAI with custom database connectors, proprietary loss objectives, and enterprise deployment engines.
+    </p>
+  </div>
+
+  <h2>Entry Points Specification</h2>
+  <p>
+    Plugins register themselves in their <code>pyproject.toml</code> under the <code>moro.plugins</code> namespace:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`[project.entry-points."moro.plugins"]
+custom_loader = "my_moro_plugin.loaders:PostgresDataLoader"
+custom_target = "my_moro_plugin.deploy:KubeflowTarget"`}
+  </pre>
+
+  <h2>Writing a Custom Data Loader</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+{`from moro.core.plugins import BaseDataLoader
+
+class PostgresDataLoader(BaseDataLoader):
+    name = "postgres"
+
+    def load(self, connection_uri: str, query: str):
+        # Fetch rows and yield standard messages dictionary
+        yield {"messages": [{"role": "user", "content": "..."}]}`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/api/websocket/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← WebSocket API
+    </a>
+    <a href="/docs/deployment/ollama/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Deploy to Ollama</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/api/python/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Python SDK
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Python API Reference</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Integrate MoroAI directly into custom pipelines, automated scripts, and Jupyter notebooks.
+    </p>
+  </div>
+
+  <h2>Core Classes</h2>
+
+  <h3><code>moro.core.compiler.EpistemicDataCompiler</code></h3>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`from moro.core.compiler import EpistemicDataCompiler
+
+compiler = EpistemicDataCompiler(
+    source="./data.jsonl",
+    mi_guard_threshold=0.85,
+    dedup_threshold=0.88,
+    pii_scan=True
+)
+compiled_dataset = compiler.compile(output_dir="./data/compiled/")`}
+  </pre>
+
+  <h3><code>moro.core.recipe.RecipePredictor</code></h3>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+{`from moro.core.recipe import RecipePredictor
+
+predictor = RecipePredictor(model_id="Qwen/Qwen2.5-1.5B")
+recipe = predictor.simulate_and_generate(device="cuda:0")
+print(f"Optimal LoRA rank: {recipe.lora_r}, Safe batch: {recipe.micro_batch_size}")`}
+  </pre>
+
+  <h3><code>moro.engine.trainer.SelfHealingTrainer</code></h3>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-purple-300">
+{`from moro.engine.trainer import SelfHealingTrainer
+
+trainer = SelfHealingTrainer(
+    recipe=recipe,
+    dataset=compiled_dataset,
+    auto_heal=True
+)
+run_result = trainer.fit()`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/api/cli/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← CLI Overview
+    </a>
+    <a href="/docs/api/rest/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Mission Control REST API</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/api/rest/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      HTTP Endpoints
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Mission Control REST API</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Control training runs, query GPU metrics, and manage model releases programmatically over HTTP.
+    </p>
+  </div>
+
+  <h2>Endpoints</h2>
+
+  <h3><code>GET /api/health</code></h3>
+  <p>Returns daemon status and system diagnostic metrics.</p>
+
+  <h3><code>POST /api/datasets/upload</code></h3>
+  <p>Uploads a raw dataset file (.jsonl, .csv) for asynchronous compilation.</p>
+
+  <h3><code>POST /api/train/start</code></h3>
+  <p>Starts an asynchronous training run with custom recipe overrides.</p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`curl -X POST http://localhost:8080/api/train/start \\
+  -H "Content-Type: application/json" \\
+  -d '{"model": "Qwen/Qwen2.5-1.5B", "epochs": 3}'`}
+  </pre>
+
+  <h3><code>POST /api/train/stop</code></h3>
+  <p>Gracefully terminates the active training process and saves intermediate checkpoints.</p>
+
+  <h3><code>GET /api/models</code></h3>
+  <p>Lists all local fine-tuned checkpoints and their evaluation gate scores.</p>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/api/python/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Python SDK
+    </a>
+    <a href="/docs/api/websocket/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>WebSocket API</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/api/websocket/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Real-Time Streaming
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">WebSocket Telemetry API</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Stream live per-step loss values, VRAM allocations, and auto-healer recovery interventions directly to your frontend or monitoring agents.
+    </p>
+  </div>
+
+  <h2>Connection</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+ws://localhost:8080/ws/telemetry
+  </pre>
+
+  <h2>Payload Format</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300">
+{`{
+  "event": "step_metrics",
+  "step": 340,
+  "total_steps": 1200,
+  "loss": 1.241,
+  "learning_rate": 0.000185,
+  "vram_allocated_mb": 7420,
+  "tokens_per_second": 842.1,
+  "healer_status": "MONITORING"
+}`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/api/rest/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← REST API
+    </a>
+    <a href="/docs/api/plugin-api/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Plugin & Extensibility API</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+# SECTION: Deployment
+
+
+## Document: /docs/deployment/docker/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Containers
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Docker Deployment</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Package fine-tuned weights and high-throughput inference engines into self-contained Docker containers.
+    </p>
+  </div>
+
+  <h2>1. Build Container Image</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro release build --target docker --tag myorg/moro-model:v1
+  </pre>
+
+  <h2>2. Run Container with GPU Passthrough</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-400">
+docker run -d --gpus all -p 8000:8000 myorg/moro-model:v1
+  </pre>
+
+  <p>The container exposes OpenAI-compatible <code>/v1/chat/completions</code> endpoints locally.</p>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/deployment/ollama/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Ollama Serving
+    </a>
+    <a href="/docs/deployment/kubernetes/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Kubernetes Deployment</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/deployment/kubernetes/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Enterprise Orchestration
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Kubernetes & Slurm Clusters</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Orchestrating multi-GPU inference pods and HPC batch adaptation jobs on private sovereign infrastructure.
+    </p>
+  </div>
+
+  <h2>Kubernetes Deployment Manifest</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+{`apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moro-inference
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+      - name: vllm
+        image: vllm/vllm-openai:latest
+        args: ["--model", "/models/moro-finetune", "--gpu-memory-utilization", "0.9"]
+        resources:
+          limits:
+            nvidia.com/gpu: 1`}
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/deployment/docker/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Docker Containerization
+    </a>
+    <a href="/docs/deployment/production/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Production Best Practices</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/deployment/ollama/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Local Serving
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Deploying to Local Ollama</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Export your fine-tuned LoRA adapters directly into Ollama with GGUF quantization in a single command.
+    </p>
+  </div>
+
+  <h2>Prerequisites</h2>
+  <ul>
+    <li>Ollama installed and running locally (<code>ollama --version</code>)</li>
+    <li>A completed MoroAI training run with a certified checkpoint</li>
+  </ul>
+
+  <h2>1-Command Deployment</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro release deploy --target ollama --quantize q4_k_m --model-name my-assistant:v1
+  </pre>
+
+  <p>
+    MoroAI executes the following steps behind the scenes:
+  </p>
+  <ol>
+    <li>Merges the low-rank adapter weights into the base model tensors.</li>
+    <li>Executes <code>llama.cpp</code> quantization into <code>Q4_K_M</code> GGUF format.</li>
+    <li>Generates a tailored <code>Modelfile</code> with system prompt templates and stop tokens.</li>
+    <li>Calls the Ollama API to create and register the model tag locally.</li>
+  </ol>
+
+  <h2>Testing Your Model</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-400">
+ollama run my-assistant:v1 "Hello! Summarize our return policy."
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/api/plugin-api/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Plugin API
+    </a>
+    <a href="/docs/deployment/docker/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Docker Containerization</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/deployment/production/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Production Checklist
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Production Best Practices</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Operational standards for reliability, low-latency inference, and continuous drift monitoring.
+    </p>
+  </div>
+
+  <h2>1. Quantization Selection</h2>
+  <p>
+    For consumer GPU inference, choose <code>Q4_K_M</code> for a near-lossless balance of precision and speed. For high-precision coding and mathematical reasoning, deploy <code>Q8_0</code> or FP16.
+  </p>
+
+  <h2>2. Automated Release Gate Enforcement</h2>
+  <p>
+    Never deploy an untested adapter directly into production. Enforce <code>moro eval compare --gate-strict</code> in CI before allowing promotion into production registries.
+  </p>
+
+  <h2>3. Continuous Lineage Backup</h2>
+  <p>
+    Archive <code>.moro/state.db</code> and release manifests alongside model weights to maintain verifiable regulatory compliance.
+  </p>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/deployment/kubernetes/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Kubernetes & Slurm
+    </a>
+    <a href="/docs/guides/troubleshooting/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Troubleshooting Guide</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+# SECTION: Advanced Guides
+
+
+## Document: /docs/guides/contributing/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Open Source
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Contributing to MoroAI</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Guidelines for submitting bug reports, writing test cases, and opening pull requests.
+    </p>
+  </div>
+
+  <h2>Setting Up Local Development</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+# Clone the repository
+git clone https://github.com/MoroAI/moro.git
+cd moro
+
+# Install in editable mode with development extras
+pip install -e '.[dev,train]'
+  </pre>
+
+  <h2>Running the Test Suite</h2>
+  <p>All PRs must maintain 100% pass rates across the test suite:</p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-400">
+pytest
+  </pre>
+
+  <h2>Code Standards</h2>
+  <ul>
+    <li>Format code with <code>ruff</code> and <code>black</code>.</li>
+    <li>Ensure all CLI arguments include descriptive help text.</li>
+    <li>Include unit tests under <code>tests/</code> for all new functions.</li>
+  </ul>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/guides/privacy/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Air-Gapped Privacy
+    </a>
+    <a href="/community" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Join the Community</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/guides/performance/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Hardware Optimization
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Consumer GPU Performance Tuning</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Techniques to maximize tokens/second and train 1.5B–14B models on consumer graphics cards.
+    </p>
+  </div>
+
+  <h2>1. Flash Attention 2 & SDPA</h2>
+  <p>
+    Ensure PyTorch 2.0+ uses scaled dot-product attention (SDPA) or Flash Attention 2 for 2.5x speedups and 50% activation memory reduction.
+  </p>
+
+  <h2>2. 8-Bit AdamW Optimizer</h2>
+  <p>
+    Using <code>paged_adamw_8bit</code> cuts optimizer state memory footprint by 75% compared to standard FP32 AdamW without any drop in model quality.
+  </p>
+
+  <h2>3. LoRA Rank & Target Modules</h2>
+  <p>
+    Setting <code>lora_r=16</code> with <code>lora_alpha=32</code> provides 98% of the expressive power of full fine-tuning with only 0.2% of the trainable parameters.
+  </p>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/guides/troubleshooting/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Troubleshooting
+    </a>
+    <a href="/docs/guides/privacy/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Air-Gapped Privacy</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/guides/privacy/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Security & Sovereignty
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Air-Gapped & Sovereign Privacy</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Architectural guarantees ensuring zero telemetry leakage and complete data sovereignty.
+    </p>
+  </div>
+
+  <h2>1. Zero Cloud Telemetry</h2>
+  <p>
+    MoroAI does not phone home. No usage stats, prompts, weights, or logs are transmitted to external servers. You can run MoroAI completely disconnected from the public internet.
+  </p>
+
+  <h2>2. Built-in PII Redaction Filter</h2>
+  <p>
+    The Epistemic Compiler includes an automated PII detector that flags social security numbers, credit cards, emails, and phone numbers before training begins:
+  </p>
+
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro data build --source ./raw.jsonl --pii-scan --redact-pii
+  </pre>
+
+  <h2>3. Cryptographic Verification</h2>
+  <p>
+    All datasets and model checkpoints are hashed with SHA-256 for internal compliance audits under ISO 27001, HIPAA, and GDPR.
+  </p>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/guides/performance/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Performance Tuning
+    </a>
+    <a href="/docs/guides/contributing/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Contributing Guide</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---
+
+## Document: /docs/guides/troubleshooting/
+
+<div class="not-prose mb-8">
+    <span class="text-xs font-mono font-bold text-moro-400 uppercase tracking-wider bg-moro-500/10 px-2.5 py-1 rounded border border-moro-500/20 mb-3 inline-block">
+      Diagnostics
+    </span>
+    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Troubleshooting & Diagnostics</h1>
+    <p class="text-gray-400 text-base mt-2">
+      Quickly resolve common CUDA allocator errors, driver incompatibilities, and dataset format warnings.
+    </p>
+  </div>
+
+  <h2>1. Run System Health Check</h2>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300">
+moro doctor
+  </pre>
+
+  <h2>2. CUDA Out Of Memory (OOM) Errors</h2>
+  <p>
+    If training experiences memory pressure despite auto-recovery, adjust your configuration:
+  </p>
+  <ul>
+    <li>Enable gradient checkpointing: <code>gradient_checkpointing: true</code> in <code>moro.yaml</code>.</li>
+    <li>Reduce micro-batch size to 1 and double gradient accumulation: <code>micro_batch_size: 1</code>.</li>
+    <li>Clamp sequence length: <code>max_seq_length: 1024</code>.</li>
+  </ul>
+
+  <h2>3. MPS Accelerator (Apple Silicon)</h2>
+  <p>
+    On Apple Silicon M-series Macs, ensure PyTorch uses MPS:
+  </p>
+  <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-400">
+export PYTORCH_ENABLE_MPS_FALLBACK=1
+moro diagnose
+  </pre>
+
+  <div class="not-prose mt-12 pt-6 border-t border-dark-800 flex items-center justify-between">
+    <a href="/docs/deployment/production/" class="text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+      ← Production Best Practices
+    </a>
+    <a href="/docs/guides/performance/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-moro-500 hover:bg-moro-400 text-white font-semibold text-xs transition-colors">
+      <span>Performance Tuning</span>
+      <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+  </div>
+
+---

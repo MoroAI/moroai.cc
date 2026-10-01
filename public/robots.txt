@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://moroai.cc/sitemap.xml
 Sitemap: https://moroai.cc/sitemap-index.xml

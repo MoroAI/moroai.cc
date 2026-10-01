@@ -12,12 +12,12 @@ const description = 'Transform private organizational data into dependable, spec
 ---
 
 <BaseLayout title={title} description={description}>
-  <main>
+  <div>
     <Hero client:load />
     <FeatureGrid client:visible />
     <ArchitectureDiagram client:visible />
     <ComparisonTable client:visible />
     <Testimonials client:visible />
     <NewsletterCTA client:visible />
-  </main>
+  </div>
 </BaseLayout>

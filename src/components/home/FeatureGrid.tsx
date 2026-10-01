@@ -94,7 +94,7 @@ const features = [
     description:
       'Cross-run comparative analytics and hyperparameter Pareto frontier visualization. Discover which data slices yielded the highest benchmark jump.',
     color: 'from-cyan-500 to-blue-500',
-    link: '/features/#analytics',
+    link: '/docs/cli/analytics/',
     tag: 'Insights',
   },
   {
@@ -103,7 +103,7 @@ const features = [
     description:
       'Clean Python entry-points for custom tokenizers, data loaders, loss criteria, and enterprise deployment backends. Extend without modifying core code.',
     color: 'from-lime-500 to-green-500',
-    link: '/features/#plugins',
+    link: '/docs/cli/plugins/',
     tag: 'Extensible',
   },
   {
@@ -112,7 +112,7 @@ const features = [
     description:
       'Built specifically to run 1.5B to 14B parameter models on single consumer graphics cards (RTX 3060, 4070, Apple Silicon M-series, or AMD ROCm).',
     color: 'from-orange-500 to-amber-500',
-    link: '/features/#hardware',
+    link: '/docs/concepts/recipe-engine/',
     tag: 'Consumer Hardware',
   },
   {

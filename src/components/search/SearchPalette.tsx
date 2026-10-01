@@ -21,6 +21,30 @@ export default function SearchPalette() {
   const [filter, setFilter] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Focus trap: keep Tab cycling inside the modal
+  useEffect(() => {
+    if (!open) return;
+    const trap = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab' || !dialogRef.current) return;
+      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener('keydown', trap);
+    return () => window.removeEventListener('keydown', trap);
+  }, [open]);
 
   // Global ⌘K / Ctrl+K / "/" shortcut & custom open event
   useEffect(() => {
@@ -128,6 +152,7 @@ export default function SearchPalette() {
           aria-modal="true"
         >
           <div
+            ref={dialogRef}
             className="w-full max-w-2xl rounded-2xl border border-dark-700 bg-dark-900 shadow-2xl shadow-moro-500/10 overflow-hidden animate-fade-in"
             onClick={(e) => e.stopPropagation()}
           >

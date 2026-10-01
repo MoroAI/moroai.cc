@@ -4,6 +4,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "baseUrl": ".",
+    "types": ["@cloudflare/workers-types", "node"],
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
@@ -12,5 +13,7 @@
       "@styles/*": ["src/styles/*"],
       "@utils/*": ["src/utils/*"]
     }
-  }
+  },
+  "include": ["src/**/*", "functions/**/*", "playwright.config.ts"],
+  "exclude": ["node_modules", "dist", ".astro"]
 }

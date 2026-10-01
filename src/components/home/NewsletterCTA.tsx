@@ -17,7 +17,7 @@ export default function NewsletterCTA() {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ email, topic: 'newsletter', website: honeypot }),
       });
-      const data = await res.json().catch(() => ({}));
+      const data = (await res.json().catch(() => ({}))) as any;
 
       if (res.status === 429) {
         setStatus('rate_limited');

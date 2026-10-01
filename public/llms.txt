@@ -1,0 +1,52 @@
+# MoroAI
+
+> Local-first model adaptation foundry for private small language models.
+> Apache-2.0 licensed, open-source Python CLI + web dashboard.
+
+MoroAI transforms private organizational data into dependable, specialized local language models (1.5B to 14B parameters) on consumer GPUs (e.g. RTX 3060, 4070, Apple Silicon M-series) with zero cloud lock-in.
+
+## Core Documentation
+- [Quickstart (5 min)](https://moroai.cc/docs/getting-started/quickstart/): Scaffolding, compilation, training, and evaluation
+- [Introduction](https://moroai.cc/docs/getting-started/introduction/): Philosophy and architecture
+- [Installation Guide](https://moroai.cc/docs/getting-started/installation/): Setup with pip and Ollama
+- [Your First Model](https://moroai.cc/docs/getting-started/first-model/): End-to-end tutorial
+
+## Architecture & Concepts
+- [System Overview](https://moroai.cc/docs/concepts/overview/): The 5 architectural pillars
+- [Epistemic Data Compiler](https://moroai.cc/docs/concepts/data-compiler/): Quality scoring and curation
+- [PPMI & MI Guard](https://moroai.cc/docs/concepts/ppci-filtering/): Shannon mutual information outlier protection
+- [Hardware Recipe Engine](https://moroai.cc/docs/concepts/recipe-engine/): Exact pre-flight VRAM memory prediction
+- [Self-Healing Training Engine](https://moroai.cc/docs/concepts/training-engine/): 5-step topological OOM recovery
+- [Multi-Layer Eval Harness](https://moroai.cc/docs/concepts/eval-harness/): Deterministic and semantic scoring
+- [DPO Feedback Flywheel](https://moroai.cc/docs/concepts/flywheel/): Continuous alignment from production logs
+- [Lineage & Provenance](https://moroai.cc/docs/concepts/lineage-graphs/): Immutable hash manifests
+- [Release Governance](https://moroai.cc/docs/concepts/governance/): SBOM generation and release gates
+- [Mission Control UI](https://moroai.cc/docs/concepts/dashboard/): Real-time training dashboard
+
+## Cookbooks & Blueprints
+- [Customer Support Bot](https://moroai.cc/docs/cookbook/support-bot/): Q&A fine-tuning on company FAQs
+- [Structured JSON Extractor](https://moroai.cc/docs/cookbook/json-extractor/): Schema-strictly grounded document extraction
+- [Code Assistant](https://moroai.cc/docs/cookbook/code-assistant/): Internal library and refactoring copilot
+- [Document Summarizer](https://moroai.cc/docs/cookbook/document-summarizer/): Long-context FlashAttention executive briefs
+- [Medical Q&A System](https://moroai.cc/docs/cookbook/medical-qa/): Clinical guideline adaptation with HIPAA compliance
+- [Legal Document Analyzer](https://moroai.cc/docs/cookbook/legal-analyzer/): NDA and contract clause extraction
+
+## CLI Reference
+- [CLI Overview](https://moroai.cc/docs/cli/): Global flags and configuration
+- [moro init](https://moroai.cc/docs/cli/init/): Project scaffolding
+- [moro data](https://moroai.cc/docs/cli/data/): Data compilation and MI Guard
+- [moro recipe](https://moroai.cc/docs/cli/recipe/): VRAM hardware predictor
+- [moro train](https://moroai.cc/docs/cli/train/): Self-healing QLoRA training
+- [moro eval](https://moroai.cc/docs/cli/eval/): Multi-layer evaluation
+- [moro release](https://moroai.cc/docs/cli/release/): GGUF export and Ollama deployment
+- [moro flywheel](https://moroai.cc/docs/cli/flywheel/): Continuous DPO alignment
+- [moro dashboard](https://moroai.cc/docs/cli/dashboard/): Real-time web UI
+- [moro plugins](https://moroai.cc/docs/cli/plugins/): Extensibility system
+
+## Full Aggregated Context
+- [Complete Documentation Stream](https://moroai.cc/llms-full.txt)
+
+## Repositories & Packages
+- GitHub: https://github.com/moroai/moro
+- PyPI: https://pypi.org/project/moroai/
+- Website: https://moroai.cc

@@ -3,7 +3,8 @@ interface Env {
   NEWSLETTER_KV?: KVNamespace;
 }
 
-export const onRequestGet: PagesFunction<Env> = async ({ env, url }) => {
+export const onRequestGet: PagesFunction<Env> = async ({ env, request }) => {
+  const url = new URL(request.url);
   const token = url.searchParams.get('token');
 
   const page = (title: string, msg: string, ok: boolean) =>
