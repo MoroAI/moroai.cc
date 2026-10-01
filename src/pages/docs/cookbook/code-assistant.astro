@@ -1,5 +1,6 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
+import SampleData from '../../../components/docs/SampleData.astro';
 import { ArrowRight, Terminal, CheckCircle2, Code, Laptop, Sparkles } from 'lucide-react';
 
 const title = 'Code Assistant — MoroAI Cookbook';
@@ -25,6 +26,7 @@ const description = 'Build and deploy a private code generation and repository a
   </ol>
 
   <h2>Sample Training Data Format (JSONL)</h2>
+  <SampleData file="code_assistant_sample.jsonl" rows={3} label="Code Assistant Refactor & Systems Dataset" />
   <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-sky-300 leading-relaxed">
 cat &gt; data/raw/code_pairs.jsonl &lt;&lt; 'EOF'
 {`{"messages": [{"role": "user", "content": "Write a Python function to reverse a string with type annotations"}, {"role": "assistant", "content": "def reverse_string(s: str) -> str:\\n    \\"\\"\\"Reverse an input string safely.\\"\\"\\"\\n    return s[::-1]\\n\\n# Example usage:\\nassert reverse_string('hello') == 'olleh'"}]}`}

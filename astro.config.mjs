@@ -20,4 +20,11 @@ export default defineConfig({
       wrap: true,
     },
   },
+  vite: {
+    build: {
+      rollupOptions: {
+        external: ['/pagefind/pagefind.js'],
+      },
+    },
+  },
 });

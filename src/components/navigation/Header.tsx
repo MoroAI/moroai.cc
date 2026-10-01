@@ -13,8 +13,11 @@ import {
   Copy,
   Check,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Search,
 } from 'lucide-react';
+import SearchPalette from '../search/SearchPalette';
+import ThemeToggle from './ThemeToggle';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -147,6 +150,9 @@ export default function Header() {
 
             {/* Right Action Buttons on Desktop */}
             <div className="hidden lg:flex items-center gap-3">
+              <SearchPalette />
+              <ThemeToggle />
+
               <a
                 href="https://github.com/moroai/moro"
                 target="_blank"
@@ -173,6 +179,17 @@ export default function Header() {
 
             {/* Mobile & Tablet Toggle Controls (< lg) */}
             <div className="flex lg:hidden items-center gap-2">
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('open-search-palette'))}
+                className="p-2 sm:px-2.5 sm:py-2 rounded-xl bg-dark-900/80 border border-dark-800 text-gray-300 hover:text-white hover:border-dark-700 transition-all flex items-center gap-1.5 text-xs font-medium"
+                aria-label="Search documentation"
+                title="Search (⌘K)"
+              >
+                <Search className="w-4 h-4 text-moro-400" />
+              </button>
+
+              <ThemeToggle />
+
               <a
                 href="https://github.com/moroai/moro"
                 target="_blank"
@@ -242,6 +259,21 @@ export default function Header() {
                   <X className="w-5 h-5" />
                 </button>
               </div>
+
+              {/* Mobile Search Button */}
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  window.dispatchEvent(new CustomEvent('open-search-palette'));
+                }}
+                className="w-full mb-4 p-3 rounded-xl bg-dark-900/90 border border-dark-800 flex items-center justify-between text-xs text-gray-300 hover:text-white hover:border-moro-500/50 transition-colors shadow-sm"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Search className="w-4 h-4 text-moro-400" />
+                  <span>Search docs, CLI, models…</span>
+                </div>
+                <kbd className="px-1.5 py-0.5 rounded bg-dark-800 text-[10px] font-mono text-gray-400 border border-dark-700">⌘K</kbd>
+              </button>
 
               {/* Quick Install Banner inside drawer */}
               <div className="mb-6 p-3 rounded-xl bg-dark-900/90 border border-dark-800 flex items-center justify-between">

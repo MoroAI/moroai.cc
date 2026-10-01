@@ -1,5 +1,6 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
+import SampleData from '../../../components/docs/SampleData.astro';
 import { ArrowRight, Terminal, CheckCircle2, Code, FileText } from 'lucide-react';
 
 const title = 'Structured JSON Extractor — MoroAI Cookbook';
@@ -45,6 +46,7 @@ const description = 'Build and deploy a private model that converts unstructured
   </div>
 
   <h2>Training Data Formulation</h2>
+  <SampleData file="invoices_sample.jsonl" rows={4} label="Invoice Entity Extraction Dataset" />
   <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-emerald-300 leading-relaxed">
 cat &gt; data/raw/invoices.jsonl &lt;&lt; 'EOF'
 {`{"messages": [{"role": "user", "content": "Extract JSON from: Invoice #12345 from Acme Corp for $500 due on 2024-03-15"}, {"role": "assistant", "content": "{\\"invoice_number\\": \\"12345\\", \\"vendor\\": \\"Acme Corp\\", \\"amount\\": 500, \\"due_date\\": \\"2024-03-15\\"}"}]}`}

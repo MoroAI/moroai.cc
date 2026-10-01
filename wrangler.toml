@@ -3,3 +3,8 @@ compatibility_date = "2024-09-01"
 
 [assets]
 directory = "./dist"
+
+[[kv_namespaces]]
+binding = "NEWSLETTER_KV"
+id = "8043223b716e49b881b1bb0e7278246f"
+preview_id = "59cb21552c834709a7eb94804148d052"

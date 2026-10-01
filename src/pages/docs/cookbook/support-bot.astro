@@ -1,5 +1,6 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
+import SampleData from '../../../components/docs/SampleData.astro';
 import { ArrowRight, Terminal, CheckCircle2, MessageSquare, Code, Play } from 'lucide-react';
 
 const title = 'Customer Support Bot — MoroAI Cookbook';
@@ -25,6 +26,7 @@ const description = 'Step-by-step cookbook: build, evaluate, and locally deploy 
   </ul>
 
   <h2>Step 1: Prepare Training Data</h2>
+  <SampleData file="support_bot_sample.jsonl" rows={10} label="Support Bot Training Dataset" />
   <p>Format your customer support FAQ into structured multi-turn conversation JSONL:</p>
 
   <pre class="bg-dark-950 p-4 rounded-xl border border-dark-800 font-mono text-xs text-cyan-300 leading-relaxed">

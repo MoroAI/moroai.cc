@@ -1,14 +1,43 @@
 import React, { useState } from 'react';
-import { Mail, ArrowRight, Check, Github, Disc as Discord, Sparkles, Terminal } from 'lucide-react';
+import { Mail, ArrowRight, Check, Github, Disc as Discord, Sparkles, Terminal, AlertCircle } from 'lucide-react';
 
 export default function NewsletterCTA() {
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'success'>('idle');
+  const [honeypot, setHoneypot] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'confirm' | 'dup' | 'rate_limited' | 'error'>('idle');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    setStatus('success');
+
+    setStatus('loading');
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email, topic: 'newsletter', website: honeypot }),
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (res.status === 429) {
+        setStatus('rate_limited');
+        return;
+      }
+
+      if (!res.ok) {
+        setStatus('error');
+        return;
+      }
+
+      if (data.status === 'already_subscribed') {
+        setStatus('dup');
+      } else {
+        setStatus('confirm');
+      }
+    } catch (err) {
+      console.error('Newsletter subscription error:', err);
+      setStatus('error');
+    }
   };
 
   return (
@@ -31,37 +60,72 @@ export default function NewsletterCTA() {
             and benchmarks for consumer GPU local adaptation directly in your inbox.
           </p>
 
-          {/* Form */}
-          {status === 'success' ? (
-            <div className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-medium">
-              <Check className="w-5 h-5 text-emerald-400" />
-              <span>You're in! Welcome to the MoroAI community. We respect your inbox privacy.</span>
+          {/* Form / Status Messages */}
+          {status === 'confirm' ? (
+            <div className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-medium animate-fade-in">
+              <Check className="w-5 h-5 text-emerald-400 shrink-0" />
+              <span>Confirmation sent! Check your inbox to confirm your subscription ✓</span>
+            </div>
+          ) : status === 'dup' ? (
+            <div className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-300 font-medium animate-fade-in">
+              <Check className="w-5 h-5 text-sky-400 shrink-0" />
+              <span>You're already subscribed! Welcome back to the foundry.</span>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto mb-8">
-              <div className="relative w-full">
-                <Mail className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <div>
+              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto mb-3">
+                {/* Honeypot field for bot mitigation */}
                 <input
-                  type="email"
-                  required
-                  placeholder="name@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-dark-950 border border-dark-700 text-white placeholder-gray-500 focus:outline-none focus:border-moro-500 focus:ring-1 focus:ring-moro-500 text-sm transition-all"
+                  type="text"
+                  name="website"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  className="hidden"
+                  aria-hidden="true"
                 />
-              </div>
-              <button
-                type="submit"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-moro-500 to-sky-600 hover:from-moro-400 hover:to-sky-500 text-white font-semibold text-sm shadow-lg shadow-moro-500/25 transition-all flex items-center justify-center gap-2 shrink-0 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span>Subscribe</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </form>
+
+                <div className="relative w-full">
+                  <Mail className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    type="email"
+                    required
+                    placeholder="name@company.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={status === 'loading'}
+                    className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-dark-950 border border-dark-700 text-white placeholder-gray-500 focus:outline-none focus:border-moro-500 focus:ring-1 focus:ring-moro-500 text-sm transition-all disabled:opacity-50"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={status === 'loading'}
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-moro-500 to-sky-600 hover:from-moro-400 hover:to-sky-500 text-white font-semibold text-sm shadow-lg shadow-moro-500/25 transition-all flex items-center justify-center gap-2 shrink-0 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                >
+                  <span>{status === 'loading' ? 'Joining…' : 'Subscribe'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </form>
+
+              {status === 'rate_limited' && (
+                <p className="text-xs text-amber-400 flex items-center justify-center gap-1.5 mt-2">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  Too many subscription attempts from this IP. Please try again in an hour.
+                </p>
+              )}
+
+              {status === 'error' && (
+                <p className="text-xs text-red-400 flex items-center justify-center gap-1.5 mt-2">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  Could not complete request. Please verify your email address and try again.
+                </p>
+              )}
+            </div>
           )}
 
           {/* Secondary Actions */}
-          <div className="pt-8 border-t border-dark-800 flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
+          <div className="pt-8 mt-6 border-t border-dark-800 flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
             <a
               href="https://github.com/moroai/moro"
               target="_blank"

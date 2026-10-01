@@ -1,0 +1,21 @@
+/* src/styles/tokens.css */
+:root,
+:root[data-theme='dark'] {
+  --bg: 2 6 23;          /* dark-950 */
+  --surface: 15 23 42;   /* dark-900 */
+  --surface-2: 30 41 59; /* dark-800 */
+  --line: 51 65 85;      /* dark-700 */
+  --ink: 241 245 249;
+  --muted: 148 163 184;
+  --faint: 100 116 139;
+}
+
+:root[data-theme='light'] {
+  --bg: 248 250 252;
+  --surface: 255 255 255;
+  --surface-2: 241 245 249;
+  --line: 203 213 225;
+  --ink: 15 23 42;
+  --muted: 71 85 105;
+  --faint: 100 116 139;
+}

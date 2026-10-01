@@ -170,7 +170,11 @@ const activeDoc = flatDocs[currentIndex] || { label: title.replace(' — MoroAI 
       </aside>
 
       {/* Main Documentation Body (Immediately visible on mobile & tablets) */}
-      <article class="lg:col-span-9 prose prose-invert max-w-none">
+      <article
+        class="lg:col-span-9 prose prose-invert max-w-none"
+        data-pagefind-filter={currentSlug.includes('/cookbook/') ? 'section:cookbook' : 'section:docs'}
+        data-pagefind-meta={currentSlug.includes('/cookbook/') ? 'type:cookbook' : 'type:docs'}
+      >
         {/* Mobile & Tablet Interactive Docs Navigation */}
         <MobileDocsNav client:load docNav={docNav} currentSlug={currentSlug} />
 
@@ -188,7 +192,7 @@ const activeDoc = flatDocs[currentIndex] || { label: title.replace(' — MoroAI 
             <ChevronRight class="w-3.5 h-3.5 text-dark-700" />
             <span class="text-gray-400">{activeDoc.category}</span>
             <ChevronRight class="w-3.5 h-3.5 text-dark-700" />
-            <span class="text-moro-300 font-semibold">{activeDoc.label}</span>
+            <span class="text-moro-300 font-semibold" data-pagefind-meta="title">{activeDoc.label}</span>
           </nav>
 
           {/* Doc Content */}

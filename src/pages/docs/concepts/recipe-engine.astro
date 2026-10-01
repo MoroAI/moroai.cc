@@ -1,5 +1,6 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
+import VramCalculator from '../../../components/tools/VramCalculator';
 import { ArrowRight, Cpu, CheckCircle2, AlertTriangle, Terminal, Sliders } from 'lucide-react';
 
 const title = 'VRAM Recipe Predictor & Hardware Engine — MoroAI Architecture';
@@ -16,6 +17,8 @@ const description = 'Pre-flight VRAM memory simulation, tensor footprint calcula
       Eliminating trial-and-error fine-tuning by simulating memory consumption down to the megabyte before touching GPU memory.
     </p>
   </div>
+
+  <VramCalculator client:visible />
 
   <h2>The VRAM Memory Formula</h2>
   <p>

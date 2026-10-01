@@ -21,6 +21,8 @@ import {
   Server,
   Key
 } from 'lucide-react';
+import VramCalculator from '../components/tools/VramCalculator';
+import MiGuardSimulator from '../components/tools/MiGuardSimulator';
 
 const title = 'MoroAI Architecture & Features — Complete Subsystems Breakdown';
 const description = 'Deep technical breakdown of the 6 core systems behind MoroAI: Epistemic Data Compiler, VRAM Recipe Predictor, OOM Auto-Recovery, Multi-Layered Eval, DPO Flywheel, and Mission Control UI.';
@@ -160,6 +162,11 @@ const subsystems = [
               </pre>
             </div>
           </div>
+
+          <!-- Interactive MI Guard Live Simulator -->
+          <div class="mt-10 pt-8 border-t border-dark-800">
+            <MiGuardSimulator client:visible />
+          </div>
         </div>
       </section>
 
@@ -249,6 +256,11 @@ Safe Available Headroom:       ~4,438 MB (36%)
 Recipe generated: ./moro.yaml (Verified Zero OOM)`}
               </pre>
             </div>
+          </div>
+
+          <!-- Interactive VRAM Calculator -->
+          <div class="mt-10 pt-8 border-t border-dark-800">
+            <VramCalculator client:visible />
           </div>
         </div>
       </section>

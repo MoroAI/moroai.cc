@@ -71,16 +71,35 @@ const finalTags = category ? [category, ...tags] : tags;
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <!-- Theme bootstrap to prevent FOUC -->
+    <script is:inline>
+      try {
+        const s = localStorage.getItem('moro-theme');
+        const t = s ?? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.dataset.theme = t;
+        if (t === 'light') {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+        } else {
+          document.documentElement.classList.remove('light');
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    </script>
   </head>
 
   <body class="bg-dark-950 text-gray-100 min-h-screen flex flex-col font-sans antialiased selection:bg-moro-500/30 selection:text-moro-200">
-    <Header client:load />
-
-    <div class="flex-1">
-      <slot />
+    <div data-pagefind-ignore>
+      <Header client:load />
     </div>
 
-    <Footer client:load />
+    <main data-pagefind-body class="flex-1">
+      <slot />
+    </main>
+
+    <div data-pagefind-ignore>
+      <Footer client:load />
+    </div>
 
     {/* Global Interactive Code Copy Utility */}
     <script is:inline>

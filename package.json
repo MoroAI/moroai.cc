@@ -8,10 +8,11 @@
     "start": "astro dev",
     "fetch-fonts": "node scripts/fetch-fonts.mjs",
     "prebuild": "node scripts/build-og-images.mjs",
-    "build": "node scripts/build-og-images.mjs && astro build",
+    "build": "node scripts/build-og-images.mjs && astro build && pagefind --site dist --output-path dist/pagefind --exclude-selectors \"nav,footer,aside,.no-search\"",
     "preview": "astro preview",
     "astro": "astro",
     "deploy": "wrangler deploy",
+    "test:e2e": "playwright test",
     "format": "prettier --write ."
   },
   "dependencies": {
@@ -34,6 +35,8 @@
     "tailwindcss": "^3.4.10"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "pagefind": "^1.5.2",
     "prettier": "^3.3.3",
     "prettier-plugin-astro": "^0.14.1",
     "wrangler": "^4.142.0"

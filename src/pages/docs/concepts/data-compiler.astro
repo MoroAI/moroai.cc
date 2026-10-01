@@ -1,5 +1,6 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
+import MiGuardSimulator from '../../../components/tools/MiGuardSimulator';
 import { ArrowRight, Database, CheckCircle2, ShieldAlert, Layers, Terminal } from 'lucide-react';
 
 const title = 'Epistemic Data Compiler & MI Guard — MoroAI Architecture';
@@ -16,6 +17,8 @@ const description = 'How MoroAI curates enterprise training datasets using infor
       Information-theoretic dataset curation engineered to mathematically protect critical domain edge cases while eliminating semantic redundancy.
     </p>
   </div>
+
+  <MiGuardSimulator client:visible />
 
   <h2>The Fundamental Dilemma in Domain Fine-Tuning</h2>
   <p>
