@@ -1,4 +1,4 @@
-/* src/styles/tokens.css */
+/* Space-separated RGB triples so Tailwind alpha modifiers (bg-surface/50) keep working */
 :root,
 :root[data-theme='dark'] {
   --bg: 2 6 23;          /* dark-950 */
@@ -19,3 +19,21 @@
   --muted: 71 85 105;
   --faint: 100 116 139;
 }
+
+/* Icon swap — driven by the attribute, NOT by Tailwind dark: variants */
+:root[data-theme='dark'] #moro-icon-sun,
+:root:not([data-theme='light']) #moro-icon-sun,
+:root[data-theme='dark'] .moro-icon-sun,
+:root:not([data-theme='light']) .moro-icon-sun {
+  display: none !important;
+}
+
+:root[data-theme='light'] #moro-icon-moon,
+:root[data-theme='light'] .moro-icon-moon {
+  display: none !important;
+}
+
+/* Light-mode chrome comfort */
+:root[data-theme='light'] ::-webkit-scrollbar-track { background: #f1f5f9; }
+:root[data-theme='light'] ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+:root[data-theme='light'] ::selection { background: rgb(14 165 233 / .25); color: #0f172a; }

@@ -41,8 +41,21 @@ const finalTags = category ? [category, ...tags] : tags;
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="dark scroll-smooth">
+<html lang="en" class="scroll-smooth">
   <head>
+    <!-- Theme bootstrap to prevent FOUC (must run before CSS rendering) -->
+    <script is:inline>
+      (function () {
+        var stored = null;
+        try { stored = localStorage.getItem('moro-theme'); } catch (e) {}
+        var theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        var el = document.documentElement;
+        el.dataset.theme = theme;
+        el.classList.toggle('dark', theme === 'dark');
+        el.style.colorScheme = theme;
+      })();
+    </script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -71,21 +84,6 @@ const finalTags = category ? [category, ...tags] : tags;
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <!-- Theme bootstrap to prevent FOUC -->
-    <script is:inline>
-      try {
-        const s = localStorage.getItem('moro-theme');
-        const t = s ?? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-        document.documentElement.dataset.theme = t;
-        if (t === 'light') {
-          document.documentElement.classList.remove('dark');
-          document.documentElement.classList.add('light');
-        } else {
-          document.documentElement.classList.remove('light');
-          document.documentElement.classList.add('dark');
-        }
-      } catch (e) {}
-    </script>
   </head>
 
   <body class="bg-dark-950 text-gray-100 min-h-screen flex flex-col font-sans antialiased selection:bg-moro-500/30 selection:text-moro-200">

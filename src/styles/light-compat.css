@@ -1,0 +1,138 @@
+/* src/styles/light-compat.css */
+/* Compatibility shim that immediately makes light theme work site-wide */
+
+/* Base surfaces and canvas */
+:root[data-theme='light'] body {
+  background-color: #f8fafc !important;
+  color: #1e293b !important;
+}
+
+:root[data-theme='light'] :not(pre).bg-dark-950 { background-color: #f8fafc !important; }
+:root[data-theme='light'] :not(pre).bg-dark-900 { background-color: #ffffff !important; }
+:root[data-theme='light'] :not(pre).bg-dark-800 { background-color: #f1f5f9 !important; }
+:root[data-theme='light'] .bg-dark-800\/50 { background-color: rgb(241 245 249 / .5) !important; }
+:root[data-theme='light'] .bg-dark-800\/60 { background-color: rgb(241 245 249 / .6) !important; }
+:root[data-theme='light'] .bg-dark-800\/80 { background-color: rgb(241 245 249 / .8) !important; }
+:root[data-theme='light'] .bg-dark-900\/50 { background-color: #ffffff !important; }
+:root[data-theme='light'] .bg-dark-900\/60 { background-color: rgb(255 255 255 / .8) !important; }
+:root[data-theme='light'] .bg-dark-900\/70 { background-color: #ffffff !important; }
+:root[data-theme='light'] .bg-dark-900\/80 { background-color: #ffffff !important; }
+:root[data-theme='light'] .bg-dark-900\/90 { background-color: #ffffff !important; }
+:root[data-theme='light'] .bg-dark-950\/40 { background-color: rgb(248 250 252 / .6) !important; }
+:root[data-theme='light'] .bg-dark-950\/60 { background-color: rgb(248 250 252 / .8) !important; }
+:root[data-theme='light'] .bg-dark-950\/85 { background-color: rgb(248 250 252 / .9) !important; }
+:root[data-theme='light'] .bg-dark-950\/95 { background-color: #ffffff !important; }
+
+/* Interactive Hover States */
+:root[data-theme='light'] .hover\:bg-dark-800:hover { background-color: #e2e8f0 !important; }
+:root[data-theme='light'] .hover\:bg-dark-700:hover { background-color: #cbd5e1 !important; }
+:root[data-theme='light'] .hover\:bg-dark-800\/50:hover { background-color: rgb(226 232 240 / .6) !important; }
+:root[data-theme='light'] .hover\:bg-dark-800\/60:hover { background-color: rgb(226 232 240 / .7) !important; }
+:root[data-theme='light'] .hover\:bg-dark-800\/70:hover { background-color: rgb(226 232 240 / .8) !important; }
+
+/* Borders & Dividers */
+:root[data-theme='light'] .border-dark-700,
+:root[data-theme='light'] .border-dark-800,
+:root[data-theme='light'] .border-dark-700\/80,
+:root[data-theme='light'] .border-dark-800\/80,
+:root[data-theme='light'] .border-dark-800\/90 {
+  border-color: #cbd5e1 !important;
+}
+:root[data-theme='light'] .divide-dark-700 > :not([hidden]) ~ :not([hidden]),
+:root[data-theme='light'] .divide-dark-800 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #cbd5e1 !important;
+}
+
+/* Typography (excluding code blocks) */
+:root[data-theme='light'] :not(pre):not(code).text-white { color: #0f172a !important; }
+:root[data-theme='light'] :not(pre):not(code).text-gray-100,
+:root[data-theme='light'] :not(pre):not(code).text-gray-200,
+:root[data-theme='light'] :not(pre):not(code).text-gray-300 { color: #1e293b !important; }
+:root[data-theme='light'] :not(pre):not(code).text-gray-400 { color: #475569 !important; }
+:root[data-theme='light'] :not(pre):not(code).text-gray-500 { color: #64748b !important; }
+
+/* Glass Cards and Overlays */
+:root[data-theme='light'] .glass-card {
+  background-color: rgb(255 255 255 / .85) !important;
+  border-color: #cbd5e1 !important;
+}
+:root[data-theme='light'] .glass-card-hover:hover {
+  background-color: #ffffff !important;
+  border-color: #94a3b8 !important;
+}
+:root[data-theme='light'] .bg-black\/60 { background-color: rgb(15 23 42 / .35) !important; }
+:root[data-theme='light'] .bg-black\/70 { background-color: rgb(15 23 42 / .45) !important; }
+:root[data-theme='light'] .bg-black\/75 { background-color: rgb(15 23 42 / .50) !important; }
+
+/* Prose & Documentation Content */
+:root[data-theme='light'] .prose,
+:root[data-theme='light'] .prose-invert {
+  --tw-prose-body: #334155;
+  --tw-prose-headings: #0f172a;
+  --tw-prose-lead: #475569;
+  --tw-prose-links: #0284c7;
+  --tw-prose-bold: #0f172a;
+  --tw-prose-counters: #64748b;
+  --tw-prose-bullets: #94a3b8;
+  --tw-prose-hr: #e2e8f0;
+  --tw-prose-quotes: #0f172a;
+  --tw-prose-quote-borders: #0ea5e9;
+  --tw-prose-captions: #64748b;
+  --tw-prose-th-borders: #cbd5e1;
+  --tw-prose-td-borders: #e2e8f0;
+  color: #334155 !important;
+}
+
+:root[data-theme='light'] .prose h1,
+:root[data-theme='light'] .prose h2,
+:root[data-theme='light'] .prose h3,
+:root[data-theme='light'] .prose h4 {
+  color: #0f172a !important;
+}
+
+:root[data-theme='light'] .prose p,
+:root[data-theme='light'] .prose li {
+  color: #334155 !important;
+}
+
+:root[data-theme='light'] .prose strong {
+  color: #0f172a !important;
+}
+
+/* Documentation Sidebar Navigation */
+:root[data-theme='light'] aside nav a:not([class*='bg-moro']) {
+  color: #475569 !important;
+}
+:root[data-theme='light'] aside nav a:not([class*='bg-moro']):hover {
+  color: #0f172a !important;
+  background-color: #f1f5f9 !important;
+}
+:root[data-theme='light'] aside a[class*='bg-moro'] {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+  border-color: #7dd3fc !important;
+}
+:root[data-theme='light'] aside h4 {
+  color: #64748b !important;
+}
+
+/* Code Blocks & Terminals stay dark like GitHub/Stripe */
+:root[data-theme='light'] pre,
+:root[data-theme='light'] pre.bg-dark-950,
+:root[data-theme='light'] pre.bg-dark-900,
+:root[data-theme='light'] .astro-code {
+  background-color: #0b0f19 !important;
+  border-color: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+:root[data-theme='light'] pre.text-sky-300 { color: #38bdf8 !important; }
+:root[data-theme='light'] pre.text-emerald-300 { color: #34d399 !important; }
+:root[data-theme='light'] pre.text-cyan-300 { color: #67e8f9 !important; }
+:root[data-theme='light'] pre.text-gray-300 { color: #cbd5e1 !important; }
+
+/* Inline code tags outside pre */
+:root[data-theme='light'] :not(pre) > code {
+  background-color: #e2e8f0 !important;
+  color: #0369a1 !important;
+  border: 1px solid #cbd5e1;
+}
