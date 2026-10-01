@@ -22,3 +22,24 @@ for (const route of ROUTES) {
     await expect(page).toHaveScreenshot({ maxDiffPixelRatio: 0.05, fullPage: false });
   });
 }
+
+test('Theme toggle flips between dark and light mode', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+  // Initial default state is dark
+  expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe('dark');
+  expect(await page.evaluate(() => document.documentElement.classList.contains('dark'))).toBe(true);
+
+  // Click toggle to switch to light
+  await page.locator('.moro-theme-toggle:visible').click();
+  expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe('light');
+  expect(await page.evaluate(() => document.documentElement.classList.contains('dark'))).toBe(false);
+  expect(await page.evaluate(() => localStorage.getItem('moro-theme'))).toBe('light');
+
+  // Click toggle again to switch back to dark
+  await page.locator('.moro-theme-toggle:visible').click();
+  expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe('dark');
+  expect(await page.evaluate(() => document.documentElement.classList.contains('dark'))).toBe(true);
+  expect(await page.evaluate(() => localStorage.getItem('moro-theme'))).toBe('dark');
+});
+
