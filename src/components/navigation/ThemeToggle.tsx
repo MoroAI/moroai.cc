@@ -29,10 +29,11 @@ export default function ThemeToggle() {
 
   return (
     <button
+      type="button"
       onClick={flip}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
       title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-      className="p-2 rounded-xl bg-dark-900/80 hover:bg-dark-800 border border-dark-700/80 hover:border-dark-600 text-gray-400 hover:text-white transition-all duration-200 flex items-center justify-center shadow-sm"
+      className="h-9 w-9 rounded-xl bg-dark-900/80 hover:bg-dark-800 border border-dark-700/80 hover:border-dark-600 text-gray-400 hover:text-white transition-all duration-200 flex items-center justify-center shadow-sm shrink-0 focus:outline-none focus:ring-2 focus:ring-moro-500/40"
     >
       {theme === 'light' ? (
         <Sun className="w-4 h-4 text-amber-500 hover:rotate-45 transition-transform" />

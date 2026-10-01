@@ -105,13 +105,16 @@ export default function SearchPalette() {
     <>
       {/* Trigger button in header */}
       <button
+        type="button"
         onClick={() => setOpen(true)}
-        className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-dark-900/80 border border-dark-700/80 text-xs text-gray-400 hover:border-moro-500/50 hover:text-gray-200 transition-colors shadow-sm"
+        className="flex items-center gap-2 h-9 px-3 rounded-xl bg-dark-900/80 hover:bg-dark-800/90 border border-dark-700/80 hover:border-moro-500/50 text-xs text-gray-400 hover:text-gray-200 transition-all duration-200 shadow-sm shrink-0 whitespace-nowrap group focus:outline-none focus:ring-2 focus:ring-moro-500/40"
         aria-label="Search documentation"
+        title="Search documentation (⌘K)"
       >
-        <Search className="w-3.5 h-3.5 text-moro-400" />
-        <span>Search docs…</span>
-        <kbd className="ml-1.5 px-1.5 py-0.5 rounded bg-dark-800 text-[10px] font-mono text-gray-400 border border-dark-700">
+        <Search className="w-3.5 h-3.5 text-moro-400 group-hover:text-moro-300 transition-colors shrink-0" />
+        <span className="hidden xl:inline font-normal text-gray-400 group-hover:text-gray-300">Search docs…</span>
+        <span className="inline xl:hidden font-normal text-gray-400 group-hover:text-gray-300">Search…</span>
+        <kbd className="flex items-center justify-center h-5 px-1.5 rounded-md bg-dark-800 text-[10px] font-mono text-gray-400 border border-dark-700/90 group-hover:border-dark-600 transition-colors shrink-0 select-none shadow-xs">
           ⌘K
         </kbd>
       </button>

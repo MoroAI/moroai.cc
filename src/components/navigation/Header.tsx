@@ -70,10 +70,10 @@ export default function Header() {
             : 'bg-transparent py-3.5 sm:py-5'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 xl:px-8">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2.5 sm:gap-3 group focus:outline-none" aria-label="MoroAI Home">
+            <a href="/" className="flex items-center gap-2.5 sm:gap-3 group focus:outline-none shrink-0" aria-label="MoroAI Home">
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-dark-900 to-dark-800 border border-dark-700/80 flex items-center justify-center p-2 group-hover:border-moro-500/50 transition-all duration-300 shadow-md group-hover:shadow-moro-500/20 shrink-0">
                 <svg viewBox="0 0 100 100" fill="none" className="w-full h-full">
                   <defs>
@@ -103,53 +103,53 @@ export default function Header() {
             </a>
 
             {/* Desktop Navigation (large screens >= lg) */}
-            <nav className="hidden lg:flex items-center gap-1 bg-dark-900/60 backdrop-blur-md border border-dark-800/80 px-4 py-1.5 rounded-full shadow-inner">
+            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 bg-dark-900/60 backdrop-blur-md border border-dark-800/80 px-2 xl:px-4 py-1 rounded-full shadow-inner shrink-0">
               <a
                 href="/features"
-                className="text-sm font-medium text-gray-300 hover:text-white px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all"
+                className="text-xs xl:text-sm font-medium text-gray-300 hover:text-white px-2.5 xl:px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all whitespace-nowrap"
               >
                 Features
               </a>
               <a
                 href="/docs/getting-started/introduction/"
-                className="text-sm font-medium text-gray-300 hover:text-white px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all"
+                className="text-xs xl:text-sm font-medium text-gray-300 hover:text-white px-2.5 xl:px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all whitespace-nowrap"
               >
                 Docs
               </a>
               <a
                 href="/#architecture"
-                className="text-sm font-medium text-gray-300 hover:text-white px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all"
+                className="text-xs xl:text-sm font-medium text-gray-300 hover:text-white px-2.5 xl:px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all whitespace-nowrap"
               >
                 Architecture
               </a>
               <a
                 href="/#comparison"
-                className="text-sm font-medium text-gray-300 hover:text-white px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all"
+                className="hidden xl:block text-xs xl:text-sm font-medium text-gray-300 hover:text-white px-2.5 xl:px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all whitespace-nowrap"
               >
                 Comparison
               </a>
               <a
                 href="/pricing"
-                className="text-sm font-medium text-gray-300 hover:text-white px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all"
+                className="text-xs xl:text-sm font-medium text-gray-300 hover:text-white px-2.5 xl:px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all whitespace-nowrap"
               >
                 Pricing
               </a>
               <a
                 href="/blog"
-                className="text-sm font-medium text-gray-300 hover:text-white px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all"
+                className="text-xs xl:text-sm font-medium text-gray-300 hover:text-white px-2.5 xl:px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all whitespace-nowrap"
               >
                 Blog
               </a>
               <a
                 href="/community"
-                className="text-sm font-medium text-gray-300 hover:text-white px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all"
+                className="hidden 2xl:block text-xs xl:text-sm font-medium text-gray-300 hover:text-white px-2.5 xl:px-3 py-1.5 rounded-full hover:bg-dark-800/70 transition-all whitespace-nowrap"
               >
                 Community
               </a>
             </nav>
 
             {/* Right Action Buttons on Desktop */}
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-2 xl:gap-2.5 shrink-0">
               <SearchPalette />
               <ThemeToggle />
 
@@ -157,12 +157,12 @@ export default function Header() {
                 href="https://github.com/moroai/moro"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-dark-900/80 hover:bg-dark-800 text-gray-200 hover:text-white text-sm font-medium border border-dark-700/80 hover:border-dark-600 transition-all duration-200 group"
+                className="flex items-center gap-2 h-9 px-3 rounded-xl bg-dark-900/80 hover:bg-dark-800 text-gray-200 hover:text-white text-xs xl:text-sm font-medium border border-dark-700/80 hover:border-dark-600 transition-all duration-200 group shrink-0 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-moro-500/40"
                 aria-label="GitHub Repository"
               >
-                <Github className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                <Github className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors shrink-0" />
                 <span>GitHub</span>
-                <span className="flex items-center gap-1 text-xs text-yellow-400 bg-yellow-400/10 px-1.5 py-0.5 rounded-md border border-yellow-400/20 ml-0.5">
+                <span className="hidden xl:flex items-center gap-1 text-[11px] text-yellow-400 bg-yellow-400/10 px-1.5 py-0.5 rounded-md border border-yellow-400/20 ml-0.5 shrink-0">
                   <Star className="w-3 h-3 fill-yellow-400" />
                   <span>v0.1.0</span>
                 </span>
@@ -170,10 +170,10 @@ export default function Header() {
 
               <a
                 href="/docs/getting-started/quickstart/"
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-moro-500 to-sky-600 hover:from-moro-400 hover:to-sky-500 text-white text-sm font-semibold shadow-md shadow-moro-500/20 hover:shadow-moro-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                className="flex items-center gap-1.5 xl:gap-2 h-9 px-3.5 xl:px-4 rounded-xl bg-gradient-to-r from-moro-500 to-sky-600 hover:from-moro-400 hover:to-sky-500 text-white text-xs xl:text-sm font-semibold shadow-md shadow-moro-500/20 hover:shadow-moro-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shrink-0 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-moro-500/40"
               >
                 <span>Get Started</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-3.5 h-3.5 xl:w-4 xl:h-4 shrink-0" />
               </a>
             </div>
 
