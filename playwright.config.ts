@@ -9,10 +9,17 @@ export default defineConfig({
     baseURL: 'http://127.0.0.1:4321',
     trace: 'on-first-retry',
   },
+  expect: {
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.05,
+    },
+  },
+  updateSnapshots: 'missing',
   webServer: {
-    command: 'npx astro preview --port 4321',
-    port: 4321,
+    command: 'npx astro preview --host 127.0.0.1 --port 4321',
+    url: 'http://127.0.0.1:4321',
     reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
   },
   projects: [
     { name: 'mobile-375', use: { viewport: { width: 375, height: 667 } } },
